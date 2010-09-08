@@ -25,7 +25,8 @@ turtle = Factory(name='Turtle',
                  nodemodule='turtle',
                  nodeclass='turtle',
                  inputs=[dict(name='sectors', interface=IEnumStr(['16', '46']), value='16'),
-                         dict(name='format', interface=IEnumStr(['soc', 'uoc']), value='soc')],
+                         dict(name='format', interface=IEnumStr(['soc', 'uoc']), value='soc'),
+			 {'name':'Energy','interface':IFloat,'value':1.0},],
                  outputs=[dict(name='turtle string', interface=IStr)],)
 __all__.append('turtle')
 
