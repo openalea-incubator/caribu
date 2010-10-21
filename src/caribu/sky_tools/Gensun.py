@@ -10,6 +10,6 @@ class Gensun(object):
     def __call__(self, Rsun,DOY,heureTU,lat):
         s=Sun.Sun()
         s.Rsun=Rsun
-        s._set_pos_astro(DOY,heureTU,lat)
+        s._set_pos_astro(DOY,heureTU,3.14/180*lat)
 
         return s
