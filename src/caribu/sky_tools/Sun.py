@@ -20,7 +20,7 @@ class Sun(object):
         ah = self.AngleHoraire(heureTU)
         self.elev = self.SunElev(lat,dec,ah)
         self.azim = self.SunAzim(lat,dec,ah)
-
+        
     def _get_pos_astro(self):
         return self.elev, self.azim
     
@@ -37,15 +37,18 @@ class Sun(object):
     
     def SunElev(self,lat,dec,ah):
         """ angle d'elevation en fonction de la latitude, decli et de l'angle horaire (rad); 0 = zenith; pi/2 = horizon"""
-        return asin(sin(lat)*sin(dec)+cos(lat)*cos(dec)*cos(ah))
-    
+        return (3.14/2)-(asin(sin(lat)*sin(dec)+cos(lat)*cos(dec)*cos(ah))) 
+       
     def SunAzim(self,lat,dec,ah):
         """ azimut du soleil en fonction de la latitude, decli et de l'angle horaire (rad) ; Nord = 0, Est = pi/2 """
         a1 = sin(lat)*cos(ah)-cos(lat)*tan(dec)
         az = atan(sin(ah)/a1)
         if a1<0:
             az=-az
-    
+               
+        # a1 = asin(sin(lat)*sin(dec)+cos(lat)*cos(dec)*cos(ah+3.14/2))
+        # a2 = sin (lat)*sin(a1)-sin(dec) # agregado el 24-10 por J Prieto
+        # az = acos(a2/(cos(lat)*cos(a1)))
         return -az
 
     def toLight(self):

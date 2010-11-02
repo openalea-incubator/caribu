@@ -44,6 +44,12 @@ class Sky(object):
             if self.sky[i][4]==sect_sun[0] and self.sky[i][5]==sect_sun[1]:
                 self.sky[i][0]+=sun.Rsun #ajoute le soleil
 
+    def set_Rsun2(self,sun):
+        """ ajoute sun position exacte en rajoutant une ligne au ciel discretise """
+        elv, azim = sun._get_pos_astro()
+        dir = self.Vdir(elv,azim)
+        I = sun.Rsun
+        self.sky.append([I]+dir+[-1,-1])
 
     def __add__(self,sky2):
         """ ajoute 2 ciels ; surcharge +"""
