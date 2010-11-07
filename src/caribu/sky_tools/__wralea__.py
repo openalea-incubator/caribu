@@ -20,6 +20,16 @@ __icon__ = 'sky.png'
 __all__ = ['Normalise_Sky_Normalise_Sky', '_98394928', 'GetLight_GetLight', '_98394576', 'GenSky_GenSky', 'add_sun_add_sun', 'merge2skies_merge2skies', 'mergeNskies_mergeNskies', 'get_meteo_dat_get_meteo_dat', 'GenSkyFile', 'Filename_Filename', 'Genlight_Genlight', 'GetLightsSun_GetLightsSun', 'group_seq_group_seq', 'place_sun_place_sun', 'SkyPlusSun', '_98394864', 'spitters_horaire_spitters_horaire', 'Gensun_Gensun', 'read_meteo_file_read_meteo_file', '_98394608']
 
 
+turtle = Factory(name='Turtle',
+                 description= 'Turtle Sky in different formats (uoc, soc',
+                 category='scene, sky',
+                 nodemodule='turtle',
+                 nodeclass='turtle',
+                 inputs=[dict(name='sectors', interface=IEnumStr(['16', '46']), value='16'),
+                         dict(name='format', interface=IEnumStr(['soc', 'uoc']), value='soc'),
+             {'name':'Energy','interface':IFloat,'value':1.0},],
+                 outputs=[dict(name='turtle string', interface=IStr)],)
+__all__.append('turtle')
 
 Normalise_Sky_Normalise_Sky = Factory(name='Normalise_Sky',
                 description='Set Rs to 1 - intensity repartition by sectors remains unchanged ',

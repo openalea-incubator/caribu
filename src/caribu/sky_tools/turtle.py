@@ -22,14 +22,14 @@ weights16_uoc = [0.1173, 0.0533,0.0533,0.0533,0.0533,0.0533,0.0981,0.0981,0.0981
 def _turtle(sectors='46', format='soc',energy=1):
 
     if sectors == '46':
-    	el = elevations
+        el = elevations
         az = azimuths
         if format =='soc':
             w = weights_soc
         else:
             w= weights_uoc
     else:
-    	el = elevations16
+        el = elevations16
         az = azimuths16
         if format =='soc':
             w = weights16_soc
