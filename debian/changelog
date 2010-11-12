@@ -1,0 +1,29 @@
+alinea-caribu (6.0.1-2~ppa5) maverick; urgency=low
+
+  * Maverick release
+
+ -- Christophe Pradal <christophe.pradal@cirad.fr>  Tue, 02 Nov 2010 18:33:38 +0100
+
+alinea-caribu (6.0.1-2~ppa4) lucid; urgency=low
+
+  * Fix missing deps 
+
+ -- Christophe Pradal <christophe.pradal@cirad.fr>  Tue, 02 Nov 2010 18:31:54 +0100
+
+alinea-caribu (6.0.1-2~ppa3) lucid; urgency=low
+
+  * Final release 
+
+ -- Christophe Pradal <christophe.pradal@cirad.fr>  Sat, 30 Oct 2010 01:03:09 +0200
+
+alinea-caribu (6.0.1-1~ppa2) lucid; urgency=low
+
+  * Final release 
+
+ -- Christophe Pradal <christophe.pradal@cirad.fr>  Sat, 30 Oct 2010 00:06:48 +0200
+
+alinea-caribu (6.0.1-1~ppa1) lucid; urgency=low
+
+  * source package automatically created by stdeb 0.6.0
+
+ -- Christophe Pradal <christophe.pradal@cirad.fr>  Mon, 11 Oct 2010 16:07:12 +0200

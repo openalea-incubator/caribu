@@ -4,7 +4,7 @@ def vcaribu_adaptor(caribuscene, direct, nz, dz, ds):
     scene = None
     lightsources = None
     pattern = None
-    if caribuscene.hasScene:	
+    if caribuscene.hasScene:    
         scene = caribuscene.scene
     if caribuscene.hasSources:
         lightsources = caribuscene.sources

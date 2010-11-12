@@ -33,7 +33,7 @@ def S2v(scene,nlayer,zmax,sleep):
     os.chdir(tmpdir)
     
     print 'tmpdir ', tmpdir
-	
+    
     canfile="scene.can"
     patternfile="scene.8"
     optfile="scene.opt"

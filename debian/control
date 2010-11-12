@@ -1,0 +1,20 @@
+Source: alinea-caribu
+Maintainer: Christophe Pradal <christophe.pradal@cirad.fr>
+Section: python
+Priority: optional
+Build-Depends: python-setuptools (>= 0.6b3), python-all-dev, debhelper (>= 7), python-support (>= 0.8.4), python-openalea.deploy, python-openalea.sconsx
+Standards-Version: 3.8.4
+
+Package: python-alinea.caribu
+Architecture: any
+Depends: ${misc:Depends}, ${python:Depends}, ${shlibs:Depends}, python-vplants.plantgl, pyton-openalea
+XB-Python-Version: ${python:Versions}
+Provides: ${python:Provides}
+Description: Python/Visualea interface to Caribu Light model
+  Caribu allows to compute light distribution on a set of triangles.
+ It combines a projection algorythm for direct lighting and nested radiosity
+ algorithm for multiple rediffusion.
+ It can simulate an infinite canopy around your scene.
+ The package is based on four C binaries (Canestra, s2v, MCsail and periodise)
+ which are combined in a python script (caribu).
+ Visualisation of outputs is available through PlantGL. 

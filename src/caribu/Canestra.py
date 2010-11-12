@@ -39,7 +39,7 @@ def Canestra(CaribuScene,
 
         log += " No Scattering asked=> enter simple projection mode\n"
         effargs+=["-1"]
-	
+    
     else :
         
         ff = open("sail.env","w")

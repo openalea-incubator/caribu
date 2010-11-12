@@ -15,10 +15,10 @@ def addSoil(caribuscene):
         A=map(float,xy[1])
         C=map(float,xy[0])
     if (C[1] < A[1]):
-        D=[A[0],C[1]]		
+        D=[A[0],C[1]]        
         B=[C[0],A[1]]
     else:
-        B=[A[0],C[1]]		
+        B=[A[0],C[1]]        
         D=[C[0],A[1]]
     A.append(0.)
     B.append(0.)

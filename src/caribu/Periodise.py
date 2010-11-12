@@ -41,7 +41,7 @@ def Periodise(scene):
         print stderr + '\n Periodise : Success !!'
 
     log +=  cmd + "\n" + stderr
-    periodicscene = copy.copy(scene)	
+    periodicscene = copy.copy(scene)    
 
     try:
         ff = open(outfile)

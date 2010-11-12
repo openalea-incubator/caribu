@@ -1,0 +1,160 @@
+Caribu
+======
+
+License agreement for final academic user
+##########################################
+
+Definitions
+-----------
+
+Software means the content of the downloaded file or any
+else medium (CD, floppy disk, ...) supplied with
+this agreement including
+- the software (computer program)
+- the data from INRA and / or third parties;
+- the presentation of theses data;
+- the associated documentation (explicative files or
+others written documents);
+- all updating, modified versions, additions, copies;
+
+
+Use means the access, downloading, installation,
+execution, copy of the software or any else
+advantage resulting from the use of its functions.
+
+INRA means Institut National de la Recherche Agronomique,
+Paris, France, as well as any affiliate(s) of INRA
+and/or any coowner or co author of the rights on the
+software.
+
+Final Academic User means the beneficiary of this License
+who is employed by a non-profit organization being
+aimed at conducting research works or teaching
+activities and hereafter referred to as “You”.
+
+Domain of the license means research and development
+activities aimed at the production of scientific
+knowledge or the teaching. Is excluded of this
+domain any commercial use, whatever to supply
+services to third parties or to sale information, data
+or any product of commercial value, except specific
+and written consent from INRA.
+
+1) Intellectual Property Rights
+a) The software, as well as any copy of it, is the
+intellectual property of INRA. The structure, the
+organization and the source code constitute trade
+secrets and confidential information that You are not
+allowed to use or disclose, except for the purposes
+mentioned in this agreement.
+b) The software is protected by the code de la propriété
+intellectuelle in France and abroad by international
+agreements on authors rights. The breach of one of
+the author’s rights constitutes an infringement crime
+punished in France by article L 335-2 of the code de
+la propriété intellectuelle and punished of 2 years in
+prison and a 150 000€ fine.
+c) The author –INRA- reserves all rights that are not
+expressly cited in the present license agreement.
+
+2) License of the software
+a) I N R A grants to Y o u by this agreement a non-
+exclusive, world-wide and royalty-free license to
+use the software to the end described hereunder in
+the domain of the license, as long as Y o u will
+comply with the terms and conditions of this
+agreement.
+b) You are authorised to download, install, execute the
+software on your computer within the limit of one
+license for one computer (one hard disk).
+c) Except specific and written agreement of INRA, You
+are not allowed to download, install or execute the
+software on a server.
+d) You are not authorised to rent, sell, sublease,
+distribute, assign, transfer, license, sublicense or
+otherwise share the software or one of INRA’s
+rights on the software.
+e) You may personalize the set up of the software or
+extend its functions. As well, You may translate,
+adapt, fix, modify the software when theses acts are
+necessary for the use of the software in accordance
+with this agreement.
+f) You are authorised to make a back-up copy of the
+software provided You will not use it on any else
+computer. You are responsible of the physical
+security of this copy and of the software.
+g) INRA reserves the right to correct errors and to
+determine the specific forms to which the following
+acts will be submitted:
+The copy of the source code of the software or the
+translation of this code are totally forbidden even
+when they are essential for the good working order
+of the software with other softwares.
+Moreover, Y o u are not authorized to reverse
+engineer, disassemble or decompile the software.
+Necessary information for good working order with
+other softwares is available by INRA, without
+implying as regard to INRA any undertaking to
+supply any assistance or services associated with the
+software.
+h) You are not authorised to extract (that is transfer
+permanently or temporarily) whole or a part of the
+content of the software (data) onto an other
+medium, by any mean and in any form. Moreover,
+you are neither authorised to re-use (that is to put at
+the public’s disposal) whole or a part of the content
+of the software (data) whatever the form may be.
+
+3) Limitation of warranty
+Except as expressly set forth in this agreement, the software
+is provided on a « as is » basis, without warranties or
+conditions of any kind, either express or implied including,
+without limitation any warranties or conditions of title, non-
+infringement, merchantability or fitness for a particular
+purpose. Y o u are responsible for determining the
+appropriateness of using the software and assume all risks
+associated with its exercise of rights under this agreement
+including but not limited to the risks and costs of program
+errors, compliance with applicable laws, damage to or loss of
+data, programs or equipment and unavailability or
+interruption of operations.
+
+4) Disclaimer of liability
+Except as expressly set forth in this agreement, under no
+circumstances shall INRA be liable to any person for any
+direct, indirect, incidental, special or consequential damages
+(including without limitation work stoppage, computer
+failure or malfunction, loss of goodwill, lost profits),
+however caused and arising in any way out of the use of the
+software or the exercise of any rights granted hereunder,
+even if advised of the possibility of such damages.
+
+5) End of contract
+In case of failure of the final academic user to comply with
+any term of this agreement, the license will automatically
+terminate. In case of termination, You must immediately
+destroy the software as well as any copy, adaptation,
+improvement or any part of the software merged in a other
+software.
+
+6) Applicable law
+This contract and all disputes arising out of the execution or
+interpretation of this license shall be governed by French
+law.
+
+7) Disputes
+The parties undertake to settle their differences amicably. In
+case of persistent disagreement, the courts of Paris will be
+competent.
+
+Contact :
+-------
+Michaël Chelle
+UMR Environnement et Grandes cultures
+INRA
+78850 Thiverval-Grignon (France)
+Phone : +33 1 30 81 55 31
+Fax : + 33 1 30 81 55 63
+Email : chelle@grignon.inra.fr
+
+

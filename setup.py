@@ -2,31 +2,19 @@
 # -*- coding: iso-8859-15 -*-
 
 import os, sys
-from setuptools import setup, find_packages
 pj = os.path.join
 
-name = 'Alinea.Caribu'
-version= '6.0.6'
-namespace = 'alinea'
+from setuptools import setup, find_packages
+from openalea.deploy.metainfo import read_metainfo
+
+# Reads the metainfo file
+metadata = read_metainfo('metainfo.ini', verbose=True)
+for key,value in metadata.iteritems():
+    if key != 'long_description':
+        exec("%s = '%s'" % (key, value))
+
+long_description = """ %s """ %(metadata['long_description'])
 pkg_root_dir = 'src'
-
-
-description= 'Python/Visualea interface to Caribu Light model'
-
-
-long_description= ''' Caribu allows to compute light distribution on a set of triangles. 
-It combines a projection algorythm for direct lighting and nested radiosity algorythm for multiple rediffusion. 
-It can simulate an infinite canopy arround your scene. 
-The package is based on four C binaries (Canestra, s2v, MCsail and periodise) 
-which are combined in a python script (caribu). 
-Visualisation of outputs is available through PlantGL. '''
-author= '''Michael Chelle (Canestra,s2v,MCSail,Periodise), 
-Christian Fournier (Python packaging and Visualea nodes), 
-Christophe Pradal (interface with PlantGL)'''
-author_email= 'chelle@grignon.inra.fr,Christian.Fournier@supagro.inra.fr, christophe.pradal@cirad.fr'
-url= ''
-license= 'INRA License agreement (see pdf in doc)' 
-
 
 # dependencies 
 setup_requires = ['openalea.deploy']
@@ -51,12 +39,12 @@ setup(
     name=name,
     version=version,
     description=description,
-    long_description=long_description,
-    author=author,
-    author_email=author_email,
+    long_description="""%s"""%long_description,
+    authors=authors,
+    authors_email=authors_email,
     url=url,
     license=license,
-    packages= packages,	
+    packages= packages,    
     package_dir= package_dir,
     namespace_packages = [namespace],
     create_namespaces = True,
