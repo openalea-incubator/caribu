@@ -25,7 +25,15 @@ class CaribuScene(object):
 
     def setPattern(self,pattern_string):
         """  Set pattern """
-        self.pattern = pattern_string
+        # re-order pattern to get xmin,ymin then xmax,ymax (needed for periodise to function correctly)
+        p = pattern_string.splitlines()
+        x1 = float(p[0].split()[0])
+        y1 = float(p[0].split()[1])
+        x2 = float(p[1].split()[0])
+        y2 = float(p[1].split()[1])
+        pattern_tuple = [(min(x1,x2),min(y1,y2)),(max(x1,x2),max(y1,y2))]
+        pattern = '\n'.join([' '.join(map(str,pattern_tuple[0])),' '.join(map(str,pattern_tuple[1])),' '])
+        self.pattern = pattern
         self.hasPattern = True
 
     def setOptical(self,optstring,wavelength):
@@ -64,6 +72,7 @@ class CaribuScene(object):
         """  write a pattern file of  the scene """ 
         if not self.hasPattern:
             print "!!!Warning!!! CaribuScene has no Pattern !"
+        
         fout = open(patternfile,"w")
         fout.write(self.pattern)
         fout.close()
