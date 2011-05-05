@@ -4,40 +4,41 @@ from scipy import array
 class Sky(object):
     def __init__(self,Nbp,Nbt):
         """ initialise sky avec I=0; Nbp=nb secteurs d'azimut, Nbt nombre secteurs zenithaux """
-        self.sec=[Nbp,Nbt]
-        self.sky=[]
+        self.sec = [Nbp,Nbt]
+        self.sky = []
+        self.dp = 2 * pi / Nbp
+        self.dt = pi / 2 / Nbt
 
-        da=pi/(2*Nbp)
-        dz=2*pi/Nbt
+        da = self.dp
+        dz = self.dt
+        
         I=0
         for j in range(Nbp):
             for k in range (Nbt):
-              elv,azim=j*da+da/2,k*dz+dz/2
-              dir=self.Vdir(elv,azim)        
-              self.sky.append([I]+dir+[j,k])
+              azim,elv = j * da + da / 2, k * dz + dz / 2
+              dir = self.Vdir(elv,azim)        
+              self.sky.append([I] + dir + [j,k])
 
     def set_Rd(self,Rd,Tsky):
         """  I=Rd distribue selon type de ciel =soc/uoc """
         Nbp,Nbt=self.sec[0],self.sec[1]
-        da=pi/(2*Nbp)
-        dz=2*pi/Nbt
+        da,dz = self.dp,self.dt
+    
         count=0
         for j in range(Nbp):
             for k in range (Nbt):
-              elv,azim=j*da+da/2,k*dz+dz/2
+              azim,elv = j * da + da / 2, k * dz + dz / 2
               if(Tsky=='soc'):
-                  I=self.soc (elv, da, azim, dz)*Rd
+                  I = self.soc (elv, dz, azim, da) * Rd
               else:
-                  I=self.uoc (elv, da, azim, dz)*Rd
+                  I = self.uoc (elv, dz, azim, da) * Rd
 
-              self.sky[count][0]=I 
+              self.sky[count][0] = I 
               count+=1
 
     def set_Rsun(self,sun):
         """ I=sun.Rsun;  ajoute sun dans secteur selon elv et azim """
         Nbp,Nbt=self.sec[0],self.sec[1]
-        da=pi/(2*Nbp)
-        dz=2*pi/Nbt
 
         sect_sun = self.Which_SkySec(Nbp,Nbt,sun._get_pos_astro())
         for i in range(len(self.sky)):
