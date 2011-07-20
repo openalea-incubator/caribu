@@ -63,63 +63,63 @@ int periodise(int argc,char **argv){
   reel  bmin[3]={99999999.0,99999999.0,99999999.0};
   double minr;
   reel bmax[3]={-99999999.0,-99999999.0,-99999999.0};
-  double D[2],delta[3],Gz,Px,Py,Pz;//delta x et y 
+  double D[2],delta[3],G,Gz,Px,Py,Pz;//delta x et y 
    
-  int nbs;
+  int nbs,m;
   int bps[3];//Bon Pour le Service
   scene.parse_can(maqname,optname,bmin, bmax,false,name8);
-  D[0]=bmax[0]-bmin[0];
-  D[1]=bmax[1]-bmin[1];
-  minr=(0.01*bmax[2]+bmin[2])/1.01;
+  D[0] = bmax[0] - bmin[0];
+  D[1] = bmax[1] - bmin[1];
+  minr = (0.01 * bmax[2] + bmin[2]) / 1.01;
   printf("==>  minr = %g --> ",minr);
-  if(minr<0){
-    delta[2]=-minr;
+  if (minr < 0){
+    delta[2] = -minr;
   }
   else
-    delta[2]=0.;
-  printf(" delta2 = %g\n",delta[2]);
-  for(i=0; i<3; i++) 
+    delta[2] = 0.;
+  printf(" delta2 = %g\n", delta[2]);
+  for (i = 0; i < 3; i++) 
     cout<<" [1]Bornemin["<<(int)i<<"] = "<<bmin[i]<<"  Bornemax["<<(int)i<<"] = "<<bmax[i]<<endl;
-  for(scene.liste_diff_scene.debut();
-      !scene.liste_diff_scene.finito();
-      scene.liste_diff_scene.suivant()){
-    delta[0]=delta[1]=0;
-    pdiff=scene.liste_diff_scene.contenu(); 
-    if( &(pdiff->primi()) == NULL){// maintient des pas bon triangles - MC09
+  for ( scene.liste_diff_scene.debut() ; !scene.liste_diff_scene.finito() ; scene.liste_diff_scene.suivant() ) {
+    delta[0] = delta[1] = 0;
+    pdiff = scene.liste_diff_scene.contenu(); 
+    if ( &(pdiff->primi()) == NULL ){// maintient des pas bon triangles - MC09
       fprintf(fout,"p  1 -1 3 0 0 0  0 0 0  0 0 0\n");
-    }else{
-    Gz=pdiff->primi().centre()[2]+delta[2];
-    fprintf(fz,"%g\n",Gz);
-    if(!pdiff->isopaque())
+    } else {
+      Gz = pdiff->primi().centre()[2] + delta[2];
       fprintf(fz,"%g\n",Gz);
-    nbs=pdiff->primi().nb_sommet();
-    fprintf(fout,"p  1 %.0f %d \t",pdiff->primi().name(),nbs);// fflush(fout);
-    for (i=0; i<2; i++) {
-      bps[i]=pdiff->primi().nb_in(bmin[i],bmax[i], i); 
-      if(bps[i]==nbs)
-	delta[i]=-D[i];
-      if(bps[i]==-nbs)
-	delta[i]=D[i];
-      //printf("delta(%d) = %g\n",i,delta[i]);
-    }
+      if (!pdiff->isopaque())
+	fprintf(fz,"%g\n",Gz);
+      nbs = pdiff->primi().nb_sommet();
+      fprintf(fout,"p  1 %.0f %d \t",pdiff->primi().name(),nbs);// fflush(fout);
+      for (i = 0; i < 2; i++) {
+	G = pdiff->primi().centre()[i];
+	m = 0;
+	while (G <= (bmin[i] + m * D[i]))
+	  m--;
+	while (G > (bmax[i] + m * D[i]))
+	  m++;
+	delta[i] = -m * D[i];
+	//printf("delta(%d) = %g\n",i,delta[i]);
+      }
     //printf("nbs = %d\n",nbs);
-    for(i=0;i<nbs;i++){
-      Px=pdiff->primi().sommets(i)[0]+delta[0];
-      Py=pdiff->primi().sommets(i)[1]+delta[1];
-      Pz=pdiff->primi().sommets(i)[2]+delta[2];
+      for( i = 0; i < nbs; i++){
+	Px = pdiff->primi().sommets(i)[0] + delta[0];
+	Py = pdiff->primi().sommets(i)[1] + delta[1];
+	Pz = pdiff->primi().sommets(i)[2] + delta[2];
       //printf(" %d => %g %g %g \n",i,Px,Py,Pz);
       // la ligne suivante generait un Bus error => scinde en 3 lignes et ca marche ??
       //fprintf(fout," %.6g %.6g %.6g  ",Px,Py,Pz);
-     fprintf(fout," %.6g  ",Px);
-     fprintf(fout," %.6g",Py);
-     fprintf(fout," %.6g",Pz);
-     
-    }
-   fprintf(fout,"\n");
+	fprintf(fout," %.6g  ",Px);
+	fprintf(fout," %.6g",Py);
+	fprintf(fout," %.6g",Pz);
+	
+      }
+      fprintf(fout,"\n");
     }//if pas bon triangle
   }//for Ldiff
   fclose(fout);
   fclose(fz);
- return 0;
+  return 0;
 }//main::periodise
 
