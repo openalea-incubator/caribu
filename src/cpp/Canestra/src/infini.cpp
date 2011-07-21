@@ -29,7 +29,7 @@ void lateral(int x,int y, char idx) ;
 void pave(int x,int  y, char idx) ;
 
 //local function
-bool out(int i,int j) {
+bool out(int i,int j,int moving_i,int moving_j) {
   register int k,l;
   bool dehors[2]={true,true};
 
@@ -46,12 +46,17 @@ bool out(int i,int j) {
   // - MC09
   // dehors[0]&= fabs(i)>Ti;
   // dehors[1]&= fabs(j)>Tj ;
-  dehors[0]&= fabs(i)>=Ti;
-  dehors[1]&= fabs(j)>=Tj ;
+  if (moving_i)
+    dehors[0] &= fabs(i)>=Ti;
+  if (moving_j)
+    dehors[1] &= fabs(j)>=Tj ;
+  //cout << "\ndehors[0]: " << dehors[0];
+  //cout << "\ndehors[1]: " << dehors[1];
+  //cout << "\ni,j ("<<i<<","<<j<<") out ["<<Ti<<","<<Tj<<"] ? ==> " << ((dehors[0] && dehors[1]) ? "true" : "false") << "\n";
   // BUG BUG BUG BUG  - MC09
   //MC96   return dehors[0]||dehors[1]; // BUG BUG theta fort > 70° !!! - MC09
   // MC09 return (dehors[0] && dehors[1]); // Bug qd phi=0°, boucle infinie...
-  return (dehors[0] && dehors[1]) || (i==0 && dehors[1]) || (dehors[0] && j==0) ;
+  return (dehors[0] && dehors[1]);
 
  
 }//out()
@@ -73,16 +78,16 @@ void zbuf(int i,int j) {
 }//zbuf()
 
 void lateral(int x,int y, char idx) {
- if(out(x,y)) return;
- if(verbose>1) printf("lateral (%d,%d)-",x,y);
+  if(out(x,y,tr[idx],tr[idx+1])) return;
+ if(verbose>1) printf("lateral (%d,%d,%d)-",x,y,idx);
  zbuf(x,y);
  lateral(x+tr[idx],y+tr[idx+1],idx);
 }//lateral()
 
 
 void pave(int x,int  y, char idx ) {
-  if(out(x,y)) return;
-  if(verbose>1)printf("\n pave(%d,%d) :",x,y);
+  if(out(x,y,tr[idx],tr[idx+1])) return;
+  if(verbose>1)printf("\n pave(%d,%d,%d):\n",x,y);
   if( !(x==0 && y == 0))
     zbuf(x,y);
   lateral(x+tr[2],y+tr[3],2);      // gauche
@@ -96,7 +101,7 @@ void infinitise(void ***Zprim, REELLE **Zbuf,
   int i,j;
   if(verbose>1){
     chrono.Start();
-    cout<<"* infinitise(): DEBUT";
+    cout<<"* infinitise(): DEBUT\n";
   }
   //init
   Zdat0.alloue(Tx,Ty);
