@@ -29,7 +29,7 @@ Help(options.GenerateHelpText(env))
 
 # Set build directory
 prefix = env['build_prefix']
-BuildDir( prefix, '.' )
+VariantDir( prefix, '.' )
 
 env.Prepend(CPPPATH='#/src/cpp/include')
 

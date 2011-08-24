@@ -284,7 +284,7 @@ long int Canopy::parse_can(char *ngeom,char *nopti,char * name8,reel *bornemin,r
       case 'p': prim=new Polygone(pch,nom,min,max); break;
       default : syntax_error(ngeom);  
       }//switch T
-      delete pch;
+      //delete pch;
       acv=0;
       assert (prim != 0);
       rejet=false;

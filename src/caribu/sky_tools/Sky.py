@@ -6,6 +6,7 @@ class Sky(object):
         """ initialise sky avec I=0; Nbp=nb secteurs d'azimut, Nbt nombre secteurs zenithaux """
         self.sec = [Nbp,Nbt]
         self.sky = []
+
         self.dp = 2 * pi / Nbp
         self.dt = pi / 2 / Nbt
 

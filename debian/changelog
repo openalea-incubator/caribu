@@ -1,3 +1,15 @@
+alinea-caribu (6.0.1-2~ppa9) natty; urgency=low
+
+  * Fix dependency from pyton-openalea to python-openalea
+
+ -- Christophe Pradal <christophe.pradal@cirad.fr>  Wed, 24 Aug 2011 11:47:43 +0200
+
+alinea-caribu (6.0.1-2~ppa8) natty; urgency=low
+
+  * Port to natty
+
+ -- Christophe Pradal <christophe.pradal@cirad.fr>  Wed, 01 Jun 2011 14:33:38 +0100
+
 alinea-caribu (6.0.1-2~ppa5) maverick; urgency=low
 
   * Maverick release
