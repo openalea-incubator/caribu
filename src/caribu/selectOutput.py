@@ -6,4 +6,4 @@ def selectOutput(EnergyLabel,variable):
     # write the node code here.
     
     # return outputs
-    return EnergyLabel[variable]
+    return EnergyLabel[variable],variable
