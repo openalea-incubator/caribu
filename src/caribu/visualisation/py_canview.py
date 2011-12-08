@@ -14,7 +14,7 @@ def plot_can(fn,colors):
     if scene:
         scene.build_scene()
         scene.plot(colors)
-    return fn,
+    return fn,scene
     
 class CanestraDisplay(Node):
 
