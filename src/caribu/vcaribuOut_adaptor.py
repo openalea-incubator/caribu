@@ -35,6 +35,6 @@ def vcaribuOut_adaptor(vcdict):
     plt=map(plant_id,d['label'])
     elt=map(elt_id,d['label'])
 
-    godict = {'Eabs':eabs, 'Area':d['area'],'Eabsm2':d['Eabs'],'EiInf':d['Ei_inf'],'EiSup':d['Ei_sup'],'Opt':opt,'Opak':opak,'Plt':plt,'Elt':elt} 
+    godict = {'Eabs':eabs, 'Area':d['area'],'Eabsm2':d['Eabs'],'EiInf':d['Ei_inf'],'EiSup':d['Ei_sup'],'Opt':opt,'Opak':opak,'Plt':plt,'Elt':elt,'label':d['label']} 
   
     return godict
