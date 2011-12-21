@@ -12,7 +12,7 @@ def gammaTrans(values, gamma=1,minval =None,maxval=None):
         m = minval
 
     if maxval is None:
-        M = value.max()
+        M = values.max()
     else:
         M = maxval
 
