@@ -179,7 +179,7 @@ class ObjCaribuScene(CaribuScene):
         CaribuScene.__init__(self)
         if scene_obj is not None:
             try:
-                self.scene = scene_obj.to_canestra()
+                self.scene = scene_obj
             except AttributeError:
                 print("Scene object input to ObjCaribuScene should have a to_canestra method")
                 raise
