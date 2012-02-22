@@ -11,7 +11,15 @@ class CaribuScene(object):
         self.scene = ""
         self.hasPattern = False
         self.pattern = "NoPattern"
-        self.PO = "#PyCaribu : PO par defaut (~PAR, materiau vert\n#format e : tige,  feuille sup,  feuille inf\n# nbre d'especes\nn 1\n#1 Sol\ns d 0.15\n# espece 1\ne d 0.10   d 0.10 0.05  d 0.10 0.05\n"
+        self.PO = """#PyCaribu : PO par defaut (PAR, materiau vert
+#format e : tige,  feuille sup,  feuille inf
+# nbre d'especes
+n 1
+#1 Sol
+s d 0.15
+# espece 1
+e d 0.10   d 0.10 0.05  d 0.10 0.05
+"""
         self.wavelength = "defaultPO"
         self.hasSources = False
         self.sources = "NoLightSources"
