@@ -42,6 +42,29 @@ def _turtle(sectors='46', format='soc',energy=1):
         s= "%.5f\t\t%.5f\t%.5f\t%.5f"% (w[i] * energy, pos.x, pos.y, pos.z)
         yield s
 
+def _turtle_vect(sectors='46', format='soc',energy=1):
+
+    if sectors == '46':
+        el = elevations
+        az = azimuths
+        if format =='soc':
+            w = weights_soc
+        else:
+            w= weights_uoc
+    else:
+        el = elevations16
+        az = azimuths16
+        if format =='soc':
+            w = weights16_soc
+        else:
+            w= weights16_uoc
+
+
+    for i in range(len(el)):
+        pos = -pgl.Vector3(pgl.Vector3.Spherical(1,radians(az[i]),radians(90-el[i])))
+        s= (w[i] * energy, pos.x, pos.y, pos.z)
+        yield s
+
 
 def write_turtle(filename='turtle16.light',sectors='46', format='soc'):
     f=open(filename,'w')
@@ -52,4 +75,7 @@ def write_turtle(filename='turtle16.light',sectors='46', format='soc'):
 
 def turtle(sectors='46', format='soc',energy=1.):
     return '\n'.join(_turtle(sectors,format,energy))
+
+def turtle_vect(sectors='46', format='soc',energy=1.):
+    return [light for light in _turtle_vect(sectors,format,energy)]
 

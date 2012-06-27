@@ -6,8 +6,8 @@ class Label(object):
     """ Label is an object to deals with can file cryptic label.
     It provide a way to store various information in one field.
     """
-    def __init__(self):
-        self._label=list('000000000000')
+    def __init__(self,label='000000000000'):
+        self._label=list(label)
 
     def _set_optical_id(self, optic_id):
         oid = list(str(optic_id))
