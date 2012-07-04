@@ -102,8 +102,8 @@ class Caribu(object):
         resdir : store caribu results as files in resdir if resdir is not None, store nothing otherwise
         resfile : store caribu output dictionary in file resfile (with pickle) if resfile is not None, store nothing otherwise
         """
-        
-        print "\n >>>> Caribu.__init__ starts...\n"
+        if debug:
+            print "\n >>>> Caribu.__init__ starts...\n"
         #debug mode
         self.my_dbg = debug
         #print "my_dbg = ",   self.my_dbg
@@ -134,14 +134,16 @@ class Caribu(object):
         self.periodise_name = "periodise"
         self.s2v_name = "s2v"
         self.ready = True
-
-        print "\n <<<< Caribu.__init__ ends...\n"
+        if debug:
+            print "\n <<<< Caribu.__init__ ends...\n"
 
     def __del__(self):
-        print "Caribu.__del__ called !"
-        if not self.my_dbg and self.tempdir.exists():
-            print 'Remove tempfile %s'%self.tempdir
-            self.tempdir.rmtree()
+        if self.my_dbg and self.tempdir.exists():
+            print "Caribu.__del__ called, tmp dir kept: %s"%self.tempdir
+        else:
+            if self.tempdir.exists():
+                print 'Remove tempfile %s'%self.tempdir
+                self.tempdir.rmtree()
 
     def __str__(self):         
         s = """
@@ -180,7 +182,7 @@ class Caribu(object):
 
     def init(self):
         if self.scene == None or self.sky==None or self.opticals== None or self.opticals==[] :
-            raise CaribuOptionError(">>> The Caribu has not been fully initialized: scene, sky, and opticals have to be defined\n     =>  Caribu can not be run... - MC09")
+            raise CaribuOptionError(">>> Caribu has not been fully initialized: scene, sky, and opticals have to be defined\n     =>  Caribu can not be run... - MC09")
         
         if self.pattern == None:
             self.infinity = False
@@ -206,12 +208,12 @@ class Caribu(object):
 
         #nrj is a dictionary of dictionary, each containing one simulation outputs. There will be as much dictionaries as optical files given as input 
         self.nrj = {}
-        self.show("Caribu::init()")
+        if self.my_dbg:
+            self.show("Caribu::init()")
         
         # Working directory
         try: 
             if self.my_dbg:
-                print "I'm here ..."
                 self.tempdir=path("./Run-tmp")
                 if not self.tempdir.exists():
                     self.tempdir.mkdir() 
@@ -334,7 +336,8 @@ class Caribu(object):
         4. canestra: compute radiosity
         5. save output on disk if resfile specified
         """
-        print "\n >>>> Caribu.run() starts...\n"
+        if self.my_dbg:
+            print "\n >>>> Caribu.run() starts...\n"
         self.init()
         self.periodise()
         self.s2v()
@@ -350,7 +353,8 @@ class Caribu(object):
             #caribu_run = pickle.load(file)
             #x=caribu_run
             #print x['par']['data']['Eabs'][0]
-        print "\n <<<< Caribu.run() ends...\n"
+        if self.my_dbg:
+            print "\n <<<< Caribu.run() ends...\n"
 
 
     def periodise(self):
@@ -364,7 +368,12 @@ class Caribu(object):
             if (d/outscene).exists():
                 self.scene = outscene
             else:
-                raise CaribuRunError("Periodise failed (no scene created).")
+                f = open(d/"periodise.log")
+                msg = f.readlines()
+                f.close()
+                print(">>>  periodise has not finished properly => STOP")
+                raise CaribuRunError(''.join(msg))
+
 
     def s2v(self):
         if self.infinity and not self.direct:
@@ -376,13 +385,18 @@ class Caribu(object):
             # Raise an exception if s2v crashed...
             leafarea= d/'leafarea'
             if not leafarea.exists():
-                raise CaribuRunError(">>> s2v(): s2v failed (no leafarea created)")
+                f = open(d/"s2v.log")
+                msg = f.readlines()
+                f.close()
+                print(">>>  s2v has not finished properly => STOP")
+                raise CaribuRunError(''.join(msg))
+     
 
     def radiative_transfer(self):
         # optics = [fn.stripext() for fn in self.opticals]
         # for opt in optics:
+        print ">> radiative_transfer() :"
         for opt in self.opticals:
-            print ">> radiative_transfer() : %s"%opt
             self.mcsail(opt)
             self.canestra(opt)
 
@@ -404,14 +418,19 @@ class Caribu(object):
             if mcsailenv.exists():
                 mcsailenv.move(d/optname + '.env')
             else:
-                raise CaribuRunError(">>> mcsail(): mcsail failed with %s (no env created)."%opt)
+                f = open(logfile   )
+                msg = f.readlines()
+                f.close()
+                print(">>>  mcsail has not finished properly => STOP")
+                raise CaribuRunError(''.join(msg))
+                
 
     def canestra(self, opt):
         """Fonction d'appel de l'executable canestrad, code C++ compilee de la radiosite mixte  - MC09"""
         #canestrad -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r  $argv[1] -1
         d = self.tempdir        
         optname, ext = path(opt.basename()).splitext()
-        
+        print optname
         str_pattern = str_direct = str_FF = str_diam = str_env = ""
         
         if self.infinity:
@@ -435,6 +454,12 @@ class Caribu(object):
         cmd = "%s -M %s -l %s -p %s -A %s %s %s %s %s "%(self.canestra_name,self.scene, self.sky,  opt, str_pattern,str_direct,str_diam, str_FF, str_env)  
         print(">>> Canestrad(): %s"%(cmd))
         status = _process(cmd, self.tempdir,d/"nr.log")
+
+##    if status == 1:
+##        f = open(d/"nr.log")
+##        msg = f.readlines()
+##        f.close()
+##        raise CaribuRunError(''.join(msg))
         
         if  (d/path("nr.log")).exists():
             # copy log files
@@ -444,23 +469,28 @@ class Caribu(object):
         ficres = d/'Etri.vec0'
         if ficres.exists():
             self.store_result(ficres,str(optname))
-            print optname
         
             if self.resdir is not None:
                 # copy result files
                 fdest = path(optname + ".vec")
-                print fdest
+                if self.my_dbg:
+                    print fdest
                 ficres.move(self.resdir/fdest)
         else:
-            raise CaribuRunError(">>>  canestra has not finished properly => STOP")
-        print ">>> caribu.py: Caribu::canestra(%s) finished !"%(opt)
-        
+            f = open(d/"nr.log")
+            msg = f.readlines()
+            f.close()
+            print(">>>  canestra has not finished properly => STOP")
+            raise CaribuRunError(''.join(msg))
+        if self.my_dbg:
+            print ">>> caribu.py: Caribu::canestra (%s) finished !"%(optname)
 
-def caribu_test(cas):
+
+def caribu_test(cas,debug = False):
     d = path(__file__).dirname()
     scene = d/'data/filterT.can'
     print scene.splitext()
-    sim=Caribu(canfile=d/'data/filterT.can', skyfile=d/'data/zenith.light', optfiles=[d/'data/par.opt', d/'data/nir.opt'])
+    sim=Caribu(canfile=d/'data/filterT.can', skyfile=d/'data/zenith.light', optfiles=[d/'data/par.opt', d/'data/nir.opt'],debug=debug)
 
     sim.infinity = False       # consider a toric canopy
     sim.direct = True           # direct light only
@@ -512,7 +542,7 @@ def caribu_test(cas):
         return
 
     if run:    
-        print "just before Caribu.run() in case ",cas 
+        print "Calling Caribu.run() in case ",cas 
         sim.run()  
         print "simulation nb =",len(sim.nrj)
         print sim.nrj.keys()
