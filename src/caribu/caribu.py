@@ -461,10 +461,6 @@ class Caribu(object):
 ##        f.close()
 ##        raise CaribuRunError(''.join(msg))
         
-        if  (d/path("nr.log")).exists():
-            # copy log files
-            fic = path("nr-" + optname + ".log")
-            (d/"nr.log").move(d/fic)
 
         ficres = d/'Etri.vec0'
         if ficres.exists():
@@ -482,6 +478,12 @@ class Caribu(object):
             f.close()
             print(">>>  canestra has not finished properly => STOP")
             raise CaribuRunError(''.join(msg))
+        
+        if  (d/path("nr.log")).exists():
+            # copy log files
+            fic = path("nr-" + optname + ".log")
+            (d/"nr.log").move(d/fic)
+
         if self.my_dbg:
             print ">>> caribu.py: Caribu::canestra (%s) finished !"%(optname)
 

@@ -10,14 +10,15 @@ n 1
 s d 0.15
 # espece 1
 e d 0.10   d 0.10 0.05  d 0.10 0.05
-
-
-TO DO (June 2012): caribu scene should handle list of lines, and make the string at the time of writting, so that add_shape,addlight methods could be easily implemented
 """
 
 #
 # interfaces to generate caribu files line strings
 #
+
+
+#TO DO (June 2012): caribu scene should handle list of lines, and make the string at the time of writting, so that add_shape,addlight methods could be easily implemented
+
 
 def _lightString(lightVect):
     """ Create a line for caribu .light files from a vector specifying energy,posx, posy and posz of a light source"""
