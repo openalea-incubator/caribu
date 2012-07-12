@@ -391,7 +391,7 @@ Scene:
     def getOutput(self,aggregate = True):
         ''' Returns outputs'''
         
-        if aggegate:
+        if aggregate:
             res = _agregate(self.output['Eabs'],ids)
         else: 
             res = _agregate(self.output['Eabs'],ids,list)
