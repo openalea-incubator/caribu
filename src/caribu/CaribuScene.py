@@ -381,7 +381,7 @@ Scene:
             lightsources = self.sources
         opticals = self.PO
         if self.hasPattern:
-            pattern = caribuscene.pattern
+            pattern = self.pattern
         optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'wavelength':self.wavelength}
    
         vcout,status = _caribu_call(scene, lightsources, opticals, pattern, optiondict)
