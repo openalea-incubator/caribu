@@ -17,8 +17,32 @@ __institutes__ = 'INRA'
 __icon__ = 'Caribou.png'
 
 
-__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', '_144099216', 'reduceDict_reduceDict', '_144098832', 'vcaribu_adaptor_vcaribu_adaptor', 'addSoil_addSoil', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_newFileCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'CaribuScene_newObjCaribuScene', 'Periodise_Periodise', 'vcaributest2', 'Canestra_Canestra', 'GenOutput_GenOutput', 'vcaribu_vcaribu', 'mtg_to_canestra', 'CaribuZenithPar', 'mydict_mydict', 'Caribu', 'ScatteringOptions_ScatteringOptions', 'selectOutput_selectOutput', 'PARsums', 'lightString_lightString', 'debug', 'WriteCan_WriteCan', 'Tutorial']
+__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', '_144099216', 'reduceDict_reduceDict', '_144098832', 'vcaribu_adaptor_vcaribu_adaptor', 'addSoil_addSoil', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_newFileCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'CaribuScene_newObjCaribuScene', 'Periodise_Periodise', 'vcaributest2', 'Canestra_Canestra', 'GenOutput_GenOutput', 'vcaribu_vcaribu', 'mtg_to_canestra', 'CaribuZenithPar', 'mydict_mydict', 'Caribu', 'ScatteringOptions_ScatteringOptions', 'selectOutput_selectOutput', 'PARsums', 'lightString_lightString', 'debug', 'WriteCan_WriteCan', 'Tutorial','CaribuScene_CaribuScene','addShapes_addShapes']
 
+addShapes_addShapes = Factory(name='addShapes',
+                authors='M. Chelle,C. Fournier (wralea authors)',
+                description='',
+                category='Unclassified',
+                nodemodule='CaribuScene',
+                nodeclass='addShapes',
+                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''},{'interface': None, 'name': 'Shapes', 'value': None, 'desc': ''},{'interface': None, 'name': 'Tesselator', 'value': None, 'desc': ''}],
+                outputs=[{'interface': None, 'name': 'CaribuScene', 'desc': ''}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+
+
+CaribuScene_CaribuScene = Factory(name='CaribuScene',
+                authors='M. Chelle,C. Fournier (wralea authors)',
+                description='Create a CaribuScene object from files',
+                category='io,codec',
+                nodemodule='CaribuScene',
+                nodeclass='newCaribuScene',
+                inputs=[{'interface': None, 'name': 'Scene', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.light", save=False), 'name': 'LightFile', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.8", save=False), 'name': 'PatternFile', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.opt", save=False), 'name': 'OptFile', 'value': None, 'desc': ''}],
+                outputs=[{'interface': None, 'name': 'CaribuScene', 'desc': ''}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
 
 
 LIE = CompositeNodeFactory(name='LIE',
