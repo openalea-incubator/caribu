@@ -401,7 +401,8 @@ def newCaribuScene(scene,light,pattern,opt):
     
     
 def addShapes(caribuscene,shapes,tesselator):
-    return caribuscene.add_Shapes(shapes,tesselator)
+    mid=caribuscene.add_Shapes(shapes,tesselator)
+    return caribuscene,mid 
     
 class FileCaribuScene(CaribuScene):
     """Adaptor to contruct CaribuScenes from files"""
