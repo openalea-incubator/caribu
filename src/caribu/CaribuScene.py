@@ -392,9 +392,9 @@ Scene:
         ''' Returns outputs'''
         
         if aggregate:
-            res = _agregate(self.output['Eabs'],ids)
+            res = _agregate(self.output['Eabs'],self.scene_ids)
         else: 
-            res = _agregate(self.output['Eabs'],ids,list)
+            res = _agregate(self.output['Eabs'],self.scene_ids,list)
         return(res)
 
         
