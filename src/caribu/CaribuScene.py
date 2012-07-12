@@ -1,7 +1,85 @@
 import os
 import label
 from numpy import array
+from itertools import groupby, izip
 
+def _caribu_call(canopy, lightsource, optics, pattern, options):
+    """
+    low level interface to Caribu class call
+    Caribu allows nested radiosity illumination on a 3D scene.
+    """
+    
+    sim = Caribu(resdir = None, resfile = None)#no output on disk
+    # --canfile 
+    sim.scene = canopy
+    # --optics 
+    sim.opticals = optics
+    #--skyfile 
+    sim.sky = lightsource               
+    #--pattern 
+    sim.pattern = pattern
+    #--options (if different from caribu defaults)
+    if options is not None:
+        #--scatter
+        if '1st' in options.keys():
+            sim.direct= options['1st']
+        #--nb_layers
+        if 'Nz' in options.keys():
+            sim.nb_layers =  options['Nz'] 
+        #--can_height
+        if 'Hc' in options.keys():
+            sim.can_height =  options['Hc'] 
+        #--sphere_diameter
+        if 'Ds' in options.keys():
+            sim.sphere_diameter =  options['Ds']
+        #--debug mode (if True, prevent removal of tempdir)
+        if 'debug' in options.keys():
+            sim.my_dbg = options['debug']
+        #--names of optical properties (usefull if opticals are given as strings
+        if 'wavelength' in options.keys():
+            sim.optnames = options['wavelength']
+    status = str(sim)
+    sim.run()
+    irradiances=sim.nrj
+
+    # return outputs
+    return irradiances,status
+
+
+def _nan_to_zero(x):
+
+    try:
+        from math import isnan
+    except:
+         #to be back compatile with python 2.5
+        def isnan(num):
+            return num != num
+ 
+    return(0 if isnan(x) else x)
+
+def _output_dict(vcdict):
+    '''    adaptor from nrj dict to  nrj + aggregation keys dict
+    '''
+    d = vcdict[vcdict.keys()[0]]['data']
+    for k in ('Eabs','Ei_inf','Ei_sup'):
+        d[k] = map(_nan_to_zero,d[k])
+    eabs = [e * a for e,a in zip(d['Eabs'],d['area'])]
+    labels = [Label(lab) for lab in d['label']]
+    opt = [lab.optical_id for lab in labels]
+    opak = [lab.transparency for lab in labels]
+    plt = [lab.plant_id for lab in labels]
+    elt = [lab.elt_id for lab in labels]
+
+    godict = {'Eabs':eabs, 'Area':d['area'],'Eabsm2':d['Eabs'],'EiInf':d['Ei_inf'],'EiSup':d['Ei_sup'],'Opt':opt,'Opak':opak,'Plt':plt,'Elt':elt,'label':d['label']} 
+  
+    return godict
+def _agregate(values,indices,fun = sum):
+    """ performss aggregation of outputs along indices """
+    ag = {}
+    for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
+        ag[key] = fun([elt[1] for elt in group])
+    return ag
+    
 DefaultOptString = """#PyCaribu : PO par defaut (PAR, materiau vert)
 #format e : tige,  feuille sup,  feuille inf
 # nbre d'especes
@@ -54,6 +132,8 @@ class CaribuScene(object):
     def __init__(self):
         self.hasScene = False
         self.scene = ""
+        self.scene_ids = []#list of ids, as long as scene, used to aggegate outputs
+        self.cid = 1#id to be given to next primitive
         self.hasPattern = False
         self.pattern = "NoPattern"
         self.PO = DefaultOptString
@@ -62,57 +142,110 @@ class CaribuScene(object):
         self.sources = "NoLightSources"
         self.hasFF = False
         self.FF = "NoFF"
+        self.output = {}
 
     def setCan(self,canstring):
         """  Set canopy from can file string """
         self.scene = canstring
         self.hasScene = True
 
+        
+    def add_Shapes(self, shapes, tesselator, opt_id = 1, opak = 0, plant_id = 1, elt_id = 1):
+        """
+        Add shapes to scene and return map of shapes id to carbu internal ids
+        """
+        if isinstance(opt_id,dict):
+            optdict = opt_id
+            defopt = 1
+        else:
+            optdict = {}
+            defopt = opt_id
+
+        if isinstance(opak,dict):
+            opakdict = opak
+            defopak = 0
+        else:
+            opakdict = {}
+            defopak = opak
+
+        if isinstance(plant_id,dict):
+            pdict = plant_id
+            defplant = 1
+        else:
+            pdict = {}
+            defplant = plant_id
+
+        if isinstance(elt_id,dict):
+            edict = elt_id
+            defelt = 1
+        else:
+            edict = {}
+            defelt = elt_id
+
+        canscene = []
+        ids = []
+        idmap={}
+
+        for shape in shapes:
+            canlines = shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
+            canscene.extend(canlines)
+            idmap[shape.id] = self.cid 
+            ids.extend([self.cid] * len(canlines))
+            self.cid += 1
+        canstring = ''.join(canscene)
+        if not self.hasScene:
+            self.setCan(canstring)
+        else: 
+            self.scene += canstring
+        self.scene_ids.extend(ids)
+        return idmap
+
+
     def setCan_fromShapes(self,shapes,tesselator,opt_id = 1,opak = 0, plant_id = 1, elt_id = 1):
-	""" Set canopy from PlantGl shapes and PGL tesselator and dict indexed by shapes_id of optical property indices, opacity, plantnumber and element number
-	
-	returns a list of shape ids as long as the primitives set in the canScene to allow aggregation of outputs
-	"""
-	if isinstance(opt_id,dict):
-	    optdict = opt_id
-	    defopt = 1
-	else:
-	    optdict = {}
-	    defopt = opt_id
+        """ Set canopy from PlantGl shapes and PGL tesselator and dict indexed by shapes_id of optical property indices, opacity, plantnumber and element number
 
-	if isinstance(opak,dict):
-	    opakdict = opak
-	    defopak = 0
-	else:
-	    opakdict = {}
-	    defopak = opak
+        returns a list of shape ids as long as the primitives set in the canScene to allow aggregation of outputs
+        """
+        if isinstance(opt_id,dict):
+            optdict = opt_id
+            defopt = 1
+        else:
+            optdict = {}
+            defopt = opt_id
 
-	if isinstance(plant_id,dict):
-	    pdict = plant_id
-	    defplant = 1
-	else:
-	    pdict = {}
-	    defplant = plant_id
+        if isinstance(opak,dict):
+            opakdict = opak
+            defopak = 0
+        else:
+            opakdict = {}
+            defopak = opak
 
-	if isinstance(elt_id,dict):
-	    edict = elt_id
-	    defelt = 1
-	else:
-	    edict = {}
-	    defelt = elt_id
+        if isinstance(plant_id,dict):
+            pdict = plant_id
+            defplant = 1
+        else:
+            pdict = {}
+            defplant = plant_id
 
-	canscene = []
-	ids = []
-	canscene.append('# File generated by Alinea.Caribu.CaribuScene class\n')
-	for shape in shapes:
-	    canlines = shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
-	    canscene.extend(canlines)
-	    ids.extend([shape.id] * len(canlines))
-	canscene.append('\n')
-	canstring = ''.join(canscene)
-	self.setCan(canstring)
-	return ids
-	
+        if isinstance(elt_id,dict):
+            edict = elt_id
+            defelt = 1
+        else:
+            edict = {}
+            defelt = elt_id
+
+        canscene = []
+        ids = []
+        canscene.append('# File generated by Alinea.Caribu.CaribuScene class\n')
+        for shape in shapes:
+            canlines = shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
+            canscene.extend(canlines)
+            ids.extend([shape.id] * len(canlines))
+        canscene.append('\n')
+        canstring = ''.join(canscene)
+        self.setCan(canstring)
+        return ids
+    
 
     def setPattern(self,pattern_string):
         """  Set pattern """
@@ -138,10 +271,10 @@ class CaribuScene(object):
         self.hasSources = True
 
     def setSources_tuple(self,sources_tuples):
-	""" Set light sources from a list of light tuples describing sources """
-	lines = map(_lightString,sources_tuples)
-	self.setSources(''.join(lines))
-	    
+        """ Set light sources from a list of light tuples describing sources """
+        lines = map(_lightString,sources_tuples)
+        self.setSources(''.join(lines))
+
     def setFF(self,FF_string):
         """  Set Form factor matrix """
         self.FF = FF_string
@@ -234,8 +367,34 @@ Scene:
     '\n'.join(self.sources.splitlines()[0:5])+'...',
      '\n'.join(self.scene.splitlines()[0:7])+'...')
         return s
-
     
+    def run(self, direct = True, nz = None, dz = None, ds = None):
+        ''' Call Caribu and store relsults'''
+        scene = None
+        lightsources = None
+        pattern = None
+        if self.hasScene:    
+            scene = self.scene
+        if self.hasSources:
+            lightsources = self.sources
+        opticals = self.PO
+        if self.hasPattern:
+            pattern = caribuscene.pattern
+        optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'wavelength':self.wavelength}
+   
+        vcout,status = _caribu_call(scene, lightsources, opticals, pattern, optiondict)
+    
+        self.output = _output_dict(vcout)
+        
+    def getOutput(self,aggregate = True):
+        ''' Returns outputs'''
+        
+        if aggegate:
+            res = _agregate(self.output['Eabs'],ids)
+        else: 
+            res = _agregate(self.output['Eabs'],ids,list)
+        return(res)
+
     
 class FileCaribuScene(CaribuScene):
     """Adaptor to contruct CaribuScenes from files"""
