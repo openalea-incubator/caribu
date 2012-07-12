@@ -388,38 +388,60 @@ Scene:
     
         self.output = _output_dict(vcout)
         
-    def getOutput(self,aggregate = True):
+    def getOutput(self,var = 'Eabs',aggregate = True):
         ''' Returns outputs'''
         
         if aggregate:
-            res = _agregate(self.output['Eabs'],self.scene_ids)
+            res = _agregate(self.output[var],self.scene_ids)
         else: 
-            res = _agregate(self.output['Eabs'],self.scene_ids,list)
+            res = _agregate(self.output[var],self.scene_ids,list)
         return(res)
 
         
 def newCaribuScene(scene,light,pattern,opt):
     cs = CaribuScene()
-    if (scene is not None) and os.path.isfile(scene):
-        fin = open(scene)
-        cs.setCan(fin.read())
-        fin.close()
-
-    if (light is not None) and os.path.isfile(light):
-        fin = open(light)
-        cs.setSources(fin.read())
-        fin.close()
+    if scene is not None:
+        if os.path.isfile(scene):
+            fin = open(scene)
+            cs.setCan(fin.read())
+            fin.close()
+        elif isinstance(scene, str):
+            cs.setCan(scene)
+        
+    if light is not None:
+        if os.path.isfile(light):
+            fin = open(light)
+            cs.setSources(fin.read())
+            fin.close()
+        elif isinstance(light,str):
+            cs.setSources(light)
+        else:
+            try:
+                cs.setSources_tuple(light)
+            except:
+                pass
        
-    if (pattern is not None) and os.path.isfile(pattern):
-        fin = open(pattern)
-        cs.setPattern(fin.read())
-        fin.close()
+    if pattern is not None:
+        if os.path.isfile(pattern):
+            fin = open(pattern)
+            cs.setPattern(fin.read())
+            fin.close()
+        elif isinstance(pattern,str):
+            cs.setPattern(pattern)
+        else:
+            try:
+                pat = '\n'.join([' '.join(map(str,pattern[0])),' '.join(map(str,pattern[1])),' '])
+                cs.setPattern(pat)
+            except:
+                pass
 
-    if (opt is not None) and os.path.isfile(opt):
-        waveLength=os.path.basename(opt).split('.')[0]
-        fin = open(opt)
-        cs.setOptical(fin.read(),waveLength)
-        fin.close()
+    if opt is not None:
+        if os.path.isfile(opt):
+            waveLength=os.path.basename(opt).split('.')[0]
+            fin = open(opt)
+            cs.setOptical(fin.read(),waveLength)
+            fin.close()
+            
     return cs
     
     
@@ -427,6 +449,16 @@ def addShapes(caribuscene,shapes,tesselator):
     mid=caribuscene.add_Shapes(shapes,tesselator)
     return caribuscene,mid 
     
+def getOutput(caribuscene,var,aggregate):
+    return caribuscene.getOutput(var,aggregate)
+
+
+def runCaribu(caribuscene, direct = True, nz =10,dz=1,ds=0.5):
+    '''functional interface to Caribu    
+    '''
+    caribuscene.run(direct,nz,dz,ds)
+    return caribuscene
+
 class FileCaribuScene(CaribuScene):
     """Adaptor to contruct CaribuScenes from files"""
 

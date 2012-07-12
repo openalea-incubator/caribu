@@ -17,9 +17,9 @@ __institutes__ = 'INRA'
 __icon__ = 'Caribou.png'
 
 
-__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', '_144099216', 'reduceDict_reduceDict', '_144098832', 'vcaribu_adaptor_vcaribu_adaptor', 'addSoil_addSoil', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_newFileCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'CaribuScene_newObjCaribuScene', 'Periodise_Periodise', 'vcaributest2', 'Canestra_Canestra', 'GenOutput_GenOutput', 'vcaribu_vcaribu', 'mtg_to_canestra', 'CaribuZenithPar', 'mydict_mydict', 'Caribu', 'ScatteringOptions_ScatteringOptions', 'selectOutput_selectOutput', 'PARsums', 'lightString_lightString', 'debug', 'WriteCan_WriteCan', 'Tutorial','CaribuScene_CaribuScene','addShapes_addShapes']
+__all__ = ['CaribuScene_runCaribu','CaribuScene_getOutput','LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', '_144099216', 'reduceDict_reduceDict', '_144098832', 'vcaribu_adaptor_vcaribu_adaptor', 'addSoil_addSoil', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_newFileCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'CaribuScene_newObjCaribuScene', 'Periodise_Periodise', 'vcaributest2', 'Canestra_Canestra', 'GenOutput_GenOutput', 'vcaribu_vcaribu', 'mtg_to_canestra', 'CaribuZenithPar', 'mydict_mydict', 'Caribu', 'ScatteringOptions_ScatteringOptions', 'selectOutput_selectOutput', 'PARsums', 'lightString_lightString', 'debug', 'WriteCan_WriteCan', 'Tutorial','CaribuScene_CaribuScene','CaribuScene_addShapes']
 
-addShapes_addShapes = Factory(name='addShapes',
+CaribuScene_addShapes = Factory(name='addShapes',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='',
                 category='Unclassified',
@@ -31,14 +31,46 @@ addShapes_addShapes = Factory(name='addShapes',
                 widgetclass=None,
                )
 
+CaribuScene_getOutput = Factory(name='getOutput',
+                authors='M. Chelle,C. Fournier (wralea authors)',
+                description='',
+                category='Unclassified',
+                nodemodule='CaribuScene',
+                nodeclass='getOutput',
+                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''},
+                        {'interface': IEnumStr(['Area','Eabs','Eabsm2','EiInf','EiSup']), 'name': 'Variable', 'value': 'Eabs', 'desc': ''},
+                        {'interface': IBool, 'name': 'aggregate', 'value': True, 'desc': 'should results (one per triangle) be aggregated by objects ?'}],
+                outputs=[{'interface': IDict, 'name': 'Output dict', 'desc': 'keys:can_id,values = variable'}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
 
+CaribuScene_runCaribu= Factory(name='runCaribu',
+                authors='M. Chelle,C. Fournier (wralea authors)',
+                description='',
+                category='Unclassified',
+                nodemodule='CaribuScene',
+                nodeclass='runCaribu',
+                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''},
+                        {'interface': IBool, 'name': 'No Multiple Scaterring', 'value': True, 'desc': 'Turn off multiple scattering calculations'}, 
+                        {'interface': IInt, 'name': 'number of layers','value': 10},
+                        {'interface': IFloat, 'name': 'Canopy Height','value': 1},
+                        {'interface': IFloat, 'name': 'Sphere diameter','value': 0.5}],
+                outputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+               
 CaribuScene_CaribuScene = Factory(name='CaribuScene',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='Create a CaribuScene object from files',
                 category='io,codec',
                 nodemodule='CaribuScene',
                 nodeclass='newCaribuScene',
-                inputs=[{'interface': None, 'name': 'Scene', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.light", save=False), 'name': 'LightFile', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.8", save=False), 'name': 'PatternFile', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.opt", save=False), 'name': 'OptFile', 'value': None, 'desc': ''}],
+                inputs=[{'interface': IFileStr(filter="*.can", save=False), 'name': 'Scene', 'value': None, 'desc': ''}, 
+                        {'interface': IFileStr(filter="*.light", save=False), 'name': 'LightFile', 'value': None, 'desc': ''}, 
+                        {'interface': IFileStr(filter="*.8", save=False), 'name': 'PatternFile', 'value': None, 'desc': ''}, 
+                        {'interface': IFileStr(filter="*.opt", save=False), 'name': 'OptFile', 'value': None, 'desc': ''}],
                 outputs=[{'interface': None, 'name': 'CaribuScene', 'desc': ''}],
                 widgetmodule=None,
                 widgetclass=None,
