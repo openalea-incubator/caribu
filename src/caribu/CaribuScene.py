@@ -2,6 +2,8 @@ import os
 import label
 from numpy import array
 from itertools import groupby, izip
+from caribu import Caribu
+from label import Label
 
 def _caribu_call(canopy, lightsource, optics, pattern, options):
     """
@@ -397,7 +399,28 @@ Scene:
 
         
 def newCaribuScene(scene,light,pattern,opt):
-    return CaribuScene()
+    cs = CaribuScene()
+    if (scene is not None) and os.path.isfile(scene):
+        fin = open(scene)
+        cs.setCan(fin.read())
+        fin.close()
+
+    if (light is not None) and os.path.isfile(light):
+        fin = open(light)
+        cs.setSources(fin.read())
+        fin.close()
+       
+    if (pattern is not None) and os.path.isfile(pattern):
+        fin = open(pattern)
+        cs.setPattern(fin.read())
+        fin.close()
+
+    if (opt is not None) and os.path.isfile(opt):
+        waveLength=os.path.basename(opt).split('.')[0]
+        fin = open(opt)
+        cs.setOptical(fin.read(),waveLength)
+        fin.close()
+    return cs
     
     
 def addShapes(caribuscene,shapes,tesselator):
