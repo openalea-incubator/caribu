@@ -395,6 +395,13 @@ Scene:
             res = _agregate(self.output['Eabs'],ids,list)
         return(res)
 
+        
+def newCaribuScene(scene,light,pattern,opt):
+    return CaribuScene()
+    
+    
+def addShapes(caribuscene,shapes,tesselator):
+    return caribuscene.add_Shapes(shapes,tesselator)
     
 class FileCaribuScene(CaribuScene):
     """Adaptor to contruct CaribuScenes from files"""
