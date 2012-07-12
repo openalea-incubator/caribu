@@ -26,7 +26,7 @@ addShapes_addShapes = Factory(name='addShapes',
                 nodemodule='CaribuScene',
                 nodeclass='addShapes',
                 inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''},{'interface': None, 'name': 'Shapes', 'value': None, 'desc': ''},{'interface': None, 'name': 'Tesselator', 'value': None, 'desc': ''}],
-                outputs=[{'interface': None, 'name': 'CaribuScene', 'desc': ''}],
+                outputs=[{'interface': None, 'name': 'CaribuScene', 'desc': ''},{'interface': IDict, 'name': 'mapid', 'desc': ''}],
                 widgetmodule=None,
                 widgetclass=None,
                )
