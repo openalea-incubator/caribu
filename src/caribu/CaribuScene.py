@@ -1,4 +1,5 @@
 import os
+import string
 import label
 from numpy import array
 from itertools import groupby, izip
@@ -151,6 +152,41 @@ class CaribuScene(object):
         self.scene = canstring
         self.hasScene = True
 
+    def addSoil(self):
+        ''' Add Soil to Caribu scene. Soil dimension is taken from pattern '''
+        
+        ids = []
+        
+        if not self.hasPattern:
+            print('addSoil needs a pattern to be set')
+            
+        else:
+            pat = self.pattern
+            xy=map(string.split,pat.splitlines())
+            A = map(float,xy[0])
+            C = map(float,xy[1])
+            if (A[0] > C[0]):
+                A=map(float,xy[1])
+                C=map(float,xy[0])
+            if (C[1] < A[1]):
+                D=[A[0],C[1]]        
+                B=[C[0],A[1]]
+            else:
+                B=[A[0],C[1]]        
+                D=[C[0],A[1]]
+            A.append(0.)
+            B.append(0.)
+            C.append(0.)
+            D.append(0.)
+
+            label="000000000000"
+            canstring = "\n".join([_canString(range(3),(A,B,C),label),_canString(range(3),(C,D,A),label)])
+            ids = [self.cid,self.cid + 1]
+            self.scene += canstring
+            self.scene_ids.extend(ids)
+            self.cid += 2
+        
+        return ids
         
     def add_Shapes(self, shapes, tesselator, opt_id = 1, opak = 0, plant_id = 1, elt_id = 1):
         """
@@ -445,8 +481,8 @@ def newCaribuScene(scene,light,pattern,opt):
     return cs
     
     
-def addShapes(caribuscene,shapes,tesselator):
-    mid=caribuscene.add_Shapes(shapes,tesselator)
+def addShapes(caribuscene,shapes,tesselator, opt_id = 1, opak = 0, plant_id = 1, elt_id = 1):
+    mid=caribuscene.add_Shapes(shapes,tesselator,opt_id, opak, plant_id, elt_id)
     return caribuscene,mid 
     
 def getOutput(caribuscene,var,aggregate):
