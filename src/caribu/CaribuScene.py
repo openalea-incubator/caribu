@@ -66,14 +66,17 @@ def _output_dict(vcdict):
     d = vcdict[vcdict.keys()[0]]['data']
     for k in ('Eabs','Ei_inf','Ei_sup'):
         d[k] = map(_nan_to_zero,d[k])
+        #filter negative values occuring in EiInf/EiSup
+        d[k] = map(lambda(x): max(0,x), d[k])
     eabs = [e * a for e,a in zip(d['Eabs'],d['area'])]
+    einc = [(esup + einf) * a for esup,einf,a in zip(d['Ei_sup'],d['Ei_inf'],d['area'])]
     labels = [Label(lab) for lab in d['label']]
     opt = [lab.optical_id for lab in labels]
     opak = [lab.transparency for lab in labels]
     plt = [lab.plant_id for lab in labels]
     elt = [lab.elt_id for lab in labels]
 
-    godict = {'Eabs':eabs, 'Area':d['area'],'Eabsm2':d['Eabs'],'EiInf':d['Ei_inf'],'EiSup':d['Ei_sup'],'Opt':opt,'Opak':opak,'Plt':plt,'Elt':elt,'label':d['label']} 
+    godict = {'Eabs':eabs, 'Einc': einc,'Area':d['area'],'Eabsm2':d['Eabs'],'EiInf':d['Ei_inf'],'EiSup':d['Ei_sup'],'Opt':opt,'Opak':opak,'Plt':plt,'Elt':elt,'label':d['label']} 
   
     return godict
 def _agregate(values,indices,fun = sum):
