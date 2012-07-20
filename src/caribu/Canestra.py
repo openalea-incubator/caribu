@@ -72,7 +72,7 @@ def Canestra(CaribuScene,
         SceneOut.setFF("FF.mat")
     ##print tmpdir
     ff=open("scene.can")
-    SceneOut.setCan(ff.read())
+    SceneOut.addCan(ff.read())
     ff.close()
     
     for root, dirs, files in os.walk(tmpdir, topdown=False):

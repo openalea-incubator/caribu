@@ -1,11 +1,21 @@
 import os
 import string
-import label
-from numpy import array
+from StringIO import StringIO
+from numpy import array,recfromtxt
 from itertools import groupby, izip
+from openalea.plantgl.all import Tesselator
 from caribu import Caribu
 from label import Label
 
+
+def _is_iterable(x):
+    try:
+        x = iter(x)
+    except TypeError: 
+        return False
+    return True
+    
+    
 def _caribu_call(canopy, lightsource, optics, pattern, options):
     """
     low level interface to Caribu class call
@@ -79,6 +89,7 @@ def _output_dict(vcdict):
     godict = {'Eabs':eabs, 'Einc': einc,'Area':d['area'],'Eabsm2':d['Eabs'],'EiInf':d['Ei_inf'],'EiSup':d['Ei_sup'],'Opt':opt,'Opak':opak,'Plt':plt,'Elt':elt,'label':d['label']} 
   
     return godict
+    
 def _agregate(values,indices,fun = sum):
     """ performss aggregation of outputs along indices """
     ag = {}
@@ -103,7 +114,20 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
 
 #TO DO (June 2012): caribu scene should handle list of lines, and make the string at the time of writting, so that add_shape,addlight methods could be easily implemented
 
+def _getlabel(line):
+    ''' extract a label string from a can file line '''
+    line = line.strip()
+    if not line: 
+        return
+    if line[0] == '#':
+        return 
+    l = line.split()
+    label = l[2]
+    if len(label) < 11:
+        label = (12-len(label))*'0'+label
 
+    return label
+    
 def _lightString(lightVect):
     """ Create a line for caribu .light files from a vector specifying energy,posx, posy and posz of a light source"""
     return ' '.join(map(str,lightVect)) + '\n'
@@ -112,7 +136,7 @@ def _canString(ind, pts, label):
     s = "p 1 %s 3 %s"%(str(label), ' '.join('%.6f'%x for i in ind for x in pts[i]))
     return s + '\n'
 
-def shape_to_can(shape,tesselator,optid = 1,opak = 0,plant_id = 1,elt_id = 1):
+def _shape_to_can(shape,tesselator,optid = 1,opak = 0,plant_id = 1,elt_id = 1):
     """
     Returns canestra string representation of a plantGL shape
     """
@@ -128,6 +152,7 @@ def shape_to_can(shape,tesselator,optid = 1,opak = 0,plant_id = 1,elt_id = 1):
     _label.elt_id = elt_id
     return [_canString(ind, pts, _label) for ind in indices]
 
+class CaribuSceneError(Exception): pass
 
 class CaribuScene(object):
     """  Handles CaribuScene """
@@ -135,26 +160,91 @@ class CaribuScene(object):
     #Contient les methode pou les brique caribu, l'extraction de donnees et la conversion vers plantGL pour visualisation
 
     
-    def __init__(self):
+    def __init__(self, scene=None, light=None, pattern=None, opt=None, waveLength ='defaultPO'):
+    
         self.hasScene = False
         self.scene = ""
-        self.scene_ids = []#list of ids, as long as scene, used to aggegate outputs
-        self.cid = 1#id to be given to next primitive
-        self.hasPattern = False
-        self.pattern = "NoPattern"
-        self.PO = DefaultOptString
-        self.wavelength = "defaultPO"
+        self.scene_labels = []#list of external identifier/canlabel of each triangle present in the scene
+        self.scene_ids = []#list of internal ids, as long as scene, used to aggegate outputs by primitive
+        self.cid = 1#id to be given to next primitive     
+        if scene is not None:
+            if os.path.isfile(str(scene)):
+                fin = open(scene)
+                self.addCan(fin.read())
+                fin.close()
+            elif isinstance(scene, str):
+                self.addCan(scene)
+            else:
+                try:
+                    self.add_Shapes(scene)
+                except:
+                    raise CaribuSceneError("Scene should be one of : None, filename, file content (string)  or plantgl scene or shape")
+                
         self.hasSources = False
         self.sources = "NoLightSources"
+        if light is not None:
+            if os.path.isfile(str(light)):
+                fin = open(light)
+                self.setSources(fin.read())
+                fin.close()
+            elif isinstance(light,str):
+                self.setSources(light)
+            else:
+                try:
+                    self.setSources_tuple(light)
+                except:
+                    pass
+                    
+        self.hasPattern = False
+        self.pattern = "NoPattern"      
+        if pattern is not None:
+            if os.path.isfile(str(pattern)):
+                fin = open(pattern)
+                self.setPattern(fin.read())
+                fin.close()
+            elif isinstance(pattern,str):
+                self.setPattern(pattern)
+            else:
+                try:
+                    pat = '\n'.join([' '.join(map(str,pattern[0])),' '.join(map(str,pattern[1])),' '])
+                    self.setPattern(pat)
+                except:
+                    pass
+
+        self.PO = DefaultOptString
+        self.wavelength = "defaultPO"
+        if opt is not None:
+            if os.path.isfile(str(opt)):
+                waveLength=os.path.basename(opt).split('.')[0]
+                fin = open(opt)
+                self.setOptical(fin.read(),waveLength)
+                fin.close()
+            elif isinstance(opt,str):
+                self.setOptical(opt,waveLength)
+        
         self.hasFF = False
         self.FF = "NoFF"
         self.output = {}
-
-    def setCan(self,canstring):
-        """  Set canopy from can file string """
-        self.scene = canstring
+    
+    def resetScene(self):
+        ''' Reset scene '''
+        self.hasScene = False
+        self.scene = ""
+        self.scene_ids = []
+        self.cid = 1
+     
+    
+    def addCan(self,canstring):
+        '''  Add primitives from can file string '''
+        self.scene += canstring
         self.hasScene = True
-
+        labels = [res for res in (_getlabel(x) for x in canstring.splitlines()) if res]
+        labmap = dict([(k,i) for i,k in enumerate(set(labels))])
+        self.scene_labels.extend(labels)
+        self.scene_ids.extend([self.cid + labmap[k] for k in labels])
+        self.cid += len(labmap)
+        return labmap
+        
     def addSoil(self):
         ''' Add Soil to Caribu scene. Soil dimension is taken from pattern '''
         
@@ -182,19 +272,25 @@ class CaribuScene(object):
             C.append(0.)
             D.append(0.)
 
-            label="000000000000"
-            canstring = "\n".join([_canString(range(3),(A,B,C),label),_canString(range(3),(C,D,A),label)])
+            label=["000000000000","000000000001"]
+            canstring = "\n".join([_canString(range(3),(A,B,C),label[0]),_canString(range(3),(C,D,A),label[1])])
             ids = [self.cid,self.cid + 1]
+ 
             self.scene += canstring
             self.scene_ids.extend(ids)
+            self.scene_labels.extend(label)
+            self.hasScene = True
             self.cid += 2
         
-        return ids
+        return dict(zip(label,ids))
         
-    def add_Shapes(self, shapes, tesselator, opt_id = 1, opak = 0, plant_id = 1, elt_id = 1):
+    def add_Shapes(self, shapes, tesselator = None, opt_id = 1, opak = 0, plant_id = 1, elt_id = 1):
         """
         Add shapes to scene and return map of shapes id to carbu internal ids
         """
+        if not tesselator:
+            tesselator = Tesselator()
+        
         if isinstance(opt_id,dict):
             optdict = opt_id
             defopt = 1
@@ -225,24 +321,30 @@ class CaribuScene(object):
 
         canscene = []
         ids = []
+        labels = []
         idmap={}
-
+        
+        if not _is_iterable(shapes):
+            shapes = [shapes]
+        
         for shape in shapes:
-            canlines = shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
+            canlines = _shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
             canscene.extend(canlines)
             idmap[shape.id] = self.cid 
             ids.extend([self.cid] * len(canlines))
+            labels.extend([shape.id] * len(canlines))
             self.cid += 1
         canstring = ''.join(canscene)
-        if not self.hasScene:
-            self.setCan(canstring)
-        else: 
-            self.scene += canstring
+        
+        self.scene += canstring
         self.scene_ids.extend(ids)
+        self.scene_labels.extend(labels)
+        self.hasScene = True
+        
         return idmap
 
 
-    def setCan_fromShapes(self,shapes,tesselator,opt_id = 1,opak = 0, plant_id = 1, elt_id = 1):
+    def setCan_fromShapes(self,shapes,tesselator=None,opt_id = 1,opak = 0, plant_id = 1, elt_id = 1):
         """ Set canopy from PlantGl shapes and PGL tesselator and dict indexed by shapes_id of optical property indices, opacity, plantnumber and element number
 
         returns a list of shape ids as long as the primitives set in the canScene to allow aggregation of outputs
@@ -279,12 +381,12 @@ class CaribuScene(object):
         ids = []
         canscene.append('# File generated by Alinea.Caribu.CaribuScene class\n')
         for shape in shapes:
-            canlines = shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
+            canlines = _shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
             canscene.extend(canlines)
             ids.extend([shape.id] * len(canlines))
         canscene.append('\n')
         canstring = ''.join(canscene)
-        self.setCan(canstring)
+        self.addCan(canstring)
         return ids
     
 
@@ -354,7 +456,15 @@ class CaribuScene(object):
         fout = open(optfile,"w")
         fout.write(self.PO)
         fout.close()
-
+    
+    def getSources(self):
+        ''' returns a recarray of light sources charactecristics '''
+        
+        sources = None
+        if self.hasSources:
+            sources = recfromtxt(StringIO(self.sources), names = 'energy,vx,vy,vz')
+        return sources
+            
     def getIncidentEnergy(self):
         """ return the total ammount of energy emitted by the lights of the scene """
         Ei=0
@@ -438,49 +548,7 @@ Scene:
 
         
 def newCaribuScene(scene,light,pattern,opt):
-    cs = CaribuScene()
-    if scene is not None:
-        if os.path.isfile(scene):
-            fin = open(scene)
-            cs.setCan(fin.read())
-            fin.close()
-        elif isinstance(scene, str):
-            cs.setCan(scene)
-        
-    if light is not None:
-        if os.path.isfile(light):
-            fin = open(light)
-            cs.setSources(fin.read())
-            fin.close()
-        elif isinstance(light,str):
-            cs.setSources(light)
-        else:
-            try:
-                cs.setSources_tuple(light)
-            except:
-                pass
-       
-    if pattern is not None:
-        if os.path.isfile(pattern):
-            fin = open(pattern)
-            cs.setPattern(fin.read())
-            fin.close()
-        elif isinstance(pattern,str):
-            cs.setPattern(pattern)
-        else:
-            try:
-                pat = '\n'.join([' '.join(map(str,pattern[0])),' '.join(map(str,pattern[1])),' '])
-                cs.setPattern(pat)
-            except:
-                pass
-
-    if opt is not None:
-        if os.path.isfile(opt):
-            waveLength=os.path.basename(opt).split('.')[0]
-            fin = open(opt)
-            cs.setOptical(fin.read(),waveLength)
-            fin.close()
-            
+    cs = CaribuScene(scene=scene, light=light, pattern=pattern, opt=opt)
     return cs
     
     
@@ -498,60 +566,13 @@ def runCaribu(caribuscene, direct = True, nz =10,dz=1,ds=0.5):
     caribuscene.run(direct,nz,dz,ds)
     return caribuscene
 
-class FileCaribuScene(CaribuScene):
-    """Adaptor to contruct CaribuScenes from files"""
-
-    def __init__(self, canfile,lightfile,patternfile=None,optfile=None):
-        CaribuScene.__init__(self)
-
-        if os.path.isfile(canfile):
-            fin = open(canfile)
-            self.setCan(fin.read())
-            fin.close()
-
-        if os.path.isfile(lightfile):
-            fin = open(lightfile)
-            self.setSources(fin.read())
-            fin.close()
-       
-        if (patternfile is not None) and os.path.isfile(patternfile):
-            fin = open(patternfile)
-            self.setPattern(fin.read())
-            fin.close()
-
-        if (optfile is not None) and os.path.isfile(optfile):
-            waveLength=os.path.basename(optfile).split('.')[0]
-            fin = open(optfile)
-            self.setOptical(fin.read(),waveLength)
-            fin.close()
 
 def newFileCaribuScene(canfile,lightfile,patternfile=None,optfile=None):
-    return FileCaribuScene(canfile,lightfile,patternfile,optfile)
+    return CaribuScene(canfile,lightfile,patternfile,optfile)
 
-
-class ObjCaribuScene(CaribuScene):
-    """Adaptor to construct caribuScene from objects"""
-
-    def __init__(self, scene_obj,light_string,pattern_tuple=None,opt_string=None,waveLength=None):
-        CaribuScene.__init__(self)
-        if scene_obj is not None:
-            try:
-                self.scene = scene_obj
-            except AttributeError:
-                print("Scene object input to ObjCaribuScene should have a to_canestra method")
-                raise
-            else:
-                self.hasScene = True
-        if light_string is not None:
-            self.setSources(light_string)
-        if pattern_tuple is not None:
-            pat = '\n'.join([' '.join(map(str,pattern_tuple[0])),' '.join(map(str,pattern_tuple[1])),' '])
-            self.setPattern(pat)
-        if opt_string is not None and waveLength is not None:
-            self.setOptical(opt_string,waveLength)
 
 def newObjCaribuScene(scene_obj=None,ligth_string=None,pattern_tuple=None,opt_string=None,waveLength=None):
-    return ObjCaribuScene(scene_obj,ligth_string,pattern_tuple,opt_string,waveLength)
+    return CaribuScene(scene_obj,ligth_string,pattern_tuple,opt_string,waveLength)
 
 def getIncidentEnergy(caribu_scene):
     return caribu_scene.getIncidentEnergy(),

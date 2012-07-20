@@ -48,11 +48,11 @@ def Periodise(scene):
 
     except IOError:
         print 'erreur execution periodise (empty scene returned) : see log'
-        periodicscene.setCan('#periodise error : no scene generated\n')
+        periodicscene.addCan('#periodise error : no scene generated\n')
         for f in [canfile,patternfile] :
             os.remove(f)
     else:
-        periodicscene.setCan(ff.read())
+        periodicscene.addCan(ff.read())
         ff.close()    
         for f in [canfile,patternfile,outfile] :
             os.remove(f)
