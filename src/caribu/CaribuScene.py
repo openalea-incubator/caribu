@@ -72,8 +72,8 @@ def _nan_to_zero(x):
     return(0 if isnan(x) else x)
 
 def _output_dict(vcdict):
-    '''    adaptor from nrj dict to  nrj + aggregation keys dict
-    '''
+    """    adaptor from nrj dict to  nrj + aggregation keys dict
+    """
     d = vcdict[vcdict.keys()[0]]['data']
     for k in ('Eabs','Ei_inf','Ei_sup'):
         d[k] = map(_nan_to_zero,d[k])
@@ -116,7 +116,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
 #TO DO (June 2012): caribu scene should handle list of lines, and make the string at the time of writting, so that add_shape,addlight methods could be easily implemented
 
 def _getlabel(line):
-    ''' extract a label string from a can file line '''
+    """ extract a label string from a can file line """
     line = line.strip()
     if not line: 
         return
@@ -228,7 +228,7 @@ class CaribuScene(object):
         self.output = {}
     
     def resetScene(self):
-        ''' Reset scene '''
+        """ Reset scene """
         self.hasScene = False
         self.scene = ""
         self.scene_ids = []
@@ -237,7 +237,7 @@ class CaribuScene(object):
      
     
     def addCan(self,canstring):
-        '''  Add primitives from can file string '''
+        """  Add primitives from can file string """
         self.scene += canstring
         self.hasScene = True
         labels = [res for res in (_getlabel(x) for x in canstring.splitlines()) if res]
@@ -248,7 +248,7 @@ class CaribuScene(object):
         return labmap
         
     def addSoil(self):
-        ''' Add Soil to Caribu scene. Soil dimension is taken from pattern '''
+        """ Add Soil to Caribu scene. Soil dimension is taken from pattern """
         
         ids = []
         
@@ -460,14 +460,14 @@ class CaribuScene(object):
         fout.close()
     
     def sources_as_array(self):
-        ''' returns a recarray of light sources charactecristics '''
+        """ returns a recarray of light sources charactecristics """
         sources = None
         if self.hasSources:
             sources = np.recfromtxt(StringIO(self.sources), names = 'energy,vx,vy,vz')
         return sources
         
     def pattern_as_array(self):
-        ''' Return a recarray of coordinates of the domain sepcified in pattern'''
+        """ Return a recarray of coordinates of the domain sepcified in pattern"""
         
         domain = None
         if self.hasPattern:
@@ -542,7 +542,7 @@ Scene:
         return s
     
     def run(self, direct = True, nz = None, dz = None, ds = None):
-        ''' Call Caribu and store relsults'''
+        """ Call Caribu and store relsults"""
         scene = None
         lightsources = None
         pattern = None
@@ -560,7 +560,7 @@ Scene:
         self.output = _output_dict(vcout)
         
     def getOutput(self,var = 'Eabs',aggregate = True):
-        ''' Returns outputs'''
+        """ Returns outputs"""
         
         if aggregate:
             res = _agregate(self.output[var],self.scene_ids)
@@ -583,8 +583,8 @@ def getOutput(caribuscene,var,aggregate):
 
 
 def runCaribu(caribuscene, direct = True, nz =10,dz=1,ds=0.5):
-    '''functional interface to Caribu    
-    '''
+    """functional interface to Caribu    
+    """
     caribuscene.run(direct,nz,dz,ds)
     return caribuscene
 
