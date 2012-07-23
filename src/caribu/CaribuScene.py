@@ -1,12 +1,13 @@
 import os
 import string
+import numpy as np
+
 from StringIO import StringIO
-from numpy import array,recfromtxt
 from itertools import groupby, izip
 from openalea.plantgl.all import Tesselator
+
 from caribu import Caribu
 from label import Label
-
 
 def _is_iterable(x):
     try:
@@ -143,8 +144,8 @@ def _shape_to_can(shape,tesselator,optid = 1,opak = 0,plant_id = 1,elt_id = 1):
 
     shape.apply(tesselator)
     mesh = tesselator.triangulation
-    pts = array(mesh.pointList, ndmin=2)
-    indices = array(mesh.indexList, ndmin=2)
+    pts = np.array(mesh.pointList, ndmin=2)
+    indices = np.array(mesh.indexList, ndmin=2)
     _label = label.Label()
     _label.plant_id = plant_id
     _label.optical_id = optid
@@ -166,7 +167,7 @@ class CaribuScene(object):
         self.scene = ""
         self.scene_labels = []#list of external identifier/canlabel of each triangle present in the scene
         self.scene_ids = []#list of internal ids, as long as scene, used to aggegate outputs by primitive
-        self.cid = 1#id to be given to next primitive     
+        self.cid = 1#internal id to be given to the next primitive     
         if scene is not None:
             if os.path.isfile(str(scene)):
                 fin = open(scene)
@@ -231,6 +232,7 @@ class CaribuScene(object):
         self.hasScene = False
         self.scene = ""
         self.scene_ids = []
+        self.scene_labels = []
         self.cid = 1
      
     
@@ -457,29 +459,49 @@ class CaribuScene(object):
         fout.write(self.PO)
         fout.close()
     
-    def getSources(self):
+    def sources_as_array(self):
         ''' returns a recarray of light sources charactecristics '''
-        
         sources = None
         if self.hasSources:
-            sources = recfromtxt(StringIO(self.sources), names = 'energy,vx,vy,vz')
+            sources = np.recfromtxt(StringIO(self.sources), names = 'energy,vx,vy,vz')
         return sources
-            
+        
+    def pattern_as_array(self):
+        ''' Return a recarray of coordinates of the domain sepcified in pattern'''
+        
+        domain = None
+        if self.hasPattern:
+            domain = np.recfromtxt(StringIO(self.pattern), names = 'x,y')
+        return domain
+        
     def getIncidentEnergy(self):
-        """ return the total ammount of energy emitted by the lights of the scene """
-        Ei=0
-        if self.hasSources:
-            sources=self.sources.splitlines()
-            for s in sources :
-                l=s.strip()
-                if not l or l.startswith('#'):
-                    continue
-                col=l.split()
-                #filter empty lines
-                if(not col) : continue
-                Ei += float(col[0])
+        """ Computes Qi, Qem, Einc on the scene given current light sources
 
-        return(Ei)
+        Qi is the incident light flux received on an horizontal surface (per scene unit area)
+        Qem is the sum of light fluxes emitted by sources in a plane perpendicular to their direction of emmission (per scene unit area)
+        Einc is the total incident energy received on the domain (Einc = Qi * domain_area), or None if pattern is not set
+
+        """
+        Qi, Qem, Einc = None,None,None
+
+        if self.hasSources:
+            sources = self.sources_as_array()
+            
+            Qi = sources.energy.sum()
+            
+            k = np.array([0,0,1])
+            if sources.size <= 1:
+                proj = abs(k.dot(np.array([sources.vx,sources.vy,sources.vz])))
+            else:
+                proj = [abs(k.dot(np.array([sources.vx[i],sources.vy[i],sources.vz[i]]))) for i in range(sources.size)]
+            Qem = (sources.energy / proj).sum()
+            
+            if self.hasPattern:
+                domain = self.pattern_as_array()
+                d_area = abs(np.diff(domain.x) * np.diff(domain.y))[0]
+                Einc = Qi * d_area
+
+        return Qi,Qem,Einc
 
     def writeLight(self,lightfile):
         """  write a lightfile of the sources """ 
@@ -575,5 +597,5 @@ def newObjCaribuScene(scene_obj=None,ligth_string=None,pattern_tuple=None,opt_st
     return CaribuScene(scene_obj,ligth_string,pattern_tuple,opt_string,waveLength)
 
 def getIncidentEnergy(caribu_scene):
-    return caribu_scene.getIncidentEnergy(),
+    return caribu_scene.getIncidentEnergy()
 
