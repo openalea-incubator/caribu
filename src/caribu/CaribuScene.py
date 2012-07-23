@@ -7,7 +7,7 @@ from itertools import groupby, izip
 from openalea.plantgl.all import Tesselator
 
 from caribu import Caribu
-from label import Label
+from label import Label,canLabel
 
 def _is_iterable(x):
     try:
@@ -137,7 +137,7 @@ def _canString(ind, pts, label):
     s = "p 1 %s 3 %s"%(str(label), ' '.join('%.6f'%x for i in ind for x in pts[i]))
     return s + '\n'
 
-def _shape_to_can(shape,tesselator,optid = 1,opak = 0,plant_id = 1,elt_id = 1):
+def _canString_fromShape(shape,tesselator,label = '100001000001'):
     """
     Returns canestra string representation of a plantGL shape
     """
@@ -146,12 +146,7 @@ def _shape_to_can(shape,tesselator,optid = 1,opak = 0,plant_id = 1,elt_id = 1):
     mesh = tesselator.triangulation
     pts = np.array(mesh.pointList, ndmin=2)
     indices = np.array(mesh.indexList, ndmin=2)
-    _label = label.Label()
-    _label.plant_id = plant_id
-    _label.optical_id = optid
-    _label.leaf_id = opak
-    _label.elt_id = elt_id
-    return [_canString(ind, pts, _label) for ind in indices]
+    return [_canString(ind, pts, label) for ind in indices]
 
 class CaribuSceneError(Exception): pass
 
@@ -162,7 +157,14 @@ class CaribuScene(object):
 
     
     def __init__(self, scene=None, light=None, pattern=None, opt=None, waveLength ='defaultPO'):
-    
+        """ Initialise a Caribu Scene object.
+        scene is a filename (*.can), a string (can file format) or a PlantGl scene/shape
+        ligth is a filename (*.light), a string (light file format) or a (list of) tuple (Energy, (vx, vy, vz))
+        pattern is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
+        opt is a filename (*.opt) or a string (opt file format)
+        
+        File format specifications are in data file CanestraDoc.pdf (shipped with caribu module)
+        """
         self.hasScene = False
         self.scene = ""
         self.scene_labels = []#list of external identifier/canlabel of each triangle present in the scene
@@ -286,51 +288,25 @@ class CaribuScene(object):
         
         return dict(zip(label,ids))
         
-    def add_Shapes(self, shapes, tesselator = None, opt_id = 1, opak = 0, plant_id = 1, elt_id = 1):
-        """
-        Add shapes to scene and return map of shapes id to carbu internal ids
+    def add_Shapes(self, shapes, tesselator = None, canlabels = None):
+        """Add shapes to scene and return a map of shapes id to carbu internal ids.
         """
         if not tesselator:
             tesselator = Tesselator()
         
-        if isinstance(opt_id,dict):
-            optdict = opt_id
-            defopt = 1
-        else:
-            optdict = {}
-            defopt = opt_id
-
-        if isinstance(opak,dict):
-            opakdict = opak
-            defopak = 0
-        else:
-            opakdict = {}
-            defopak = opak
-
-        if isinstance(plant_id,dict):
-            pdict = plant_id
-            defplant = 1
-        else:
-            pdict = {}
-            defplant = plant_id
-
-        if isinstance(elt_id,dict):
-            edict = elt_id
-            defelt = 1
-        else:
-            edict = {}
-            defelt = elt_id
-
+        if not _is_iterable(shapes):
+            shapes = [shapes]
+        
+        if not canlabels:
+            canlabels = canLabel(minlength=len(shapes))
+            
         canscene = []
         ids = []
         labels = []
         idmap={}
         
-        if not _is_iterable(shapes):
-            shapes = [shapes]
-        
-        for shape in shapes:
-            canlines = _shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
+        for i,shape in enumerate(shapes):
+            canlines = _canString_fromShape(shape,tesselator,canlabels[i])
             canscene.extend(canlines)
             idmap[shape.id] = self.cid 
             ids.extend([self.cid] * len(canlines))
@@ -344,52 +320,6 @@ class CaribuScene(object):
         self.hasScene = True
         
         return idmap
-
-
-    def setCan_fromShapes(self,shapes,tesselator=None,opt_id = 1,opak = 0, plant_id = 1, elt_id = 1):
-        """ Set canopy from PlantGl shapes and PGL tesselator and dict indexed by shapes_id of optical property indices, opacity, plantnumber and element number
-
-        returns a list of shape ids as long as the primitives set in the canScene to allow aggregation of outputs
-        """
-        if isinstance(opt_id,dict):
-            optdict = opt_id
-            defopt = 1
-        else:
-            optdict = {}
-            defopt = opt_id
-
-        if isinstance(opak,dict):
-            opakdict = opak
-            defopak = 0
-        else:
-            opakdict = {}
-            defopak = opak
-
-        if isinstance(plant_id,dict):
-            pdict = plant_id
-            defplant = 1
-        else:
-            pdict = {}
-            defplant = plant_id
-
-        if isinstance(elt_id,dict):
-            edict = elt_id
-            defelt = 1
-        else:
-            edict = {}
-            defelt = elt_id
-
-        canscene = []
-        ids = []
-        canscene.append('# File generated by Alinea.Caribu.CaribuScene class\n')
-        for shape in shapes:
-            canlines = _shape_to_can(shape,tesselator,optdict.get(shape.id,defopt),opakdict.get(shape.id,defopak),pdict.get(shape.id,defplant),edict.get(shape.id,defelt))
-            canscene.extend(canlines)
-            ids.extend([shape.id] * len(canlines))
-        canscene.append('\n')
-        canstring = ''.join(canscene)
-        self.addCan(canstring)
-        return ids
     
 
     def setPattern(self,pattern_string):
@@ -475,7 +405,7 @@ class CaribuScene(object):
         return domain
         
     def getIncidentEnergy(self):
-        """ Computes Qi, Qem, Einc on the scene given current light sources
+        """ Compute Qi, Qem, Einc on the scene given current light sources.
 
         Qi is the incident light flux received on an horizontal surface (per scene unit area)
         Qem is the sum of light fluxes emitted by sources in a plane perpendicular to their direction of emmission (per scene unit area)

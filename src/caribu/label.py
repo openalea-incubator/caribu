@@ -76,3 +76,44 @@ class Label(object):
 
     elt_id = property(_get_elt_id, _set_elt_id)
 
+    
+def _complete(l,length):
+        if len(l) < length:
+            l = l * (length / len(l)) + [l[i] for i in range(length % len(l))]
+        return l
+        
+def _newlabel(opt,opak,plant,elt):
+    lab = Label()
+    lab.plant_id = plant
+    lab.optical_id = opt
+    lab.leaf_id = opak
+    lab.elt_id = elt
+    return lab
+    
+def canLabel(opt_id=1, opak=0, plant_id=1, elt_id=1, minlength = 1):
+    """Create canlabels from list of properties to be encoded.
+    canlabels allow to associate optical properties and geometry for Caribu
+    properties are re-cycled to match the length of the longuest one
+    minlength is the minimal length of the output
+    
+    """
+    
+    if not isinstance(opt_id, list):
+        opt_id = [opt_id]
+       
+    if not isinstance(opak, list):
+        opak = [opak]
+        
+    if not isinstance(plant_id, list):
+        plant_id = [plant_id]
+        
+    if not isinstance(elt_id,list):
+        elt_id = [elt_id]
+        
+    maxlen = max([max(map(len,[opt_id,opak,plant_id,elt_id])), minlength])
+    
+    opt_id, opak, plant_id, elt_id = map(lambda(x): _complete(x,maxlen),[opt_id,opak,plant_id,elt_id]) 
+    
+    return [str(_newlabel(opt_id[i],opak[i], plant_id[i], elt_id[i])) for i in range(maxlen)]
+    
+    
