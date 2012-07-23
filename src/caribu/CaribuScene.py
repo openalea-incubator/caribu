@@ -499,15 +499,7 @@ Scene:
         return(res)
 
         
-def newCaribuScene(scene,light,pattern,opt):
-    cs = CaribuScene(scene=scene, light=light, pattern=pattern, opt=opt)
-    return cs
-    
-    
-def addShapes(caribuscene,shapes,tesselator, opt_id = 1, opak = 0, plant_id = 1, elt_id = 1):
-    mid=caribuscene.add_Shapes(shapes,tesselator,opt_id, opak, plant_id, elt_id)
-    return caribuscene,mid 
-    
+
 def getOutput(caribuscene,var,aggregate):
     return caribuscene.getOutput(var,aggregate)
 
@@ -518,9 +510,6 @@ def runCaribu(caribuscene, direct = True, nz =10,dz=1,ds=0.5):
     caribuscene.run(direct,nz,dz,ds)
     return caribuscene
 
-
-def newFileCaribuScene(canfile,lightfile,patternfile=None,optfile=None):
-    return CaribuScene(canfile,lightfile,patternfile,optfile)
 
 
 def newObjCaribuScene(scene_obj=None,ligth_string=None,pattern_tuple=None,opt_string=None,waveLength=None):
