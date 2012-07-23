@@ -10,7 +10,7 @@ from CaribuScene import CaribuScene
 def newCaribuScene(scene,light,pattern,opt):
     """ Creates and Initialise a Caribu Scene object.
         scene is a filename (*.can), a string (can file format) or a PlantGl scene/shape
-        ligth is a filename (*.light), a string (light file format) or a (list of) tuple (Energy, (vx, vy, vz))
+        ligth is a filename (*.light), a string (light file format) or a (list of) tuple (Energy, (direction_x, direction_y, direction_z))
         pattern is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
         opt is a filename (*.opt) or a string (opt file format)
         
@@ -39,6 +39,23 @@ def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):
     mid=cs.add_Shapes(shapes,tesselator,canlabels)
     
     return cs,mid 
+
+def addSoil(caribuscene,copyscene):
+    """ Add Soil to Caribu scene. Soil dimension is taken from pattern """
+    
+    if copyscene:
+        cs = copy(caribuscene)
+    else:
+        cs = caribuscene
+    
+    mid = cs.addSoil()
+    
+    return cs,mid
+    
+def WriteCan(caribuscene, filename):
+    """  write the scene in a file (can format).""" 
+    caribuscene.writeCan(filename)
+    return filename,
     
 def getOutput(caribuscene,var,aggregate):
     return caribuscene.getOutput(var,aggregate)
@@ -54,7 +71,7 @@ def runCaribu(caribuscene, direct, nz, dz, ds, copyscene):
         cs = caribuscene
      
     caribuscene.run(direct,nz,dz,ds)
-    return caribuscene
+    return cs
 
 
 

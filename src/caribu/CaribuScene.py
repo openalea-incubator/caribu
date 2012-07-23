@@ -6,7 +6,7 @@ from StringIO import StringIO
 from itertools import groupby, izip
 from openalea.plantgl.all import Tesselator
 
-from caribu import Caribu
+from caribu import Caribu, vcaribu
 from label import Label,canLabel
 
 def _is_iterable(x):
@@ -16,49 +16,6 @@ def _is_iterable(x):
         return False
     return True
     
-    
-def _caribu_call(canopy, lightsource, optics, pattern, options):
-    """
-    low level interface to Caribu class call
-    Caribu allows nested radiosity illumination on a 3D scene.
-    """
-    
-    sim = Caribu(resdir = None, resfile = None)#no output on disk
-    # --canfile 
-    sim.scene = canopy
-    # --optics 
-    sim.opticals = optics
-    #--skyfile 
-    sim.sky = lightsource               
-    #--pattern 
-    sim.pattern = pattern
-    #--options (if different from caribu defaults)
-    if options is not None:
-        #--scatter
-        if '1st' in options.keys():
-            sim.direct= options['1st']
-        #--nb_layers
-        if 'Nz' in options.keys():
-            sim.nb_layers =  options['Nz'] 
-        #--can_height
-        if 'Hc' in options.keys():
-            sim.can_height =  options['Hc'] 
-        #--sphere_diameter
-        if 'Ds' in options.keys():
-            sim.sphere_diameter =  options['Ds']
-        #--debug mode (if True, prevent removal of tempdir)
-        if 'debug' in options.keys():
-            sim.my_dbg = options['debug']
-        #--names of optical properties (usefull if opticals are given as strings
-        if 'wavelength' in options.keys():
-            sim.optnames = options['wavelength']
-    status = str(sim)
-    sim.run()
-    irradiances=sim.nrj
-
-    # return outputs
-    return irradiances,status
-
 
 def _nan_to_zero(x):
 
@@ -365,7 +322,7 @@ class CaribuScene(object):
 
 
     def writeCan(self,canfile):
-        """  write a canfile of the scene """ 
+        """  write the scene in a file (can format) """ 
         if not self.hasScene:
             print "!!!Warning!!! CaribuScene has no Scene !"
         fout = open(canfile,"w")
@@ -485,7 +442,7 @@ Scene:
             pattern = self.pattern
         optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'wavelength':self.wavelength}
    
-        vcout,status = _caribu_call(scene, lightsources, opticals, pattern, optiondict)
+        vcout,status = vcaribu(scene, lightsources, opticals, pattern, optiondict)
     
         self.output = _output_dict(vcout)
         
