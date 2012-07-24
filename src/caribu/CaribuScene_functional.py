@@ -4,8 +4,9 @@ They generally have an additional copyscene argument, that pass caribuscene by c
 
 """
 from copy import copy
-from CaribuScene import CaribuScene
+from CaribuScene import CaribuScene, CaribuSceneError
 
+class CaribuSceneDeprecatedError(CaribuSceneError): pass
 
 def newCaribuScene(scene,light,pattern,opt):
     """ Creates and Initialise a Caribu Scene object.
@@ -20,11 +21,6 @@ def newCaribuScene(scene,light,pattern,opt):
     cs = CaribuScene(scene=scene, light=light, pattern=pattern, opt=opt)
     return cs
    
-
-def newFileCaribuScene(scene,light,pattern,opt):
-    """ Warning !!! This node is deprecated and will be removed in future versions, use CaribuScene instead."""
-    cs=CaribuScene(scene=scene,light=light,pattern=pattern,opt=opt)
-    return cs
     
 def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):
     """Add shapes to scene and return a map of shapes id to carbu internal ids.
@@ -85,3 +81,14 @@ def getIncidentEnergy(caribuscene):
         """    
         return caribuscene.getIncidentEnergy()
 
+# Deprecated / future deprecated nodes
+
+def newFileCaribuScene(scene,light,pattern,opt):
+    """ Warning !!! This node is deprecated and will be removed in future versions, use CaribuScene instead."""
+    print('Warning !!! FileCaribuScene is deprecated and will be removed in future versions, use CaribuScene instead')
+    cs=CaribuScene(scene=scene,light=light,pattern=pattern,opt=opt)
+    return cs
+    
+def GenOutput(etri,eabs):
+    """ This is a deprecated node, not functional anymore"""
+    raise CaribuSceneDeprecatedError('This node is deprecated, vcaribu/caribu now do what GenOutput was doing')
