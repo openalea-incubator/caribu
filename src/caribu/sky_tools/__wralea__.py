@@ -21,14 +21,19 @@ __all__ = ['Normalise_Sky_Normalise_Sky', '_98394928', 'GetLight_GetLight', '_98
 
 
 turtle = Factory(name='Turtle',
-                 description= 'Turtle Sky in different formats (uoc, soc',
+                 description= 'Turtle Sky in different formats (uoc, soc)',
                  category='scene, sky',
                  nodemodule='turtle',
                  nodeclass='turtle',
                  inputs=[dict(name='sectors', interface=IEnumStr(['16', '46']), value='16'),
                          dict(name='format', interface=IEnumStr(['soc', 'uoc']), value='soc'),
-             {'name':'Energy','interface':IFloat,'value':1.0},],
-                 outputs=[dict(name='turtle string', interface=IStr)],)
+                        {'name':'Energy','interface':IFloat,'value':1.0, 'desc': 'energy flux measured on an horizontal surface'},],
+                 outputs=[dict(name='Energy', interface=ISequence),
+                          dict(name='Emission', interface=ISequence),
+                          dict(name='Direction vector', interface=ISequence),
+                          dict(name='elevation', interface=ISequence),
+                          dict(name='azimuth', interface=ISequence)
+                 ],)
 __all__.append('turtle')
 
 Normalise_Sky_Normalise_Sky = Factory(name='Normalise_Sky',

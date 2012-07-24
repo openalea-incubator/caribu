@@ -36,7 +36,7 @@ def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):
     
     return cs,mid 
 
-def addSoil(caribuscene,copyscene):
+def addSoil(caribuscene, zsoil, copyscene):
     """ Add Soil to Caribu scene. Soil dimension is taken from pattern """
     
     if copyscene:
@@ -44,7 +44,7 @@ def addSoil(caribuscene,copyscene):
     else:
         cs = caribuscene
     
-    mid = cs.addSoil()
+    mid = cs.addSoil(zsoil)
     
     return cs,mid
     
@@ -91,4 +91,4 @@ def newFileCaribuScene(scene,light,pattern,opt):
     
 def GenOutput(etri,eabs):
     """ This is a deprecated node, not functional anymore"""
-    raise CaribuSceneDeprecatedError('This node is deprecated, vcaribu/caribu now do what GenOutput was doing')
+    raise CaribuSceneDeprecatedError('This node is deprecated, use vcaribu/caribu interfaces to Canestra/McSail')

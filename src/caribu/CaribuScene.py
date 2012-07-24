@@ -4,7 +4,7 @@ import numpy as np
 
 from StringIO import StringIO
 from itertools import groupby, izip
-from openalea.plantgl.all import Tesselator
+
 
 from caribu import Caribu, vcaribu
 from label import Label,canLabel
@@ -87,8 +87,9 @@ def _getlabel(line):
     return label
     
 def _lightString(lightVect):
-    """ Create a line for caribu .light files from a vector specifying energy,posx, posy and posz of a light source"""
-    return ' '.join(map(str,lightVect)) + '\n'
+    """ Create a line for caribu .light files from a tuple (energy,(posx, posy, posz))"""
+    e,p = lightVect
+    return ' '.join(map(str,[e] + list(p))) + '\n'
 
 def _canString(ind, pts, label):
     s = "p 1 %s 3 %s"%(str(label), ' '.join('%.6f'%x for i in ind for x in pts[i]))
@@ -141,20 +142,10 @@ class CaribuScene(object):
                     raise CaribuSceneError("Scene should be one of : None, filename, file content (string)  or plantgl scene or shape")
                 
         self.hasSources = False
-        self.sources = "NoLightSources"
-        if light is not None:
-            if os.path.isfile(str(light)):
-                fin = open(light)
-                self.setSources(fin.read())
-                fin.close()
-            elif isinstance(light,str):
-                self.setSources(light)
-            else:
-                try:
-                    self.setSources_tuple(light)
-                except:
-                    pass
-                    
+        self.sources = ""
+        if light is not None:   
+            self.addSources(light)
+                     
         self.hasPattern = False
         self.pattern = "NoPattern"      
         if pattern is not None:
@@ -206,8 +197,11 @@ class CaribuScene(object):
         self.cid += len(labmap)
         return labmap
         
-    def addSoil(self):
-        """ Add Soil to Caribu scene. Soil dimension is taken from pattern """
+    def addSoil(self, zsoil = 0.):
+        """ Add Soil to Caribu scene. Soil dimension is taken from pattern.
+        zsoil specifies the heigth of the soil
+
+        """
         
         ids = []
         
@@ -228,10 +222,10 @@ class CaribuScene(object):
             else:
                 B=[A[0],C[1]]        
                 D=[C[0],A[1]]
-            A.append(0.)
-            B.append(0.)
-            C.append(0.)
-            D.append(0.)
+            A.append(zsoil)
+            B.append(zsoil)
+            C.append(zsoil)
+            D.append(zsoil)
 
             label=["000000000000","000000000001"]
             canstring = "\n".join([_canString(range(3),(A,B,C),label[0]),_canString(range(3),(C,D,A),label[1])])
@@ -249,6 +243,7 @@ class CaribuScene(object):
         """Add shapes to scene and return a map of shapes id to carbu internal ids.
         """
         if not tesselator:
+            from openalea.plantgl.all import Tesselator
             tesselator = Tesselator()
         
         if not _is_iterable(shapes):
@@ -297,15 +292,38 @@ class CaribuScene(object):
         self.PO = optstring
         self.wavelength = wavelength
 
-    def setSources(self,sources_string):
-        """  Set Light Sources """
-        self.sources = sources_string
+    def addSources(self,sources):
+        """ Set light sources from a filename (*.light), a string (light file format) or(a list of) tuples (energy,(vx,vy,vz).
+        energy is the light flux (per scene unit area) measured on an horizontal surface
+        vx,vy,vz are the coordinates of the normalised vector of light direction 
+        example : (1, (0, 0, -1)) is a source pointing downwards of intensity 1
+
+        """
+        
+        if os.path.isfile(str(sources)):
+                fin = open(sources)
+                self.addSources_from_string(fin.read())
+                fin.close()
+        elif isinstance(sources,str):
+            self.addSources_from_string(sources)
+        else:
+            try:
+                self.addSources_from_tuple(sources)
+            except:
+                raise CaribuSceneError("Light sources should be one of : filename, file content (string)  or (list of ) tuple (Energy, (vx,vy,vz))")
+       
+    def addSources_from_string(self,sources):
+        """  add Light Sources  from string or file name"""
+        self.sources += sources
         self.hasSources = True
 
-    def setSources_tuple(self,sources_tuples):
-        """ Set light sources from a list of light tuples describing sources """
-        lines = map(_lightString,sources_tuples)
-        self.setSources(''.join(lines))
+    def addSources_from_tuple(self,sources):
+        """  add Light Sources  from a (energy, (vx,vy,vz)) (list of) tuple. """
+        
+        if not isinstance(sources,list):
+            sources = [sources]    
+        lines = map(_lightString,sources)
+        self.addSources_from_string(''.join(lines))
 
     def setFF(self,FF_string):
         """  Set Form factor matrix """
