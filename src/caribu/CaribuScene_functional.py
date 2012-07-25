@@ -9,7 +9,7 @@ from CaribuScene import CaribuScene, CaribuSceneError
 class CaribuSceneDeprecatedError(CaribuSceneError): pass
 
 def newCaribuScene(scene,light,pattern,opt):
-    """ Creates and Initialise a Caribu Scene object.
+    """ Create and Initialise a Caribu Scene object.
         scene is a filename (*.can), a string (can file format) or a PlantGl scene/shape
         ligth is a filename (*.light), a string (light file format) or a (list of) tuple (Energy, (direction_x, direction_y, direction_z))
         pattern is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
@@ -17,9 +17,12 @@ def newCaribuScene(scene,light,pattern,opt):
         
         File format specifications are in data/CanestraDoc.pdf
     
+        return a caribuscene object and a map of primitiveid-> caribu internal ids
+        
     """
     cs = CaribuScene(scene=scene, light=light, pattern=pattern, opt=opt)
-    return cs
+    mapid = dict(zip(cs.scene_labels,cs.scene_ids))
+    return cs, mapid
    
     
 def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):
@@ -86,9 +89,9 @@ def getIncidentEnergy(caribuscene):
 def newFileCaribuScene(scene,light,pattern,opt):
     """ Warning !!! This node is deprecated and will be removed in future versions, use CaribuScene instead."""
     print('Warning !!! FileCaribuScene is deprecated and will be removed in future versions, use CaribuScene instead')
-    cs=CaribuScene(scene=scene,light=light,pattern=pattern,opt=opt)
+    cs,mapid=newCaribuScene(scene,light,pattern,opt)
     return cs
     
 def GenOutput(etri,eabs):
     """ This is a deprecated node, not functional anymore"""
-    raise CaribuSceneDeprecatedError('This node is deprecated, use vcaribu/caribu interfaces to Canestra/McSail')
+    raise CaribuSceneDeprecatedError('This node is deprecated, use vcaribu/caribu interfaces to Canestra')
