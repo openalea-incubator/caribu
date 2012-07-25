@@ -17,7 +17,7 @@ __institutes__ = 'INRA'
 __icon__ = 'Caribou.png'
 
 
-__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', 'CaribuScene_functional_newFileCaribuScene', 'reduceDict_reduceDict', 'CaribuScene_getOutput', 'vcaribu_adaptor_vcaribu_adaptor', '_134696848', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_runCaribu', 'CaribuScene_functional_newCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'CaribuScene_functional_WriteCan', 'CaribuScene_newObjCaribuScene', 'Periodise_Periodise', 'vcaributest2', '_134696912', 'mtg_to_canestra', 'Canestra_Canestra', 'CaribuScene_functional_addShapes', 'label_canLabel', 'CaribuZenithPar', 'CaribuScene_functional_GenOutput', 'caribu_vcaribu', '_252913808', 'mydict_mydict', 'CaribuScene_functional_addSoil', 'Caribu', 'ScatteringOptions_ScatteringOptions', 'selectOutput_selectOutput', 'PARsums', 'Tutorial', 'debug', 'lightString_lightString']
+__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', 'CaribuScene_functional_newFileCaribuScene', 'reduceDict_reduceDict', 'CaribuScene_getOutput', 'vcaribu_adaptor_vcaribu_adaptor', '_134696848', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_runCaribu', 'CaribuScene_functional_newCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'CaribuScene_functional_WriteCan', 'CaribuScene_newObjCaribuScene', 'Periodise_Periodise', 'vcaributest2', '_134696912', 'mtg_to_canestra', 'Canestra_Canestra', 'CaribuScene_functional_addShapes', 'CaribuZenithPar', 'CaribuScene_functional_GenOutput', 'caribu_vcaribu', '_252913808', 'mydict_mydict', 'CaribuScene_functional_addSoil', 'Caribu', 'ScatteringOptions_ScatteringOptions', 'selectOutput_selectOutput', 'PARsums', 'Tutorial', 'debug', 'lightString_lightString']
 
 
 
@@ -1088,20 +1088,38 @@ CaribuScene_functional_addShapes = Factory(name='addShapes',
 
 
 
-label_canLabel = Factory(name='canLabel',
+label_encode_label = Factory(name='encode label',
                 authors='C. Fournier',
                 description='',
                 category='io',
                 nodemodule='label',
-                nodeclass='canLabel',
-                inputs=[{'interface': IInt, 'name': 'optical species', 'value': 1}, {'interface': IInt, 'name': 'Opacity', 'value': 1, 'desc': '0 means transparent(leaves), 1 means opak (stems)'}, {'interface': IInt, 'name': 'Plant id', 'value': 1}, {'interface': IInt, 'name': 'element id', 'value': 1}, {'interface': IInt, 'name': 'minimal length for the output', 'value': 1}],
+                nodeclass='encode_label',
+                inputs=[{'interface': IInt, 'name': 'optical species', 'value': 1}, 
+                        {'interface': IInt, 'name': 'Opacity', 'value': 1, 'desc': '0 means transparent(leaves), 1 means opak (stems)'}, 
+                        {'interface': IInt, 'name': 'Plant id', 'value': 1}, 
+                        {'interface': IInt, 'name': 'element id', 'value': 1}, 
+                        {'interface': IInt, 'name': 'minimal length for the output', 'value': 1}],
                 outputs=[{'interface': ISequence, 'name': 'canLabels', 'desc': ''}],
                 widgetmodule=None,
                 widgetclass=None,
                )
+__all__.append('label_encode_label')
 
-
-
+label_decode_label = Factory(name='decode label',
+                authors='C. Fournier',
+                description='',
+                category='io',
+                nodemodule='label',
+                nodeclass='decode_label',
+                inputs=[{'interface': ISequence, 'name': 'canLabels'}],
+                outputs=[{'interface': ISequence, 'name': 'optical species'},
+                {'interface': ISequence, 'name': 'Opacity'},
+                {'interface': ISequence, 'name': 'Plant id'}, 
+                {'interface': ISequence, 'name': 'Element id'}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+__all__.append('label_decode_label')
 
 CaribuZenithPar = CompositeNodeFactory(name='CaribuZenithPar',
                              description='Run Caribu with default PO and one ligth source at zenith',

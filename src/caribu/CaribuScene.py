@@ -7,7 +7,7 @@ from itertools import groupby, izip
 
 
 from caribu import Caribu, vcaribu
-from label import Label,canLabel
+from label import Label,encode_label
 
 def _is_iterable(x):
     try:
@@ -40,15 +40,11 @@ def _output_dict(vcdict):
     einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
     eincsup = [esup * a for esup,a in izip(d['Ei_sup'],d['area'])]
     eincinf = [einf * a for einf,a in izip(d['Ei_inf'],d['area'])]
-    labels = [Label(lab) for lab in d['label']]
-    opt = [lab.optical_id for lab in labels]
-    opak = [lab.transparency for lab in labels]
-    plt = [lab.plant_id for lab in labels]
-    elt = [lab.elt_id for lab in labels]
-
-    godict = {'Eabs': eabs, 'Einc': einc, 'EincSup': eincsup, 'EincInf': eincinf, 'Area': d['area'],
+ 
+    godict = {'Eabs': eabs, 'Einc': einc, 'EincSup': eincsup, 'EincInf': eincinf, 
+              'Area': d['area'],
               'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
-              'Opt':opt, 'Opak': opak, 'Plt': plt, 'Elt': elt, 'label': d['label']} 
+              'label': d['label']} 
   
     return godict
     
@@ -259,7 +255,7 @@ class CaribuScene(object):
             shapes = [shapes]
         
         if not canlabels:
-            canlabels = canLabel(minlength=len(shapes))
+            canlabels = encode_label(minlength=len(shapes))
             
         canscene = []
         ids = []
@@ -489,10 +485,6 @@ Scene:
             res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) for k in res['Eabs'].iterkeys()])
             res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) for k in res['EincInf'].iterkeys()])
             res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) for k in res['EincSup'].iterkeys()])
-            #compute means for properties (debug)
-            #def _mean(x):
-            #    return sum(float(x)) / len(x)
-            #resP = dict([(k, _agregate(self.output[k],self.scene_ids,_mean)) for k in ['Opt', 'Opak', 'Plt', 'Elt'])
         else: 
             res = dict([(k, _agregate(self.output[k],self.scene_ids,list)) for k in self.output.keys()])
             

@@ -90,7 +90,7 @@ def _newlabel(opt,opak,plant,elt):
     lab.elt_id = elt
     return lab
     
-def canLabel(opt_id=1, opak=0, plant_id=1, elt_id=1, minlength = 1):
+def encode_label(opt_id=1, opak=0, plant_id=1, elt_id=1, minlength = 1):
     """Create canlabels from list of properties to be encoded.
     canlabels allow to associate optical properties and geometry for Caribu
     properties are re-cycled to match the length of the longuest one
@@ -116,4 +116,14 @@ def canLabel(opt_id=1, opak=0, plant_id=1, elt_id=1, minlength = 1):
     
     return [str(_newlabel(opt_id[i],opak[i], plant_id[i], elt_id[i])) for i in range(maxlen)]
     
+    
+def decode_label(label):
+    """ decode a (list of) canlabels into properties """
+    
+    if not isinstance(label, list):
+        label = [label]
+        
+    properties = [(lab.optical_id, lab.transparency, lab.plant_id, lab.elt_id) for lab in (Label(labstring) for labstring in label)]    
+    
+    return zip(*properties)
     
