@@ -4,6 +4,7 @@ They generally have an additional copyscene argument, that pass caribuscene by c
 
 """
 from copy import copy
+#alternative a local importt de caribuscene ne serait il pas de faire import * ici , par hasard??
 from CaribuScene import CaribuScene, CaribuSceneError
 
 class CaribuSceneDeprecatedError(CaribuSceneError): pass
