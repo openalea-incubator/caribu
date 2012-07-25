@@ -51,10 +51,10 @@ def addSoil(caribuscene, zsoil, copyscene):
 def WriteCan(caribuscene, filename):
     """  write the scene in a file (can format).""" 
     caribuscene.writeCan(filename)
-    return filename,
+    return filename
     
 def getOutput(caribuscene,var,aggregate):
-    return caribuscene.getOutput(var,aggregate)
+    return caribuscene.getOutput(var,aggregate),
 
 
 def runCaribu(caribuscene, direct, nz, dz, ds, copyscene):
@@ -66,7 +66,7 @@ def runCaribu(caribuscene, direct, nz, dz, ds, copyscene):
     else:
         cs = caribuscene
      
-    caribuscene.run(direct,nz,dz,ds)
+    cs.run(direct,nz,dz,ds)
     return cs
 
 

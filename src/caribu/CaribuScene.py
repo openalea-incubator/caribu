@@ -36,15 +36,19 @@ def _output_dict(vcdict):
         d[k] = map(_nan_to_zero,d[k])
         #filter negative values occuring in EiInf/EiSup
         d[k] = map(lambda(x): max(0,x), d[k])
-    eabs = [e * a for e,a in zip(d['Eabs'],d['area'])]
-    einc = [(esup + einf) * a for esup,einf,a in zip(d['Ei_sup'],d['Ei_inf'],d['area'])]
+    eabs = [e * a for e,a in izip(d['Eabs'],d['area'])]
+    einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
+    eincsup = [esup * a for esup,a in izip(d['Ei_sup'],d['area'])]
+    eincinf = [einf * a for einf,a in izip(d['Ei_inf'],d['area'])]
     labels = [Label(lab) for lab in d['label']]
     opt = [lab.optical_id for lab in labels]
     opak = [lab.transparency for lab in labels]
     plt = [lab.plant_id for lab in labels]
     elt = [lab.elt_id for lab in labels]
 
-    godict = {'Eabs':eabs, 'Einc': einc,'Area':d['area'],'Eabsm2':d['Eabs'],'EiInf':d['Ei_inf'],'EiSup':d['Ei_sup'],'Opt':opt,'Opak':opak,'Plt':plt,'Elt':elt,'label':d['label']} 
+    godict = {'Eabs': eabs, 'Einc': einc, 'EincSup': eincsup, 'EincInf': eincinf, 'Area': d['area'],
+              'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
+              'Opt':opt, 'Opak': opak, 'Plt': plt, 'Elt': elt, 'label': d['label']} 
   
     return godict
     
@@ -52,7 +56,11 @@ def _agregate(values,indices,fun = sum):
     """ performss aggregation of outputs along indices """
     ag = {}
     for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
-        ag[key] = fun([elt[1] for elt in group])
+        vals = [elt[1] for elt in group]
+        try:
+            ag[key] = fun(vals)
+        except TypeError:
+            ag[key] = vals[0]
     return ag
     
 DefaultOptString = """#PyCaribu : PO par defaut (PAR, materiau vert)
@@ -131,8 +139,9 @@ class CaribuScene(object):
         if scene is not None:
             if os.path.isfile(str(scene)):
                 fin = open(scene)
-                self.addCan(fin.read())
+                canstring = fin.read()
                 fin.close()
+                self.addCan(canstring)                
             elif isinstance(scene, str):
                 self.addCan(scene)
             else:
@@ -143,7 +152,7 @@ class CaribuScene(object):
                 
         self.hasSources = False
         self.sources = ""
-        if light is not None:   
+        if light is not None:
             self.addSources(light)
                      
         self.hasPattern = False
@@ -191,9 +200,9 @@ class CaribuScene(object):
         self.scene += canstring
         self.hasScene = True
         labels = [res for res in (_getlabel(x) for x in canstring.splitlines()) if res]
-        labmap = dict([(k,i) for i,k in enumerate(set(labels))])
+        labmap = dict([(k,i + self.cid) for i,k in enumerate(set(labels))])
         self.scene_labels.extend(labels)
-        self.scene_ids.extend([self.cid + labmap[k] for k in labels])
+        self.scene_ids.extend([labmap[k] for k in labels])
         self.cid += len(labmap)
         return labmap
         
@@ -299,18 +308,19 @@ class CaribuScene(object):
         example : (1, (0, 0, -1)) is a source pointing downwards of intensity 1
 
         """
-        
-        if os.path.isfile(str(sources)):
+        if sources is not None:
+            if os.path.isfile(str(sources)):
                 fin = open(sources)
-                self.addSources_from_string(fin.read())
+                sourcestring = fin.read()
                 fin.close()
-        elif isinstance(sources,str):
-            self.addSources_from_string(sources)
-        else:
-            try:
-                self.addSources_from_tuple(sources)
-            except:
-                raise CaribuSceneError("Light sources should be one of : filename, file content (string)  or (list of ) tuple (Energy, (vx,vy,vz))")
+                self.addSources_from_string(sourcestring)                
+            elif isinstance(sources,str):
+                self.addSources_from_string(sources)
+            else:
+                try:
+                    self.addSources_from_tuple(sources)
+                except:
+                    raise CaribuSceneError("Light sources should be one of : filename, file content (string)  or (list of ) tuple (Energy, (vx,vy,vz))")
        
     def addSources_from_string(self,sources):
         """  add Light Sources  from string or file name"""
@@ -464,19 +474,39 @@ Scene:
     
         self.output = _output_dict(vcout)
         
-    def getOutput(self,var = 'Eabs',aggregate = True):
-        """ Returns outputs"""
+    def getOutput(self,mapid = None,aggregate = True):
+        """ Return outputs and do agregation
+        mapid is a dict of external_id -> caribu internal id. If given, the results are aggregated using external ids
+        return a dict of dict, firts key being the variable naame, second key being the id
         
+        """
+        
+        # aggregation uses internal ids as unicity of scene_labels is not guarantee (eg if several scenes have been mixed)
         if aggregate:
-            res = _agregate(self.output[var],self.scene_ids)
+            #compute sums for area integrated variables
+            res = dict([(k, _agregate(self.output[k],self.scene_ids)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
+            # compute mean fluxes
+            res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) for k in res['Eabs'].iterkeys()])
+            res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) for k in res['EincInf'].iterkeys()])
+            res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) for k in res['EincSup'].iterkeys()])
+            #compute means for properties (debug)
+            #def _mean(x):
+            #    return sum(float(x)) / len(x)
+            #resP = dict([(k, _agregate(self.output[k],self.scene_ids,_mean)) for k in ['Opt', 'Opak', 'Plt', 'Elt'])
         else: 
-            res = _agregate(self.output[var],self.scene_ids,list)
+            res = dict([(k, _agregate(self.output[k],self.scene_ids,list)) for k in self.output.keys()])
+            
+        #re-index results if mapid is given
+        if mapid:
+            for var in res.keys():
+                res[var] = dict([(k,(res[var])[v]) for k,v in mapid.items()])
+        
         return(res)
 
         
 
-def getOutput(caribuscene,var,aggregate):
-    return caribuscene.getOutput(var,aggregate)
+def getOutput(caribuscene,mapid,aggregate):
+    return caribuscene.getOutput(mapid,aggregate)
 
 
 def runCaribu(caribuscene, direct = True, nz =10,dz=1,ds=0.5):
