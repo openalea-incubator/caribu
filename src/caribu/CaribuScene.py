@@ -1,108 +1,4 @@
-import os
-import string
-import numpy as np
-
-from StringIO import StringIO
-from itertools import groupby, izip
-
-
-from caribu import Caribu, vcaribu
-from label import Label,encode_label
-
-def _is_iterable(x):
-    try:
-        x = iter(x)
-    except TypeError: 
-        return False
-    return True
-    
-
-def _nan_to_zero(x):
-
-    try:
-        from math import isnan
-    except:
-         #to be back compatile with python 2.5
-        def isnan(num):
-            return num != num
- 
-    return(0 if isnan(x) else x)
-
-def _output_dict(vcdict):
-    """    adaptor from nrj dict to  nrj + aggregation keys dict
-    """
-    d = vcdict[vcdict.keys()[0]]['data']
-    for k in ('Eabs','Ei_inf','Ei_sup'):
-        d[k] = map(_nan_to_zero,d[k])
-        #filter negative values occuring in EiInf/EiSup
-        d[k] = map(lambda(x): max(0,x), d[k])
-    eabs = [e * a for e,a in izip(d['Eabs'],d['area'])]
-    einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
-    eincsup = [esup * a for esup,a in izip(d['Ei_sup'],d['area'])]
-    eincinf = [einf * a for einf,a in izip(d['Ei_inf'],d['area'])]
- 
-    godict = {'Eabs': eabs, 'Einc': einc, 'EincSup': eincsup, 'EincInf': eincinf, 
-              'Area': d['area'],
-              'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
-              'label': d['label']} 
-  
-    return godict
-    
-def _agregate(values,indices,fun = sum):
-    """ performss aggregation of outputs along indices """
-    ag = {}
-    for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
-        vals = [elt[1] for elt in group]
-        try:
-            ag[key] = fun(vals)
-        except TypeError:
-            ag[key] = vals[0]
-    return ag
-    
-DefaultOptString = """#PyCaribu : PO par defaut (PAR, materiau vert)
-#format e : tige,  feuille sup,  feuille inf
-# nbre d'especes
-n 1
-#1 Sol
-s d 0.15
-# espece 1
-e d 0.10   d 0.10 0.05  d 0.10 0.05
-"""
-
-def _getlabel(line):
-    """ extract a label string from a can file line """
-    line = line.strip()
-    if not line: 
-        return
-    if line[0] == '#':
-        return 
-    l = line.split()
-    label = l[2]
-    if len(label) < 11:
-        label = (12-len(label))*'0'+label
-
-    return label
-    
-def _lightString(lightVect):
-    """ Create a line for caribu .light files from a tuple (energy,(posx, posy, posz))"""
-    e,p = lightVect
-    return ' '.join(map(str,[e] + list(p))) + '\n'
-
-def _canString(ind, pts, label):
-    s = "p 1 %s 3 %s"%(str(label), ' '.join('%.6f'%x for i in ind for x in pts[i]))
-    return s + '\n'
-
-def _canString_fromShape(shape,tesselator,label = '100001000001'):
-    """
-    Returns canestra string representation of a plantGL shape
-    """
-
-    shape.apply(tesselator)
-    mesh = tesselator.triangulation
-    pts = np.array(mesh.pointList, ndmin=2)
-    indices = np.array(mesh.indexList, ndmin=2)
-    return [_canString(ind, pts, label) for ind in indices]
-
+""" This module defines CaribuScene and CaribuSceneError classes."""
 class CaribuSceneError(Exception): pass
 
 class CaribuScene(object):
@@ -120,11 +16,25 @@ class CaribuScene(object):
         
         File format specifications are in data/CanestraDoc.pdf
         """
+        
+        import os
+        DefaultOptString = """#PyCaribu : PO par defaut (PAR, materiau vert)
+#format e : tige,  feuille sup,  feuille inf
+# nbre d'especes
+n 1
+#1 Sol
+s d 0.15
+# espece 1
+e d 0.10   d 0.10 0.05  d 0.10 0.05
+"""
+
+ 
         self.hasScene = False
         self.scene = ""
         self.scene_labels = []#list of external identifier/canlabel of each triangle present in the scene
         self.scene_ids = []#list of internal ids, as long as scene, used to aggegate outputs by primitive
-        self.cid = 1#internal id to be given to the next primitive     
+        self.cid = 1#internal id to be given to the next primitive
+
         if scene is not None:
             if os.path.isfile(str(scene)):
                 fin = open(scene)
@@ -186,6 +96,19 @@ class CaribuScene(object):
     
     def addCan(self,canstring):
         """  Add primitives from can file string """
+        
+        def _getlabel(line):
+            line = line.strip()
+            if not line: 
+                return
+            if line[0] == '#':
+                return 
+            l = line.split()
+            label = l[2]
+            if len(label) < 11:
+                label = (12 - len(label)) * '0' + label
+            return label
+
         self.scene += canstring
         self.hasScene = True
         labels = [res for res in (_getlabel(x) for x in canstring.splitlines()) if res]
@@ -200,6 +123,11 @@ class CaribuScene(object):
         zsoil specifies the heigth of the soil
 
         """
+        import string
+        def _canString(ind, pts, label):
+            s = "p 1 %s 3 %s"%(str(label), ' '.join('%.6f'%x for i in ind for x in pts[i]))
+            return s + '\n'
+
         
         ids = []
         
@@ -240,6 +168,27 @@ class CaribuScene(object):
     def add_Shapes(self, shapes, tesselator = None, canlabels = None):
         """Add shapes to scene and return a map of shapes id to carbu internal ids.
         """
+        
+        def _canString(ind, pts, label):
+            s = "p 1 %s 3 %s"%(str(label), ' '.join('%.6f'%x for i in ind for x in pts[i]))
+            return s + '\n'
+
+        
+        def _canString_fromShape(shape,tesselator,label = '100001000001'):
+            shape.apply(tesselator)
+            mesh = tesselator.triangulation
+            pts = np.array(mesh.pointList, ndmin=2)
+            indices = np.array(mesh.indexList, ndmin=2)
+            return [_canString(ind, pts, label) for ind in indices]
+
+        def _is_iterable(x):
+            try:
+                x = iter(x)
+            except TypeError: 
+                return False
+            return True
+             
+            
         if not tesselator:
             from openalea.plantgl.all import Tesselator
             tesselator = Tesselator()
@@ -248,6 +197,7 @@ class CaribuScene(object):
             shapes = [shapes]
         
         if not canlabels:
+            from label import encode_label
             canlabels = encode_label(minlength=len(shapes))
             
         canscene = []
@@ -297,6 +247,7 @@ class CaribuScene(object):
         example : (1, (0, 0, -1)) is a source pointing downwards of intensity 1
 
         """
+        import os
         if sources is not None:
             if os.path.isfile(str(sources)):
                 fin = open(sources)
@@ -319,6 +270,10 @@ class CaribuScene(object):
     def addSources_from_tuple(self,sources):
         """  add Light Sources  from a (energy, (vx,vy,vz)) (list of) tuple. """
         
+        def _lightString(lightVect):
+            e,p = lightVect
+            return ' '.join(map(str,[e] + list(p))) + '\n'
+
         if not isinstance(sources,list):
             sources = [sources]    
         lines = map(_lightString,sources)
@@ -365,17 +320,20 @@ class CaribuScene(object):
     
     def sources_as_array(self):
         """ returns a recarray of light sources charactecristics """
+        from numpy import recfromtxt
+        from StringIO import StringIO
         sources = None
         if self.hasSources:
-            sources = np.recfromtxt(StringIO(self.sources), names = 'energy,vx,vy,vz')
+            sources = recfromtxt(StringIO(self.sources), names = 'energy,vx,vy,vz')
         return sources
         
     def pattern_as_array(self):
         """ Return a recarray of coordinates of the domain sepcified in pattern"""
-        
+        from numpy import recfromtxt
+        from StringIO import StringIO
         domain = None
         if self.hasPattern:
-            domain = np.recfromtxt(StringIO(self.pattern), names = 'x,y')
+            domain = recfromtxt(StringIO(self.pattern), names = 'x,y')
         return domain
         
     def getIncidentEnergy(self):
@@ -386,6 +344,7 @@ class CaribuScene(object):
         Einc is the total incident energy received on the domain (Einc = Qi * domain_area), or None if pattern is not set
 
         """
+        import numpy as np
         Qi, Qem, Einc = None,None,None
 
         if self.hasSources:
@@ -445,8 +404,38 @@ Scene:
      '\n'.join(self.scene.splitlines()[0:7])+'...')
         return s
     
-    def run(self, direct = True, nz = None, dz = None, ds = None):
+    def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5):
         """ Call Caribu and store relsults"""
+        def _nan_to_zero(x):
+            try:
+                from math import isnan
+            except:
+                 #to be back compatile with python 2.5
+                def isnan(num):
+                    return num != num         
+            return(0 if isnan(x) else x)
+
+        def _output_dict(vcdict):
+            from itertools import izip
+            d = vcdict[vcdict.keys()[0]]['data']
+            for k in ('Eabs','Ei_inf','Ei_sup'):
+                d[k] = map(_nan_to_zero,d[k])
+                #filter negative values occuring in EiInf/EiSup
+                d[k] = map(lambda(x): max(0,x), d[k])
+            eabs = [e * a for e,a in izip(d['Eabs'],d['area'])]
+            einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
+            eincsup = [esup * a for esup,a in izip(d['Ei_sup'],d['area'])]
+            eincinf = [einf * a for einf,a in izip(d['Ei_inf'],d['area'])]
+         
+            godict = {'Eabs': eabs, 'Einc': einc, 'EincSup': eincsup, 'EincInf': eincinf, 
+                      'Area': d['area'],
+                      'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
+                      'label': d['label']} 
+          
+            return godict
+
+        from alinea.caribu.caribu import vcaribu
+        
         scene = None
         lightsources = None
         pattern = None
@@ -470,6 +459,17 @@ Scene:
         return a dict of dict, firts key being the variable name, second key being the id
         
         """
+        def _agregate(values,indices,fun = sum):
+            """ performss aggregation of outputs along indices """
+            from itertools import groupby, izip
+            ag = {}
+            for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
+                vals = [elt[1] for elt in group]
+                try:
+                    ag[key] = fun(vals)
+                except TypeError:
+                    ag[key] = vals[0]
+            return ag
         
         # aggregation uses internal ids as unicity of scene_labels is not guarantee (eg if several scenes have been mixed)
         if aggregate:
@@ -488,14 +488,6 @@ Scene:
                 res[var] = dict([(k,(res[var])[v]) for k,v in mapid.items()])
         
         return(res)
-
-
-def runCaribu(caribuscene, direct = True, nz =10,dz=1,ds=0.5):
-    """functional interface to Caribu    
-    """
-    caribuscene.run(direct,nz,dz,ds)
-    return caribuscene
-
 
 
 def newObjCaribuScene(scene_obj=None,ligth_string=None,pattern_tuple=None,opt_string=None,waveLength=None):

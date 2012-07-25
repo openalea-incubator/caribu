@@ -17,8 +17,8 @@ def newCaribuScene(scene,light,pattern,opt):
     return cs, mapid
 docadd = '\n\nreturn a caribuscene object and a map of primitiveid-> caribu internal ids\n'
 newCaribuScene.__doc__ = ''.join([cdoc.__init__.__doc__,docadd])
-    
-    
+
+   
 def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):    
     if copyscene:
         cs = copy(caribuscene)
@@ -43,17 +43,18 @@ def addSoil(caribuscene, zsoil, copyscene):
 addSoil.__doc__ = cdoc.addSoil.__doc__
  
  
-def WriteCan(caribuscene, filename):    caribuscene.writeCan(filename)
+def WriteCan(caribuscene, filename):    
+    caribuscene.writeCan(filename)
     return filename
 WriteCan.__doc__ = cdoc.writeCan.__doc__
     
     
 def output_by_id(caribuscene,mapid,aggregate):
-    return caribuscene.output_by_id(mapid,aggregate),
+    return caribuscene.output_by_id(mapid,aggregate)
 output_by_id.__doc__ = cdoc.output_by_id.__doc__
 
 
-def runCaribu(caribuscene, direct, nz, dz, ds, copyscene):
+def runCaribu(caribuscene, direct, scatterOpt, copyscene):
     """functional interface to Caribu    
     """
     
@@ -62,8 +63,10 @@ def runCaribu(caribuscene, direct, nz, dz, ds, copyscene):
     else:
         cs = caribuscene
      
-    cs.run(direct,nz,dz,ds)
-    return cs
+    nz,dz,ds = scatterOpt['Nz'], scatterOpt['Zmax'], scatterOpt['SphereDiameter']
+    cs.runCaribu(direct,nz,dz,ds)
+    
+    return cs,cs.output
 
 
 
@@ -77,14 +80,16 @@ def getIncidentEnergy(caribuscene):
         """    
         return caribuscene.getIncidentEnergy()
 
-# Deprecated / future deprecated nodes
+# future deprecated nodes
 
 def newFileCaribuScene(scene,light,pattern,opt):
     """ Warning !!! This node is deprecated and will be removed in future versions, use CaribuScene instead."""
     print('Warning !!! FileCaribuScene is deprecated and will be removed in future versions, use CaribuScene instead')
     cs,mapid=newCaribuScene(scene,light,pattern,opt)
-    return cs
+    return cs,mapid
     
+#deprecated nodes (used to inform user of alternatives)
+
 def GenOutput(etri,eabs):
     """ This is a deprecated node, not functional anymore"""
     raise CaribuSceneDeprecatedError('This node is deprecated, use vcaribu/caribu interfaces to Canestra')
