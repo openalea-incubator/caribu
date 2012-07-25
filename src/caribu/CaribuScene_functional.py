@@ -8,28 +8,18 @@ from CaribuScene import CaribuScene, CaribuSceneError
 
 class CaribuSceneDeprecatedError(CaribuSceneError): pass
 
+#caribuscene instance used to access doc strings of class methods
+cdoc = CaribuScene()
+
 def newCaribuScene(scene,light,pattern,opt):
-    """ Create and Initialise a Caribu Scene object.
-        scene is a filename (*.can), a string (can file format) or a PlantGl scene/shape
-        ligth is a filename (*.light), a string (light file format) or a (list of) tuple (Energy, (direction_x, direction_y, direction_z))
-        pattern is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
-        opt is a filename (*.opt) or a string (opt file format)
-        
-        File format specifications are in data/CanestraDoc.pdf
-    
-        return a caribuscene object and a map of primitiveid-> caribu internal ids
-        
-    """
     cs = CaribuScene(scene=scene, light=light, pattern=pattern, opt=opt)
     mapid = dict(zip(cs.scene_labels,cs.scene_ids))
     return cs, mapid
-   
+docadd = '\n\nreturn a caribuscene object and a map of primitiveid-> caribu internal ids\n'
+newCaribuScene.__doc__ = ''.join([cdoc.__init__.__doc__,docadd])
     
-def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):
-    """Add shapes to scene and return a map of shapes id to carbu internal ids.
-   
-    """
     
+def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):    
     if copyscene:
         cs = copy(caribuscene)
     else:
@@ -38,10 +28,10 @@ def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):
     mid=cs.add_Shapes(shapes,tesselator,canlabels)
     
     return cs,mid 
-
-def addSoil(caribuscene, zsoil, copyscene):
-    """ Add Soil to Caribu scene. Soil dimension is taken from pattern """
+addShapes.__doc__ = cdoc.add_Shapes.__doc__
     
+    
+def addSoil(caribuscene, zsoil, copyscene):
     if copyscene:
         cs = copy(caribuscene)
     else:
@@ -50,14 +40,17 @@ def addSoil(caribuscene, zsoil, copyscene):
     mid = cs.addSoil(zsoil)
     
     return cs,mid
-    
-def WriteCan(caribuscene, filename):
-    """  write the scene in a file (can format).""" 
-    caribuscene.writeCan(filename)
+addSoil.__doc__ = cdoc.addSoil.__doc__
+ 
+ 
+def WriteCan(caribuscene, filename):    caribuscene.writeCan(filename)
     return filename
+WriteCan.__doc__ = cdoc.writeCan.__doc__
     
-def getOutput(caribuscene,var,aggregate):
-    return caribuscene.getOutput(var,aggregate),
+    
+def output_by_id(caribuscene,mapid,aggregate):
+    return caribuscene.output_by_id(mapid,aggregate),
+output_by_id.__doc__ = cdoc.output_by_id.__doc__
 
 
 def runCaribu(caribuscene, direct, nz, dz, ds, copyscene):

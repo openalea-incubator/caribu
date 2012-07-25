@@ -118,7 +118,7 @@ class CaribuScene(object):
         pattern is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
         opt is a filename (*.opt) or a string (opt file format)
         
-        File format specifications are in data file CanestraDoc.pdf (shipped with caribu module)
+        File format specifications are in data/CanestraDoc.pdf
         """
         self.hasScene = False
         self.scene = ""
@@ -463,10 +463,11 @@ Scene:
     
         self.output = _output_dict(vcout)
         
-    def getOutput(self,mapid = None,aggregate = True):
-        """ Return outputs and do agregation
+    def output_by_id(self,mapid = None,aggregate = True):
+        """ Group outputs by scene ids and aggregate results if asked to.
         mapid is a dict of external_id -> caribu internal id. If given, the results are aggregated using external ids
-        return a dict of dict, firts key being the variable naame, second key being the id
+        if aggregate is True, one scalar is return by id (sum or weighted mean), otherwise the list of value of all triangles of the primitive is returned
+        return a dict of dict, firts key being the variable name, second key being the id
         
         """
         
@@ -487,11 +488,6 @@ Scene:
                 res[var] = dict([(k,(res[var])[v]) for k,v in mapid.items()])
         
         return(res)
-
-        
-
-def getOutput(caribuscene,mapid,aggregate):
-    return caribuscene.getOutput(mapid,aggregate)
 
 
 def runCaribu(caribuscene, direct = True, nz =10,dz=1,ds=0.5):

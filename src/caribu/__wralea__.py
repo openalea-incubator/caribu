@@ -17,7 +17,7 @@ __institutes__ = 'INRA'
 __icon__ = 'Caribou.png'
 
 
-__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', 'CaribuScene_functional_newFileCaribuScene', 'reduceDict_reduceDict', 'CaribuScene_getOutput', 'vcaribu_adaptor_vcaribu_adaptor', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_runCaribu', 'CaribuScene_functional_newCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'label_decode_label', 'CaribuScene_functional_WriteCan', 'CaribuScene_newObjCaribuScene', '_135367824', 'Periodise_Periodise', 'vcaributest2', 'Canestra_Canestra', 'CaribuScene_functional_addShapes', 'mtg_to_canestra', '_135367600', 'CaribuZenithPar', 'CaribuScene_functional_GenOutput', 'label_encode_label', 'caribu_vcaribu', 'mydict_mydict', 'CaribuScene_functional_addSoil', 'Caribu', 'ScatteringOptions_ScatteringOptions', '_135368464', 'selectOutput_selectOutput', 'PARsums', 'Tutorial', 'debug', 'lightString_lightString']
+__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', 'CaribuScene_functional_newFileCaribuScene', 'reduceDict_reduceDict', 'vcaribu_adaptor_vcaribu_adaptor', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_runCaribu', 'CaribuScene_functional_newCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'label_decode_label', 'CaribuScene_functional_WriteCan', 'CaribuScene_newObjCaribuScene', '_135367824', 'Periodise_Periodise', 'vcaributest2', 'Canestra_Canestra', 'CaribuScene_functional_addShapes', 'mtg_to_canestra', '_135367600', 'CaribuZenithPar', 'CaribuScene_functional_GenOutput', 'label_encode_label', 'caribu_vcaribu', 'mydict_mydict', 'CaribuScene_functional_addSoil', 'Caribu', 'ScatteringOptions_ScatteringOptions', '_135368464', 'selectOutput_selectOutput', 'PARsums', 'Tutorial', 'debug', 'lightString_lightString']
 
 
 
@@ -220,18 +220,19 @@ reduceDict_reduceDict = Factory(name='reduceDict',
 
 
 
-CaribuScene_getOutput = Factory(name='getOutput',
-                authors='M. Chelle,C. Fournier (wralea authors)',
-                description='',
-                category='Unclassified',
-                nodemodule='CaribuScene',
-                nodeclass='getOutput',
-                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': None, 'name': 'user_id -> caribu_id dict', 'value': None, 'desc': 'if given uses user id instead of caribu internal id as a key'}, {'interface': IBool, 'name': 'aggregate', 'value': True, 'desc': 'should results (one per triangle) be aggregated by objects ?'}],
+CaribuScene_functional_output_by_id = Factory(name='Output by id',
+                authors='C. Fournier',
+                category='io',
+                nodemodule='CaribuScene_functional',
+                nodeclass='output_by_id',
+                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''},
+                        {'interface': None, 'name': 'user_id -> caribu_id dict', 'value': None, 'desc': 'if given uses user id instead of caribu internal id as a key'},
+                        {'interface': IBool, 'name': 'aggregate', 'value': True, 'desc': 'should results (one per triangle) be aggregated by objects ?'}],
                 outputs=[{'interface': IDict, 'name': 'Output dict', 'desc': 'keys:can_id,values = variable'}],
                 widgetmodule=None,
                 widgetclass=None,
                )
-
+__all__.append('CaribuScene_functional_output_by_id')
 
 
 
