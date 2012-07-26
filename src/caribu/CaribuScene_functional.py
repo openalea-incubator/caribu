@@ -56,7 +56,9 @@ output_by_id.__doc__ = cdoc.output_by_id.__doc__
 
 
 def runCaribu(caribuscene, direct, scatterOpt, infinity, copyscene):
-    """functional interface to Caribu    
+    """High level interface to Caribu script
+        Caribu implements the nested radiosity model
+        returns updated caribuscene and the results for the first wavelength computed
     """
     
     if copyscene:
