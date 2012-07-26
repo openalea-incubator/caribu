@@ -9,7 +9,7 @@ class CaribuScene(object):
     
     def __init__(self, scene=None, light=None, pattern=None, opt=None, waveLength ='defaultPO'):
         """ Initialise a Caribu Scene object.
-        scene is a filename (*.can), a string (can file format) or a PlantGl scene/shape
+        scene is a filename (*.can), a string (can file format), a (list of) PlantGl shape(s) with ids or an object with a 'to_canestra' method (generating a string in can format)
         ligth is a filename (*.light), a string (light file format) or a (list of) tuple (Energy, (vx, vy, vz))
         pattern is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
         opt is a filename (*.opt) or a string (opt file format)
@@ -36,7 +36,10 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.cid = 1#internal id to be given to the next primitive
 
         if scene is not None:
-            if os.path.isfile(str(scene)):
+            if hasattr(scene,'to_canestra'):
+                canstring = scene.to_canestra()
+                self.addCan(canstring)
+            elif os.path.isfile(str(scene)):
                 fin = open(scene)
                 canstring = fin.read()
                 fin.close()
