@@ -3,7 +3,7 @@ class CaribuSceneError(Exception): pass
 
 class CaribuScene(object):
     """  Handles CaribuScene """
-    # Contient le texte des fichiers necessaires a canestra ou produit par lui (scene, 8, opt, ligtht, FF)
+    # Contient le texte des fichiers necessaires a canestra ou produit par lui (scene, 8, opt, ligtht)
     #Contient les methode pou les brique caribu, l'extraction de donnees et la conversion vers plantGL pour visualisation
 
     
@@ -81,8 +81,6 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             elif isinstance(opt,str):
                 self.setOptical(opt,waveLength)
         
-        self.hasFF = False
-        self.FF = "NoFF"
         self.output = {}
     
     def resetScene(self):
@@ -279,19 +277,6 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         lines = map(_lightString,sources)
         self.addSources_from_string(''.join(lines))
 
-    def setFF(self,FF_string):
-        """  Set Form factor matrix """
-        self.FF = FF_string
-        self.hasFF = True
-
-    def setFF(self,FFfile):
-        """  Set form factors from ff file """
-        if os.path.isfile(FFfile):
-            fin = open(FFfile)
-            self.FF = fin.read()
-            self.hasFF = True
-            fin.close()
-
 
     def writeCan(self,canfile):
         """  write the scene in a file (can format) """ 
@@ -374,13 +359,6 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         fout.write(self.sources)
         fout.close()
 
-    def writeFF(self,FFfile):
-        """  write a FFfile of the scene """ 
-        if not self.hasFF:
-            print "!!!Warning!!! CaribuScene has no FormFactor yet !"
-        fout = open(FFfile,"w")
-        fout.write(self.FF)
-        fout.close()
     
     def __str__(self):
         s = """
@@ -391,7 +369,7 @@ Current Wavelength : %s
 PO:
 %s
 
-has FF: %s
+
 Light Sources:
 %s
 Scene:
@@ -399,7 +377,6 @@ Scene:
 """%(self.pattern,
     self.wavelength,
     self.PO,
-     str(self.hasFF),
     '\n'.join(self.sources.splitlines()[0:5])+'...',
      '\n'.join(self.scene.splitlines()[0:7])+'...')
         return s
