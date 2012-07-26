@@ -79,6 +79,7 @@ class Caribu(object):
                  patternfile = None,
                  optnames = None,
                  direct = True,
+                 infinitise = True,
                  nb_layers = None,
                  can_height = None,
                  sphere_diameter = -1,
@@ -93,8 +94,9 @@ class Caribu(object):
         skyfile: file/file content containing all the light description
         optfiles: list of files/files contents defining optical property
         optnames: list of name to be used as keys for output dict (if None use the name of the opt files or the generic names band0,band1 if optfiles are given as content)
-        patternfile: file/file content that defines a domain to till the scene. Consider a toric canopy if pattern is not None
+        patternfile: file/file content that defines a domain to till the scene. 
         direct: consider only direct projection
+        infinitise: Consider a toric canopy (infinite). Needs a pattern to take effet
         nb_layers: number of layers to be consider for the scene
         can_height: height of the can scene
         sphere_diameter: used for the radiosity
@@ -114,15 +116,14 @@ class Caribu(object):
         self.scene = canfile
         self.sky = skyfile
         self.opticals = optfiles
+        self.pattern = patternfile
 
         # User options
         self.optnames = optnames
         self.resdir = resdir
         self.resfile = resfile
-         # consider a toric canopy
-        self.pattern = patternfile
-        self.infinity = None
         
+        self.infinity = infinitise #consider toric canopy       
         self.form_factor = None
         self.direct = direct           # direct light only
         self.nb_layers = nb_layers     # grid turbid medium
@@ -182,27 +183,25 @@ class Caribu(object):
 
     def init(self):
         if self.scene == None or self.sky==None or self.opticals== None or self.opticals==[] :
-            raise CaribuOptionError(">>> Caribu has not been fully initialized: scene, sky, and opticals have to be defined\n     =>  Caribu can not be run... - MC09")
+            raise CaribuOptionError("Caribu has not been fully initialized: scene, sky, and opticals have to be defined\n     =>  Caribu can not be run... - MC09")
         
-        if self.pattern == None:
-            self.infinity = False
-            print ">>> pattern not specified => computations done on a NON toric scene"
-        else:
-            self.infinity = True
             
-        # print "infty, pattern", self.infinity, self.pattern    
+        #print "infty, pattern", self.infinity, self.pattern    
             
         if not self.direct: 
             if  self.sphere_diameter < 0 :
                 # Compute classic radioity without toric scene
-                self.pattern = None
-                self.infinity = False
-                print ">>> sphere_diameter < 0 => classic radiosity called on a NON toric scene"
+                if self.infinity:
+                    raise CaribuOptionError("incompatible options for radiosity : sphere_diameter < 0 && infinity")
             else:   ## diameter >=0 
                 # consider a toric canopy
                 if not self.infinity :   
-                    raise CaribuOptionError(">>> incompatible options for nested radiosity: pattern==None (not infinity) &&  sphere_diameter >= 0 ")
-                
+                    raise CaribuOptionError("incompatible options for nested radiosity: no infinity &&  sphere_diameter >= 0 ")
+
+        if self.pattern == None and self.infinity:
+            raise CaribuOptionError('pattern not specified => Caribu canot infinitise the scene')
+                    
+                    
         self.form_factor=True        
         # self.canestra_1st = True # Boolean that indicates the first or not times, canestra is called thus form factors computed...
 
@@ -339,9 +338,14 @@ class Caribu(object):
         if self.my_dbg:
             print "\n >>>> Caribu.run() starts...\n"
         self.init()
-        self.periodise()
-        self.s2v()
-        self.radiative_transfer()
+        if self.infinity:
+            self.periodise()
+        if self.infinity and not self.direct:
+            self.s2v()
+            for opt in self.opticals:
+                self.mcsail(opt)
+        for opt in self.opticals:
+            self.canestra(opt)
         if self.resfile is not None:
             import pickle 
             file = open(self.resfile, 'w') 
@@ -358,71 +362,59 @@ class Caribu(object):
 
 
     def periodise(self):
-        if self.infinity:
-            d = self.tempdir
-            name, ext = self.scene.splitext()
-            outscene = name + '_8' + ext
-            cmd = '%s -m %s -8 %s -o %s '%(self.periodise_name,self.scene, self.pattern, outscene)
-            print ">>> periodise() : ",cmd
-            status = _process(cmd, d, d/"periodise.log")
-            if (d/outscene).exists():
-                self.scene = outscene
-            else:
-                f = open(d/"periodise.log")
-                msg = f.readlines()
-                f.close()
-                print(">>>  periodise has not finished properly => STOP")
-                raise CaribuRunError(''.join(msg))
+        d = self.tempdir
+        name, ext = self.scene.splitext()
+        outscene = name + '_8' + ext
+        cmd = '%s -m %s -8 %s -o %s '%(self.periodise_name,self.scene, self.pattern, outscene)
+        print ">>> periodise() : ",cmd
+        status = _process(cmd, d, d/"periodise.log")
+        if (d/outscene).exists():
+            self.scene = outscene
+        else:
+            f = open(d/"periodise.log")
+            msg = f.readlines()
+            f.close()
+            print(">>>  periodise has not finished properly => STOP")
+            raise CaribuRunError(''.join(msg))
 
 
-    def s2v(self):
-        if self.infinity and not self.direct:
-            d = self.tempdir
-            wavelength = ' '.join([fn.stripext() for fn in self.opticals])
-            cmd = "%s %s %d %f %s "%(self.s2v_name,self.scene, self.nb_layers, self.can_height, self.pattern) + wavelength
-            print ">>> s2v() : ",cmd
-            status = _process(cmd, d, d/"s2v.log")
-            # Raise an exception if s2v crashed...
-            leafarea= d/'leafarea'
-            if not leafarea.exists():
-                f = open(d/"s2v.log")
-                msg = f.readlines()
-                f.close()
-                print(">>>  s2v has not finished properly => STOP")
-                raise CaribuRunError(''.join(msg))
-     
-
-    def radiative_transfer(self):
-        # optics = [fn.stripext() for fn in self.opticals]
-        # for opt in optics:
-        print ">> radiative_transfer() :"
-        for opt in self.opticals:
-            self.mcsail(opt)
-            self.canestra(opt)
+    def s2v(self):    
+        d = self.tempdir
+        wavelength = ' '.join([fn.stripext() for fn in self.opticals])
+        cmd = "%s %s %d %f %s "%(self.s2v_name,self.scene, self.nb_layers, self.can_height, self.pattern) + wavelength
+        print ">>> s2v() : ",cmd
+        status = _process(cmd, d, d/"s2v.log")
+        # Raise an exception if s2v crashed...
+        leafarea= d/'leafarea'
+        if not leafarea.exists():
+            f = open(d/"s2v.log")
+            msg = f.readlines()
+            f.close()
+            print(">>>  s2v has not finished properly => STOP")
+            raise CaribuRunError(''.join(msg))
+ 
 
     def mcsail(self, opt):
-        if self.infinity and not self.direct:
-            d = self.tempdir
-            optname, ext = path(opt.basename()).splitext()
-            d = self.tempdir
-            (d/optname+'.spec').copy(d/'spectral')
-                
-            cmd = "%s %s "%(self.sail_name,self.sky)
-       
-            print ">>> mcsail(): ",cmd
-            logfile = "sail-%s.log"%(optname)
-            logfile = d/logfile
-            status = _process(cmd, d, logfile)
+        d = self.tempdir
+        optname, ext = path(opt.basename()).splitext()
+        (d/optname+'.spec').copy(d/'spectral')
             
-            mcsailenv = d/'mlsail.env'
-            if mcsailenv.exists():
-                mcsailenv.move(d/optname + '.env')
-            else:
-                f = open(logfile   )
-                msg = f.readlines()
-                f.close()
-                print(">>>  mcsail has not finished properly => STOP")
-                raise CaribuRunError(''.join(msg))
+        cmd = "%s %s "%(self.sail_name,self.sky)
+   
+        print ">>> mcsail(): ",cmd
+        logfile = "sail-%s.log"%(optname)
+        logfile = d/logfile
+        status = _process(cmd, d, logfile)
+        
+        mcsailenv = d/'mlsail.env'
+        if mcsailenv.exists():
+            mcsailenv.move(d/optname + '.env')
+        else:
+            f = open(logfile   )
+            msg = f.readlines()
+            f.close()
+            print(">>>  mcsail has not finished properly => STOP")
+            raise CaribuRunError(''.join(msg))
                 
 
     def canestra(self, opt):
@@ -500,6 +492,9 @@ def vcaribu(canopy, lightsource, optics, pattern, options):
         #--scatter
         if '1st' in options.keys():
             sim.direct= options['1st']
+        #--infinity
+        if 'infinity' in options.keys():
+            sim.infinity = options['infinity']
         #--nb_layers
         if 'Nz' in options.keys():
             sim.nb_layers =  options['Nz'] 
@@ -530,7 +525,7 @@ def caribu_test(cas,debug = False):
     print scene.splitext()
     sim=Caribu(canfile=d/'data/filterT.can', skyfile=d/'data/zenith.light', optfiles=[d/'data/par.opt', d/'data/nir.opt'],debug=debug)
 
-    sim.infinity = False       # consider a toric canopy
+    sim.infinity = True       # consider a toric canopy
     sim.direct = True           # direct light only
     sim.nb_layers = None
     sim.can_height = None
@@ -540,12 +535,14 @@ def caribu_test(cas,debug = False):
     
     if cas ==1:
         # Case 1: projection on non toric scene
+        sim.infinity = False
         pass
     elif cas ==2:
         # Case 2: projection on  toric scene
         sim.pattern = d/"data/filter.8"
     elif cas == 3:
         # Case 3: classic radiosity on  non toric scene
+        sim.infinity = False
         sim.direct = False           # NOT direct light only
         sim.sphere_diameter = -1 # classic radiosity
     elif cas == 4:

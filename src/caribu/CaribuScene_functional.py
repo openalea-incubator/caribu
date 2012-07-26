@@ -55,7 +55,7 @@ def output_by_id(caribuscene,mapid,aggregate):
 output_by_id.__doc__ = cdoc.output_by_id.__doc__
 
 
-def runCaribu(caribuscene, direct, scatterOpt, copyscene):
+def runCaribu(caribuscene, direct, scatterOpt, infinity, copyscene):
     """functional interface to Caribu    
     """
     
@@ -65,7 +65,7 @@ def runCaribu(caribuscene, direct, scatterOpt, copyscene):
         cs = caribuscene
      
     nz,dz,ds = scatterOpt['Nz'], scatterOpt['Zmax'], scatterOpt['SphereDiameter']
-    cs.runCaribu(direct,nz,dz,ds)
+    cs.runCaribu(direct,nz,dz,ds,infinity)
     
     return cs,cs.output
 

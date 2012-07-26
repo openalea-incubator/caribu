@@ -404,7 +404,7 @@ Scene:
      '\n'.join(self.scene.splitlines()[0:7])+'...')
         return s
     
-    def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5):
+    def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5, infinity = True):
         """ Call Caribu and store relsults"""
         def _nan_to_zero(x):
             try:
@@ -446,7 +446,7 @@ Scene:
         opticals = self.PO
         if self.hasPattern:
             pattern = self.pattern
-        optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'wavelength':self.wavelength}
+        optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'infinity': infinity, 'wavelength':self.wavelength}
    
         vcout,status = vcaribu(scene, lightsources, opticals, pattern, optiondict)
     
