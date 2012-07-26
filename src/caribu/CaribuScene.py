@@ -470,8 +470,6 @@ Scene:
         return(res)
 
 
-def newObjCaribuScene(scene_obj=None,ligth_string=None,pattern_tuple=None,opt_string=None,waveLength=None):
-    return CaribuScene(scene_obj,ligth_string,pattern_tuple,opt_string,waveLength)
 
 def getIncidentEnergy(caribu_scene):
     return caribu_scene.getIncidentEnergy()

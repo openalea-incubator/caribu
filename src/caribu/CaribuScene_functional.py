@@ -70,24 +70,30 @@ def runCaribu(caribuscene, direct, scatterOpt, infinity, copyscene):
     return cs,cs.output
 
 
-
 def getIncidentEnergy(caribuscene):
-        """ Compute Qi, Qem, Einc on the scene given current light sources.
-
-        Qi is the incident light flux received on an horizontal surface (per scene unit area)
-        Qem is the sum of light fluxes emitted by sources in a plane perpendicular to their direction of emmission (per scene unit area)
-        Einc is the total incident energy received on the domain (Einc = Qi * domain_area), or None if pattern is not set
-
-        """    
         return caribuscene.getIncidentEnergy()
+getIncidentEnergy.__doc__ = cdoc.getIncidentEnergy.__doc__
 
 # future deprecated nodes
 
 def newFileCaribuScene(scene,light,pattern,opt):
-    """ Warning !!! This node is deprecated and will be removed in future versions, use CaribuScene instead."""
+    """ This node is deprecated and will be removed in future versions, use CaribuScene instead."""
     print('Warning !!! FileCaribuScene is deprecated and will be removed in future versions, use CaribuScene instead')
     cs,mapid=newCaribuScene(scene,light,pattern,opt)
     return cs,mapid
+
+def newObjCaribuScene(scene,ligth,pattern,opt,waveLength):
+    """ This node is deprecated and will be removed in future versions, use CaribuScene instead."""
+    print('Warning !!! ObjCaribuScene is deprecated and will be removed in future versions, use CaribuScene instead')
+    cs,mapid=newCaribuScene(scene,light,pattern,opt)
+    cs.wavelength = waveLength
+    return cs,mapid
+
+def getEi(cs):
+    """ This node is deprecated and will be removed in future versions, use getIncidentEnergy instead."""
+    print('Warning !!! getEi is deprecated and will be removed in future versions, use getIncidentEnergy instead')
+    qi,qe,ei = cs.getIncidentEnergy()
+    return qi
     
 #deprecated nodes (used to inform user of alternatives)
 
