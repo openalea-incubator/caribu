@@ -17,7 +17,7 @@ __institutes__ = 'INRA'
 __icon__ = 'Caribou.png'
 
 
-__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'vcaribuOut_adaptor_vcaribuOut_adaptor', 'CaribuScene_functional_newFileCaribuScene', 'reduceDict_reduceDict', 'vcaribu_adaptor_vcaribu_adaptor', '_130521104', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_functional_newCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', '_130522256', 'label_decode_label', 'CaribuScene_functional_WriteCan', 'CaribuScene_newObjCaribuScene', 'Periodise_Periodise', 'vcaributest2', 'Canestra_Canestra', 'CaribuScene_functional_addShapes', 'mtg_to_canestra', 'CaribuZenithPar', 'CaribuScene_functional_GenOutput', 'label_encode_label', 'CaribuScene_functional_runCaribu', 'caribu_vcaribu', '_130521648', 'mydict_mydict', 'CaribuScene_functional_addSoil', 'ScatteringOptions_ScatteringOptions', 'CaribuScene_functional_output_by_id', 'selectOutput_selectOutput', 'PARsums', 'Tutorial', 'debug', 'lightString_lightString']
+__all__ = ['LIE', 'CaribuScene_getIncidentEnergy', 'CaribuScene_functional_newFileCaribuScene', 'reduceDict_reduceDict', '_130521104', 'MCSail_MCSail', 'S2v_S2v', 'CaribuScene_functional_newCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', '_130522256', 'label_decode_label', 'CaribuScene_functional_WriteCan', 'CaribuScene_newObjCaribuScene', 'Periodise_Periodise', 'vcaributest2', 'Canestra_Canestra', 'CaribuScene_functional_addShapes', 'mtg_to_canestra', 'CaribuZenithPar', 'CaribuScene_functional_GenOutput', 'label_encode_label', 'CaribuScene_functional_runCaribu', 'caribu_vcaribu', '_130521648', 'mydict_mydict', 'CaribuScene_functional_addSoil', 'CaribuScene_functional_output_by_id', 'selectOutput_selectOutput', 'PARsums', 'Tutorial', 'debug', 'lightString_lightString']
 
 
 
@@ -175,20 +175,6 @@ CaribuScene_getIncidentEnergy = Factory(name='get Ei',
 
 
 
-vcaribuOut_adaptor_vcaribuOut_adaptor = Factory(name='vcaribuOut adaptor',
-                authors='M. Chelle,C. Fournier (wralea authors)',
-                description='adaptor from vcaribu nrj dict to genout like dict',
-                category='data i/o',
-                nodemodule='vcaribuOut_adaptor',
-                nodeclass='vcaribuOut_adaptor',
-                inputs=[{'interface': None, 'name': 'irradiance dict', 'value': None, 'desc': ''}],
-                outputs=[{'interface': None, 'name': 'genout dict', 'desc': ''}],
-                widgetmodule=None,
-                widgetclass=None,
-               )
-
-
-
 
 CaribuScene_functional_newFileCaribuScene = Factory(name='FileCaribuScene',
                 authors='C. Fournier',
@@ -217,20 +203,6 @@ reduceDict_reduceDict = Factory(name='reduceDict',
                 widgetclass=None,
                )
 
-
-
-
-vcaribu_adaptor_vcaribu_adaptor = Factory(name='vcaribu adaptor',
-                authors='M. Chelle,C. Fournier (wralea authors)',
-                description='Adaptor to make vcaribu compatible with caribuScene and Scattering options nodes',
-                category='data i/o',
-                nodemodule='vcaribu_adaptor',
-                nodeclass='vcaribu_adaptor',
-                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IBool, 'name': 'Direct', 'value': None, 'desc': ''}, {'interface': None, 'name': 'Nz', 'value': None, 'desc': ''}, {'interface': None, 'name': 'dz', 'value': None, 'desc': ''}, {'interface': None, 'name': 'DS', 'value': None, 'desc': ''}],
-                outputs=[{'interface': None, 'name': 'Scene', 'desc': ''}, {'interface': None, 'name': 'lightsources', 'desc': ''}, {'interface': None, 'name': 'opticals', 'desc': ''}, {'interface': None, 'name': 'pattern', 'desc': ''}, {'interface': None, 'name': 'optionDict', 'desc': ''}],
-                widgetmodule=None,
-                widgetclass=None,
-               )
 
 
 
@@ -1830,22 +1802,6 @@ CaribuScene_functional_addSoil = Factory(name='addSoil',
                 widgetmodule=None,
                 widgetclass=None,
                )
-
-
-
-
-ScatteringOptions_ScatteringOptions = Factory(name='Scattering Options',
-                authors='M. Chelle,C. Fournier (wralea authors)',
-                description='handles multiple scattering options',
-                category='scene',
-                nodemodule='ScatteringOptions',
-                nodeclass='ScatteringOptions',
-                inputs=[{'interface': IBool, 'name': 'No Multiple Scaterring', 'value': True, 'desc': 'Turn off multiple scattering calculations'}, {'interface': IDict, 'name': 'Multiple scattering options :', 'value': {'SphereDiameter': 0.5, 'Nz': 5, 'Zmax': 2, 'keepFF': False}, 'desc': 'Dictionary of parameters for multiple scaterring'}],
-                outputs=[{'interface': IInt, 'name': 'Number of layers', 'desc': ''}, {'interface': IFloat, 'name': 'ZmaxLayer', 'desc': ''}, {'interface': IBool, 'name': 'Sleep!', 'desc': ''}, {'interface': IBool, 'name': 'No multiple scattering', 'desc': ''}, {'interface': IFloat, 'name': 'Sphere Diameter', 'desc': ''}, {'interface': IBool, 'name': 'keep FF in Scene', 'desc': ''}],
-                widgetmodule=None,
-                widgetclass=None,
-               )
-
 
 
 
