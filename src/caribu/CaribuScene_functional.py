@@ -20,12 +20,15 @@ docadd = '\n\nreturn a caribuscene object and a map of primitiveid-> caribu inte
 newCaribuScene.__doc__ = ''.join([cdoc.__init__.__doc__,docadd])
 
    
-def addShapes(caribuscene,shapes,tesselator, canlabels, copyscene):    
+def addShapes(caribuscene,shapes,tesselator, canlabels, autocan, copyscene):    
     if copyscene:
         cs = copy(caribuscene)
     else:
         cs = caribuscene
-        
+
+    if autocan:
+        canlabels = None
+     
     mid=cs.add_Shapes(shapes,tesselator,canlabels)
     
     return cs,mid 

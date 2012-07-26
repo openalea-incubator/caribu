@@ -176,6 +176,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
 
         
         def _canString_fromShape(shape,tesselator,label = '100001000001'):
+            import numpy as np
             shape.apply(tesselator)
             mesh = tesselator.triangulation
             pts = np.array(mesh.pointList, ndmin=2)
@@ -198,7 +199,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             shapes = [shapes]
         
         if not canlabels:
-            from label import encode_label
+            from alinea.caribu.label import encode_label
             canlabels = encode_label(minlength=len(shapes))
             
         canscene = []
