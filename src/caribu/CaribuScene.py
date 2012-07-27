@@ -478,6 +478,8 @@ Scene:
             if mapid is not None:# empty mapid (corrresponding to absence of a list of shapes in the scene) should pass otherwise all res is returned
                 for var in res.keys():
                     res[var] = dict([(k,(res[var])[v]) for k,v in mapid.items()])
+                if len(res[res.keys()[0]]) <= 0:#pas de res trouve pour les mapid en entree
+                    res={}
         
         return(res)
 
