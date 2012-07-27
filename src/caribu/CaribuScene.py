@@ -341,12 +341,10 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             
             Qi = sources.energy.sum()
             
-            k = np.array([0,0,1])
-            if sources.size <= 1:
-                proj = abs(k.dot(np.array([sources.vx,sources.vy,sources.vz])))
-            else:
-                proj = [abs(k.dot(np.array([sources.vx[i],sources.vy[i],sources.vz[i]]))) for i in range(sources.size)]
-            Qem = (sources.energy / proj).sum()
+            # costheta = k . direction, k etant le vecteur (0,0,1) et theta l'angle avec la verticale = abs(zdirection) / norm(direction)
+            norm = np.sqrt(sources.vx**2 + sources.vy**2 + sources.vz**2)
+            costheta = abs(sources.vz) / norm
+            Qem = (sources.energy / costheta).sum()
             
             if self.hasPattern:
                 domain = self.pattern_as_array()
@@ -470,8 +468,4 @@ Scene:
         
         return(res)
 
-
-
-def getIncidentEnergy(caribu_scene):
-    return caribu_scene.getIncidentEnergy()
 
