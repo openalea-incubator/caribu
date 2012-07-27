@@ -12,6 +12,13 @@ class CaribuSceneDeprecatedError(CaribuSceneError): pass
 #caribuscene instance used to access doc strings of class methods
 cdoc = CaribuScene()
 
+copyscenedoc = """
+
+Copy Scene option allows to work on a (deep) copy of the caribuscene given as input and avoids side effects, at the cost of memory space consumption.
+A common side effect is linked to the internal id numbering in caribuscenes.
+It can be check out in certain loops (where node are run only once) or in dataflow with well placed non lazy nodes.
+"""
+
 def newCaribuScene(scene,light,pattern,opt):
     cs = CaribuScene(scene=scene, light=light, pattern=pattern, opt=opt)
     mapid = dict(zip(cs.scene_labels,cs.scene_ids))
@@ -32,7 +39,7 @@ def addShapes(caribuscene,shapes,tesselator, canlabels, autocan, copyscene):
     mid=cs.add_Shapes(shapes,tesselator,canlabels)
     
     return cs,mid 
-addShapes.__doc__ = cdoc.add_Shapes.__doc__
+addShapes.__doc__ = ''.join([cdoc.add_Shapes.__doc__, copyscenedoc])
     
     
 def addSoil(caribuscene, zsoil, copyscene):
@@ -44,7 +51,7 @@ def addSoil(caribuscene, zsoil, copyscene):
     mid = cs.addSoil(zsoil)
     
     return cs,mid
-addSoil.__doc__ = cdoc.addSoil.__doc__
+addSoil.__doc__ = ''.join([cdoc.addSoil.__doc__, copyscenedoc])
  
  
 def WriteCan(caribuscene, filename):    
@@ -62,6 +69,7 @@ def runCaribu(caribuscene, direct, scatterOpt, infinity, copyscene):
     """High level interface to Caribu script
         Caribu implements the nested radiosity model
         returns updated caribuscene and the results for the first wavelength computed
+        copy scene allows to work on a deep copy of the input scene
     """
     
     if copyscene:

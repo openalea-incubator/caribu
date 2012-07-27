@@ -8,13 +8,21 @@ class CaribuScene(object):
 
     
     def __init__(self, scene=None, light=None, pattern=None, opt=None, waveLength ='defaultPO'):
-        """ Initialise a Caribu Scene object.
-        scene is a filename (*.can), a string (can file format), a (list of) PlantGl shape(s) with ids or an object with a 'to_canestra' method (generating a string in can format)
-        ligth is a filename (*.light), a string (light file format) or a (list of) tuple (Energy, (vx, vy, vz))
-        pattern is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
-        opt is a filename (*.opt) or a string (opt file format)
+        """Initialise a Caribu Scene object.
+        
+        :Optional parameters:
+        
+        - `scene` is a filename (*.can), a string (can file format), a (list of) PlantGl shape(s) with ids or an object with a 'to_canestra' method (generating a string in can format)
+        
+        - `ligth` is a filename (*.light), a string (light file format) or a (list of) tuple (Energy, (vx, vy, vz))
+        
+        - `pattern` is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
+        
+        - `opt` is a filename (*.opt) or a string (opt file format)
         
         File format specifications are in data/CanestraDoc.pdf
+
+
         """
         
         import os
