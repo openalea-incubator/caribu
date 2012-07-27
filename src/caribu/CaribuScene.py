@@ -383,8 +383,12 @@ Scene:
      '\n'.join(self.scene.splitlines()[0:7])+'...')
         return s
     
-    def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5, infinity = True):
-        """ Call Caribu and store relsults"""
+    
+    def get_caribu_output(self,vcdict):
+        """ Get and arrange output of caribu for use in CaribuScene. """
+                           
+        from itertools import izip
+        
         def _nan_to_zero(x):
             try:
                 from math import isnan
@@ -393,44 +397,49 @@ Scene:
                 def isnan(num):
                     return num != num         
             return(0 if isnan(x) else x)
-
-        def _output_dict(vcdict):
-            from itertools import izip
-            d = vcdict[vcdict.keys()[0]]['data']
-            for k in ('Eabs','Ei_inf','Ei_sup'):
-                d[k] = map(_nan_to_zero,d[k])
-                #filter negative values occuring in EiInf/EiSup
-                d[k] = map(lambda(x): max(0,x), d[k])
-            eabs = [e * a for e,a in izip(d['Eabs'],d['area'])]
-            einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
-            eincsup = [esup * a for esup,a in izip(d['Ei_sup'],d['area'])]
-            eincinf = [einf * a for einf,a in izip(d['Ei_inf'],d['area'])]
-         
-            godict = {'Eabs': eabs, 'Einc': einc, 'EincSup': eincsup, 'EincInf': eincinf, 
-                      'Area': d['area'],
-                      'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
-                      'label': d['label']} 
-          
-            return godict
-
-        from alinea.caribu.caribu import vcaribu
-        
-        scene = None
-        lightsources = None
-        pattern = None
-        if self.hasScene:    
-            scene = self.scene
-        if self.hasSources:
-            lightsources = self.sources
-        opticals = self.PO
-        if self.hasPattern:
-            pattern = self.pattern
-        optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'infinity': infinity, 'wavelength':self.wavelength}
-   
-        vcout,status = vcaribu(scene, lightsources, opticals, pattern, optiondict)
+            
+        d = vcdict[vcdict.keys()[0]]['data']
+        for k in ('Eabs','Ei_inf','Ei_sup'):
+            d[k] = map(_nan_to_zero,d[k])
+            #filter negative values occuring in EiInf/EiSup
+            d[k] = map(lambda(x): max(0,x), d[k])
+        eabs = [e * a for e,a in izip(d['Eabs'],d['area'])]
+        einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
+        eincsup = [esup * a for esup,a in izip(d['Ei_sup'],d['area'])]
+        eincinf = [einf * a for einf,a in izip(d['Ei_inf'],d['area'])]
+     
+        csdict = {'Eabs': eabs, 'Einc': einc, 'EincSup': eincsup, 'EincInf': eincinf, 
+                  'Area': d['area'],
+                  'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
+                  'label': d['label']} 
+        return csdict  
     
-        self.output = _output_dict(vcout)
+    def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5, infinity = True):
+        """ Call Caribu and store relsults"""
         
+        if len(self.scene_ids) <= 0: #scene is empty
+            self.output = {}
+        else:
+            from alinea.caribu.caribu import vcaribu            
+            scene = None
+            lightsources = None
+            pattern = None
+            if self.hasScene:    
+                scene = self.scene
+            if self.hasSources:
+                lightsources = self.sources
+            opticals = self.PO
+            if self.hasPattern:
+                pattern = self.pattern
+            optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'infinity': infinity, 'wavelength':self.wavelength}
+       
+            vcout,status = vcaribu(scene, lightsources, opticals, pattern, optiondict)
+        
+            self.output = self.get_caribu_output(vcout)
+    
+
+
+    
     def output_by_id(self,mapid = None,aggregate = True):
         """ Group outputs by scene ids and aggregate results if asked to.
         mapid is a dict of external_id -> caribu internal id. If given, the results are aggregated using external ids
@@ -438,33 +447,37 @@ Scene:
         return a dict of dict, firts key being the variable name, second key being the id
         
         """
-        def _agregate(values,indices,fun = sum):
-            """ performss aggregation of outputs along indices """
-            from itertools import groupby, izip
-            ag = {}
-            for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
-                vals = [elt[1] for elt in group]
-                try:
-                    ag[key] = fun(vals)
-                except TypeError:
-                    ag[key] = vals[0]
-            return ag
         
-        # aggregation uses internal ids as unicity of scene_labels is not guarantee (eg if several scenes have been mixed)
-        if aggregate:
-            #compute sums for area integrated variables
-            res = dict([(k, _agregate(self.output[k],self.scene_ids)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
-            # compute mean fluxes
-            res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) for k in res['Eabs'].iterkeys()])
-            res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) for k in res['EincInf'].iterkeys()])
-            res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) for k in res['EincSup'].iterkeys()])
-        else: 
-            res = dict([(k, _agregate(self.output[k],self.scene_ids,list)) for k in self.output.keys()])
+        res = {}
+        
+        if len(self.output) > 0:
+            def _agregate(values,indices,fun = sum):
+                """ performss aggregation of outputs along indices """
+                from itertools import groupby, izip
+                ag = {}
+                for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
+                    vals = [elt[1] for elt in group]
+                    try:
+                        ag[key] = fun(vals)
+                    except TypeError:
+                        ag[key] = vals[0]
+                return ag
             
-        #re-index results if mapid is given
-        if mapid:
-            for var in res.keys():
-                res[var] = dict([(k,(res[var])[v]) for k,v in mapid.items()])
+            # aggregation uses internal ids as unicity of scene_labels is not guarantee (eg if several scenes have been mixed)
+            if aggregate:
+                #compute sums for area integrated variables
+                res = dict([(k, _agregate(self.output[k],self.scene_ids)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
+                # compute mean fluxes
+                res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) for k in res['Eabs'].iterkeys()])
+                res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) for k in res['EincInf'].iterkeys()])
+                res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) for k in res['EincSup'].iterkeys()])
+            else: 
+                res = dict([(k, _agregate(self.output[k],self.scene_ids,list)) for k in self.output.keys()])
+                
+            #re-index results if mapid is given
+            if mapid is not None:# empty mapid (corrresponding to absence of a list of shapes in the scene) should pass otherwise all res is returned
+                for var in res.keys():
+                    res[var] = dict([(k,(res[var])[v]) for k,v in mapid.items()])
         
         return(res)
 
