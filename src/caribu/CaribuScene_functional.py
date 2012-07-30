@@ -14,9 +14,10 @@ cdoc = CaribuScene()
 
 copyscenedoc = """
 
-Copy Scene option allows to work on a (deep) copy of the caribuscene given as input and avoids side effects, at the cost of memory space consumption.
-A common side effect is linked to the internal id numbering in caribuscenes.
-It can be check out in certain loops (where node are run only once) or in dataflow with well placed non lazy nodes.
+Copy Scene allows to work on a copy of the input scene, avoiding side effects (recomended in visualea in interactive mode)
+Unchecking this option may significantly speed up computation, but requires great care in taking into acount side effects
+
+
 """
 
 def newCaribuScene(scene,light,pattern,opt):
@@ -26,6 +27,14 @@ def newCaribuScene(scene,light,pattern,opt):
 docadd = '\n\nreturn a caribuscene object and a map of primitiveid-> caribu internal ids\n'
 newCaribuScene.__doc__ = ''.join([cdoc.__init__.__doc__,docadd])
 
+def resetScene(caribuscene, copyscene):
+    if copyscene:
+        cs = copy(caribuscene)
+    else:
+        cs = caribuscene
+    cs.resetScene()
+    return cs
+resetScene.__doc__ = ''.join([cdoc.resetScene.__doc__, copyscenedoc])
    
 def addShapes(caribuscene,shapes,tesselator, canlabels, autocan, copyscene):    
     if copyscene:

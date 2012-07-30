@@ -95,13 +95,13 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.output = {}
     
     def resetScene(self):
-        """ Reset scene """
+        """ Reset scene and output (keep opt, pattern and sources)"""
         self.hasScene = False
         self.scene = ""
         self.scene_ids = []
         self.scene_labels = []
         self.cid = 1
-     
+        self.output = {}
     
     def addCan(self,canstring):
         """  Add primitives from can file string """
@@ -442,7 +442,7 @@ Scene:
             optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'infinity': infinity, 'wavelength':self.wavelength}
        
             vcout,status = vcaribu(scene, lightsources, opticals, pattern, optiondict)
-        
+        # to do : ne pas garder l'output mais le renvoyer, ainsi que l'aggregation avec les moyenne. output by id peut recalculer si besoin
             self.output = self.get_caribu_output(vcout)
     
 
@@ -476,9 +476,9 @@ Scene:
                 #compute sums for area integrated variables
                 res = dict([(k, _agregate(self.output[k],self.scene_ids)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
                 # compute mean fluxes
-                res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) for k in res['Eabs'].iterkeys()])
-                res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) for k in res['EincInf'].iterkeys()])
-                res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) for k in res['EincSup'].iterkeys()])
+                res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['Eabs'].iterkeys()  ])
+                res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['EincInf'].iterkeys()])
+                res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['EincSup'].iterkeys()])
             else: 
                 res = dict([(k, _agregate(self.output[k],self.scene_ids,list)) for k in self.output.keys()])
                 

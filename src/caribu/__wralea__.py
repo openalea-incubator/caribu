@@ -1232,6 +1232,19 @@ CaribuScene_functional_addShapes = Factory(name='addShapes',
                 widgetclass=None,
                )
 
+CaribuScene_functional_resetScene = Factory(name='resetScene',
+                authors='C. Fournier',
+                description='reset Scene/output of a CaribuScene object',
+                category='io',
+                nodemodule='CaribuScene_functional',
+                nodeclass='addShapes',
+                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''},
+                    {'interface': IBool, 'name': 'Copy Caribuscene', 'value': True, 'desc': ''}],
+                outputs=[{'interface': None, 'name': 'CaribuScene', 'desc': ''}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+__all__.append('CaribuScene_functional_resetScene')
 
 
 
@@ -1765,7 +1778,7 @@ CaribuScene_functional_addSoil = Factory(name='addSoil',
                 category='scene.ecophysiology',
                 nodemodule='CaribuScene_functional',
                 nodeclass='addSoil',
-                inputs=[{'interface': IData, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IFloat, 'name': 'altitude (z)', 'value': 0.0}, {'interface': IBool, 'name': 'Copy Caribuscene', 'value': True, 'desc': 'uncheck only if you know what you do (pass by reference)'}],
+                inputs=[{'interface': IData, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IFloat, 'name': 'altitude (z)', 'value': 0.0}, {'interface': IBool, 'name': 'Copy Caribuscene', 'value': True, 'desc': ''}],
                 outputs=[{'interface': IData, 'name': 'CaribuScene', 'desc': ''}, {'interface': IDict, 'name': 'Soil_id2Caribu_id', 'desc': 'mapping of soil id to internal caribu id'}],
                 widgetmodule=None,
                 widgetclass=None,
