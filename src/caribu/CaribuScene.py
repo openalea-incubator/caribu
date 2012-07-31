@@ -41,7 +41,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.scene = ""
         self.scene_labels = []#list of external identifier/canlabel of each triangle present in the scene
         self.scene_ids = []#list of internal ids, as long as scene, used to aggegate outputs by primitive
-        self.cid = 1#internal id to be given to the next primitive
+        self.pid = 1#internal pending id to be given to the next primitive
 
         if scene is not None:
             if hasattr(scene,'to_canestra'):
@@ -92,7 +92,6 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             elif isinstance(opt,str):
                 self.setOptical(opt,waveLength)
         
-        self.output = {}
     
     def resetScene(self):
         """ Reset scene and output (keep opt, pattern and sources)"""
@@ -100,8 +99,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.scene = ""
         self.scene_ids = []
         self.scene_labels = []
-        self.cid = 1
-        self.output = {}
+        self.pid = 1
     
     def addCan(self,canstring):
         """  Add primitives from can file string """
@@ -121,10 +119,10 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.scene += canstring
         self.hasScene = True
         labels = [res for res in (_getlabel(x) for x in canstring.splitlines()) if res]
-        labmap = dict([(k,i + self.cid) for i,k in enumerate(set(labels))])
+        labmap = dict([(k,i + self.pid) for i,k in enumerate(set(labels))])
         self.scene_labels.extend(labels)
         self.scene_ids.extend([labmap[k] for k in labels])
-        self.cid += len(labmap)
+        self.pid += len(labmap)
         return labmap
         
     def addSoil(self, zsoil = 0.):
@@ -164,13 +162,13 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
 
             label=["000000000000","000000000001"]
             canstring = "\n".join([_canString(range(3),(A,B,C),label[0]),_canString(range(3),(C,D,A),label[1])])
-            ids = [self.cid,self.cid + 1]
+            ids = [self.pid,self.pid + 1]
  
             self.scene += canstring
             self.scene_ids.extend(ids)
             self.scene_labels.extend(label)
             self.hasScene = True
-            self.cid += 2
+            self.pid += 2
         
         return dict(zip(label,ids))
         
@@ -218,10 +216,10 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         for i,shape in enumerate(shapes):
             canlines = _canString_fromShape(shape,tesselator,canlabels[i])
             canscene.extend(canlines)
-            idmap[shape.id] = self.cid 
-            ids.extend([self.cid] * len(canlines))
+            idmap[shape.id] = self.pid 
+            ids.extend([self.pid] * len(canlines))
             labels.extend([shape.id] * len(canlines))
-            self.cid += 1
+            self.pid += 1
         canstring = ''.join(canscene)
         
         self.scene += canstring
@@ -425,9 +423,8 @@ Scene:
     def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5, infinity = True):
         """ Call Caribu and store relsults"""
         
-        if len(self.scene_ids) <= 0: #scene is empty
-            self.output = {}
-        else:
+        output = {}
+        if len(self.scene_ids) > 0: #scene is not empty
             from alinea.caribu.caribu import vcaribu            
             scene = None
             lightsources = None
@@ -442,14 +439,14 @@ Scene:
             optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'infinity': infinity, 'wavelength':self.wavelength}
        
             vcout,status = vcaribu(scene, lightsources, opticals, pattern, optiondict)
-        # to do : ne pas garder l'output mais le renvoyer, ainsi que l'aggregation avec les moyenne. output by id peut recalculer si besoin
-            self.output = self.get_caribu_output(vcout)
-    
+            output = self.get_caribu_output(vcout)
+
+        return(output)
 
 
     
-    def output_by_id(self,mapid = None,aggregate = True):
-        """ Group outputs by scene ids and aggregate results if asked to.
+    def output_by_id(self, output, mapid = None,aggregate = True):
+        """ Group output by scene ids and aggregate results if asked to.
         mapid is a dict of external_id -> caribu internal id. If given, the results are aggregated using external ids
         if aggregate is True, one scalar is return by id (sum or weighted mean), otherwise the list of value of all triangles of the primitive is returned
         return a dict of dict, firts key being the variable name, second key being the id
@@ -458,7 +455,7 @@ Scene:
         
         res = {}
         
-        if len(self.output) > 0:
+        if len(output) > 0:
             def _agregate(values,indices,fun = sum):
                 """ performss aggregation of outputs along indices """
                 from itertools import groupby, izip
@@ -474,13 +471,13 @@ Scene:
             # aggregation uses internal ids as unicity of scene_labels is not guarantee (eg if several scenes have been mixed)
             if aggregate:
                 #compute sums for area integrated variables
-                res = dict([(k, _agregate(self.output[k],self.scene_ids)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
+                res = dict([(k, _agregate(output[k],self.scene_ids)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
                 # compute mean fluxes
                 res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['Eabs'].iterkeys()  ])
                 res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['EincInf'].iterkeys()])
                 res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['EincSup'].iterkeys()])
             else: 
-                res = dict([(k, _agregate(self.output[k],self.scene_ids,list)) for k in self.output.keys()])
+                res = dict([(k, _agregate(output[k],self.scene_ids,list)) for k in output.keys()])
                 
             #re-index results if mapid is given
             if mapid is not None:# empty mapid (corrresponding to absence of a list of shapes in the scene) should pass otherwise all res is returned

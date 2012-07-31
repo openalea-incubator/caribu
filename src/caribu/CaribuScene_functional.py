@@ -69,27 +69,22 @@ def WriteCan(caribuscene, filename):
 WriteCan.__doc__ = cdoc.writeCan.__doc__
     
     
-def output_by_id(caribuscene,mapid,aggregate):
-    return caribuscene.output_by_id(mapid,aggregate)
+def output_by_id(caribuscene,output,mapid,aggregate):
+    return caribuscene.output_by_id(output,mapid,aggregate)
 output_by_id.__doc__ = cdoc.output_by_id.__doc__
 
 
-def runCaribu(caribuscene, direct, scatterOpt, infinity, copyscene):
+def runCaribu(caribuscene, direct, scatterOpt, infinity):
     """High level interface to Caribu script
         Caribu implements the nested radiosity model
-        returns updated caribuscene and the results for the first wavelength computed
-        copy scene allows to work on a deep copy of the input scene
+        returns caribuscene and the results for the first wavelength computed
     """
     
-    if copyscene:
-        cs = copy(caribuscene)
-    else:
-        cs = caribuscene
      
     nz,dz,ds = scatterOpt['Nz'], scatterOpt['Zmax'], scatterOpt['SphereDiameter']
-    cs.runCaribu(direct,nz,dz,ds,infinity)
+    output = caribuscene.runCaribu(direct,nz,dz,ds,infinity)
     
-    return cs,cs.output
+    return caribuscene,output
 
 
 def getIncidentEnergy(caribuscene):
