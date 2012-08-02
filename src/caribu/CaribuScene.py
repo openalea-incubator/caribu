@@ -444,6 +444,19 @@ Scene:
         return(output)
 
 
+    def runPeriodise(self):
+        """ Call periodise and modify position of triangle in the scene to fit inside pattern"""
+        if len(self.scene_ids) > 0: #scene is not empty
+            from alinea.caribu.caribu import vperiodise            
+            scene = None
+            pattern = None
+            if self.hasScene:    
+                scene = self.scene
+            if self.hasPattern:
+                pattern = self.pattern
+            newscene = vperiodise(scene, pattern)
+            self.scene = newscene
+            
     
     def output_by_id(self, output, mapid = None,aggregate = True):
         """ Group output by scene ids and aggregate results if asked to.
@@ -452,7 +465,9 @@ Scene:
         return a dict of dict, firts key being the variable name, second key being the id
         
         """
-        
+        # peut etre autoriser une liste de cid dans mapid et construire en premier une liste d'aggregateur, avec un indice -1 pour les valeurs n'appartenant pas au mapid
+        # ainsi permet plusieur niveau d'aggregation
+        #+ une fonction input_by_id qui renverrai hmin, hmax, h, area et lai pour differents aggregateurs
         res = {}
         
         if len(output) > 0:

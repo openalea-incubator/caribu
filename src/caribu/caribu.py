@@ -210,7 +210,35 @@ class Caribu(object):
         if self.my_dbg:
             self.show("Caribu::init()")
         
+        
+        # name of band to process (if not given)
+        if self.optnames is None:
+            #try to derive from filename or use generic name
+            optn = []
+            for i,opt in enumerate(_safe_iter(self.opticals)):
+                if os.path.exists(opt):
+                    name = str(path(path(opt).basename()).stripext())
+                    optn.append(name)
+                else :
+                    optn.append('band%d'%(i))
+            self.optnames = optn
+
         # Working directory
+        self.setup_working_dir()
+
+        # Copy the files (or file content) in the tempdir
+        self.copyfiles()
+    
+    def init_periodise(self):
+        """ init caribuscene for a periodise-only run. """
+        if self.scene == None or self.pattern==None :
+            raise CaribuOptionError("Periodise has not been fully initialized: scene and pattern have to be defined")
+        self.infinity = True
+        self.setup_working_dir()
+        self.copyfiles(skip_opt = True, skip_sky = True)
+    
+    def setup_working_dir(self):
+        """ Create working directories for caribu."""
         try: 
             if self.my_dbg:
                 self.tempdir=path("./Run-tmp")
@@ -227,24 +255,9 @@ class Caribu(object):
                     self.resdir.mkdir()
         except:
             raise CaribuIOError(">>> Caribu can't create appropriate directory on your disk : check for read/write permission")
-        
-        # name of band to process (if not given)
-        if self.optnames is None:
-            #try to derive from filename or use generic name
-            optn = []
-            for i,opt in enumerate(_safe_iter(self.opticals)):
-                if os.path.exists(opt):
-                    name = str(path(path(opt).basename()).stripext())
-                    optn.append(name)
-                else :
-                    optn.append('band%d'%(i))
-            self.optnames = optn
-    
-        # Copy the files (or file content) in the tempdir
-        self.copyfiles()
-           
 
-    def copyfiles(self):
+           
+    def copyfiles(self, skip_sky = False, skip_pattern = False, skip_opt = False):
         d = self.tempdir
         
         if os.path.exists(self.scene):
@@ -255,37 +268,40 @@ class Caribu(object):
             fn.write_text(self.scene)
         self.scene = path(fn.basename())
 
-        if os.path.exists(self.sky):
-            fn = path(self.sky)
-            fn.copy(d/fn.basename())
-        else :
-            fn = d/'sky.light'
-            fn.write_text(self.sky)
-        self.sky = path(fn.basename())
-
-        if self.infinity:
-            if os.path.exists(self.pattern):
-                fn = path(self.pattern)
+        if not skip_sky:
+            if os.path.exists(self.sky):
+                fn = path(self.sky)
                 fn.copy(d/fn.basename())
-            else : 
-                fn = d/'pattern.8'
-                fn.write_text(self.pattern)
-            self.pattern = path(fn.basename())
+            else :
+                fn = d/'sky.light'
+                fn.write_text(self.sky)
+            self.sky = path(fn.basename())
 
-        optn = map(lambda(x): x + '.opt',_safe_iter(self.optnames))
-        try:
-            for i,opt in enumerate(_safe_iter(self.opticals)):
-        #safe_iter allows not to iterate along character composing the optfile name when only one optfile is given
-                if os.path.exists(opt):
-                #print opt
-                    fn = path(opt)
-                    fn.copy(d/optn[i])
-                else:
-                    fn = d/optn[i]
-                    fn.write_text(opt)
-            self.opticals = map(path,_safe_iter(optn))
-        except IndexError:
-            raise CaribuOptionError("Optnames list must be None or as long as optfiles list")
+        if not skip_pattern:
+            if self.infinity:
+                if os.path.exists(self.pattern):
+                    fn = path(self.pattern)
+                    fn.copy(d/fn.basename())
+                else : 
+                    fn = d/'pattern.8'
+                    fn.write_text(self.pattern)
+                self.pattern = path(fn.basename())
+
+        if not skip_opt:
+            optn = map(lambda(x): x + '.opt',_safe_iter(self.optnames))
+            try:
+                for i,opt in enumerate(_safe_iter(self.opticals)):
+            #safe_iter allows not to iterate along character composing the optfile name when only one optfile is given
+                    if os.path.exists(opt):
+                    #print opt
+                        fn = path(opt)
+                        fn.copy(d/optn[i])
+                    else:
+                        fn = d/optn[i]
+                        fn.write_text(opt)
+                self.opticals = map(path,_safe_iter(optn))
+            except IndexError:
+                raise CaribuOptionError("Optnames list must be None or as long as optfiles list")
 
     def store_result(self,filename,band_name):
         """
@@ -360,7 +376,17 @@ class Caribu(object):
         if self.my_dbg:
             print "\n <<<< Caribu.run() ends...\n"
 
-
+    def run_periodise(self):
+        """ Run Periodise as a standalone program
+        """
+        self.init_periodise()
+        self.periodise()
+        d = self.tempdir
+        fin = open(d/self.scene)
+        canstring = fin.read()
+        fin.close()
+        return canstring
+        
     def periodise(self):
         d = self.tempdir
         name, ext = self.scene.splitext()
@@ -517,7 +543,17 @@ def vcaribu(canopy, lightsource, optics, pattern, options):
     # return outputs
     return irradiances,status
 
-            
+def vperiodise(canopy, pattern):
+    """ low level interface to periodise. return modified canopy in can format """
+    sim = Caribu(resdir = None, resfile = None)#no output on disk
+    # --canfile 
+    sim.scene = canopy
+    #--pattern 
+    sim.pattern = pattern
+    periodic_scene = sim.run_periodise()
+    
+    return periodic_scene
+    
             
 def caribu_test(cas,debug = False):
     d = path(__file__).dirname()

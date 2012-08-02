@@ -86,7 +86,17 @@ def runCaribu(caribuscene, direct, scatterOpt, infinity):
     
     return caribuscene,output
 
+def periodise(caribuscene, copyscene):
+    if copyscene:
+        cs = copy(caribuscene)
+    else:
+        cs = caribuscene
+    
+    cs.runPeriodise()
+    return cs
+periodise.__doc__ =''.join([cdoc.runPeriodise.__doc__,copyscenedoc])
 
+        
 def getIncidentEnergy(caribuscene):
         return caribuscene.getIncidentEnergy()
 getIncidentEnergy.__doc__ = cdoc.getIncidentEnergy.__doc__
