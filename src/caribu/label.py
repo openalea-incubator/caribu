@@ -57,7 +57,17 @@ class Label(object):
 
     def is_stem(self):
         return (self.optical_id != 0) and (self.transparency == 0)
-
+    
+    def get_identity(self):
+        identity = "unknown"
+        if self.is_soil():
+            identity = "soil"
+        elif self.is_stem():
+            identity = "stem"
+        elif self.is_leaf():
+            identity = "leaf"
+        return identity
+    
     def __str__(self):
         return ''.join(self._label)
 

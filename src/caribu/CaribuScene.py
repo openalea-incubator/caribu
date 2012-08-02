@@ -41,6 +41,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.scene = ""
         self.scene_labels = []#list of external identifier/canlabel of each triangle present in the scene
         self.scene_ids = []#list of internal ids, as long as scene, used to aggegate outputs by primitive
+        self.colors = {}#dict of id->(r,g,b) tuples of ambient colors of primitives
         self.pid = 1#internal pending id to be given to the next primitive
 
         if scene is not None:
@@ -101,8 +102,10 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.scene_labels = []
         self.pid = 1
     
-    def addCan(self,canstring):
+    def addCan(self,canstring, palette = {'leaf' : (0,180, 0), 'stem' : (0,130,0), 'soil' : (170, 85, 0)}):
         """  Add primitives from can file string """
+        
+        from alinea.caribu.label import Label
         
         def _getlabel(line):
             line = line.strip()
@@ -120,12 +123,14 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.hasScene = True
         labels = [res for res in (_getlabel(x) for x in canstring.splitlines()) if res]
         labmap = dict([(k,i + self.pid) for i,k in enumerate(set(labels))])
+        colormap = dict([(id,palette[Label(label).get_identity()]) for label,id in labmap.iteritems()])
         self.scene_labels.extend(labels)
         self.scene_ids.extend([labmap[k] for k in labels])
+        self.colors.update(colormap)
         self.pid += len(labmap)
         return labmap
         
-    def addSoil(self, zsoil = 0.):
+    def addSoil(self, zsoil = 0., color = (170, 85, 0)):
         """ Add Soil to Caribu scene. Soil dimension is taken from pattern.
         zsoil specifies the heigth of the soil
 
@@ -167,6 +172,8 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             self.scene += canstring
             self.scene_ids.extend(ids)
             self.scene_labels.extend(label)
+            self.colors[pid] = color
+            self.color[pid+1] = color
             self.hasScene = True
             self.pid += 2
         
@@ -219,12 +226,15 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             idmap[shape.id] = self.pid 
             ids.extend([self.pid] * len(canlines))
             labels.extend([shape.id] * len(canlines))
+            col = shape.appearance.ambient
+            self.colors[self.pid] = (col.red,col.green,col.blue)
             self.pid += 1
         canstring = ''.join(canscene)
         
         self.scene += canstring
         self.scene_ids.extend(ids)
         self.scene_labels.extend(labels)
+        self.colors.extend(colors)
         self.hasScene = True
         
         return idmap
@@ -288,6 +298,69 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.addSources_from_string(''.join(lines))
 
 
+    def generate_scene(self, colors = None):
+        """
+        Generate PlantGL scene from Caribu scene
+        
+        Colors is an (optional) list of (rgb) tuples specifiying colors of individual triangles in the scene
+
+        """
+        from openalea.plantgl.all import Scene, Vector3, TriangleSet, Index3, Color4, Shape,Color3,Material
+        
+        scene = Scene()
+        
+        if len(self.scene_ids) > 0: #scene is not empty
+                       
+            def _get_triangle(line):
+                line = line.strip()
+                if not line: 
+                    return
+                if line[0] == '#':
+                    return 
+                l = line.split()
+                nb_polygon = int(l[-10])
+                assert nb_polygon == 3
+                coords = map(float,l[-9:])   
+                triangle = (Vector3(*coords[:3]), 
+                    Vector3(*coords[3:6]), 
+                    Vector3(*coords[6:]))
+                return triangle
+            
+            canstring = self.scene
+            triangles = [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
+            geoms = {}
+            
+            for i,triangle in enumerate(triangles):
+                id = self.scene_ids[i]                
+                if id not in geoms:
+                    geoms[id] = TriangleSet([],[])
+                    if colors:
+                        geoms[id].colorList = []
+                        geoms[id].colorPerVertex = False
+                shape = geoms[id]
+                count = len(shape.pointList)
+                shape.pointList.append(triangle[0])
+                shape.pointList.append(triangle[1])
+                shape.pointList.append(triangle[2])
+                shape.indexList.append(Index3(count, count+1,count+2))
+                if colors:
+                    r,g,b = colors[i]
+                    shape.colorList.append(Color4(r,g,b,0))
+                    
+            for id,geom in geoms.iteritems():
+                if colors:
+                    shape = geom
+                    shape.id = id
+                else:
+                    material = Material(Color3(*self.colors[id]))
+                    shape = Shape(geom, material)
+                    shape.id = id
+      
+                scene += shape
+            
+            
+        return(scene)
+        
     def writeCan(self,canfile):
         """  write the scene in a file (can format) """ 
         if not self.hasScene:

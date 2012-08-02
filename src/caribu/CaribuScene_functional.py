@@ -96,7 +96,11 @@ def periodise(caribuscene, copyscene):
     return cs
 periodise.__doc__ =''.join([cdoc.runPeriodise.__doc__,copyscenedoc])
 
-        
+   
+def generate_scene(caribuscene, colors):
+    return caribuscene.generate_scene(colors)
+generate_scene.__doc__ = cdoc.generate_scene.__doc__
+   
 def getIncidentEnergy(caribuscene):
         return caribuscene.getIncidentEnergy()
 getIncidentEnergy.__doc__ = cdoc.getIncidentEnergy.__doc__

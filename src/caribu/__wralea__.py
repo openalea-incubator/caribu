@@ -3327,8 +3327,19 @@ lightString_lightString = Factory(name='light string',
                 widgetclass=None,
                )
 
-
-
+CaribuScene_functional_generate_scene = Factory(name='generate scene',
+                authors='C. Fournier, C Pradal',
+                description='generate a PlantGL scene form a Caribu Scene',
+                category='scene',
+                nodemodule='CaribuScene_functional',
+                nodeclass='generate_scene',
+                inputs=[{'interface': None, 'name': 'CaribuScene'},
+                    {'interface': ISequence, 'name': 'colors', 'value': None}],
+                outputs=[{'interface': None, 'name': 'PlantGL scene'}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+__all__.append('CaribuScene_functional_generate_scene')
 
 CaribuScene_functional_getEi = Factory(name='get Ei',
                 authors='M. Chelle,C. Fournier (wralea authors)',
