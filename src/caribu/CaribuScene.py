@@ -234,7 +234,6 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         self.scene += canstring
         self.scene_ids.extend(ids)
         self.scene_labels.extend(labels)
-        self.colors.extend(colors)
         self.hasScene = True
         
         return idmap
