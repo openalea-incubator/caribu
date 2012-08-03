@@ -172,8 +172,8 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             self.scene += canstring
             self.scene_ids.extend(ids)
             self.scene_labels.extend(label)
-            self.colors[pid] = color
-            self.color[pid+1] = color
+            self.colors[self.pid] = color
+            self.colors[self.pid + 1] = color
             self.hasScene = True
             self.pid += 2
         
