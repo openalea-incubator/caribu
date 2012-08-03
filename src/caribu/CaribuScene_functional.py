@@ -113,7 +113,7 @@ def newFileCaribuScene(scene,light,pattern,opt):
     cs,mapid=newCaribuScene(scene,light,pattern,opt)
     return cs,mapid
 
-def newObjCaribuScene(scene,ligth,pattern,opt,waveLength):
+def newObjCaribuScene(scene,light,pattern,opt,waveLength):
     """ This node is deprecated and will be removed in future versions, use CaribuScene instead."""
     print('Warning !!! ObjCaribuScene is deprecated and will be removed in future versions, use CaribuScene instead')
     cs,mapid=newCaribuScene(scene,light,pattern,opt)
