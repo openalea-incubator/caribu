@@ -30,7 +30,7 @@ def _process(cmd, directory, out):
         status = p.communicate()
     else:
         p = Popen(cmd, shell=True, cwd=directory,
-              stdin=PIPE, stdout=f, stderr=STDOUT)
+              stdin=None, stdout=f, stderr=STDOUT)
         status = p.wait()
 
     f.close()

@@ -135,5 +135,5 @@ def decode_label(label):
         
     properties = [(lab.optical_id, lab.transparency, lab.plant_id, lab.elt_id) for lab in (Label(labstring) for labstring in label)]    
     
-    return zip(*properties),
+    return zip(*properties)
     

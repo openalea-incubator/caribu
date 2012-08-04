@@ -463,7 +463,7 @@ Scene:
     
     
     def get_caribu_output(self,vcdict):
-        """ Get and arrange output of caribu for use in CaribuScene. """
+        """ Get, filter and arrange output of caribu for use in CaribuScene. """
                            
         from itertools import izip
         
@@ -477,10 +477,12 @@ Scene:
             return(0 if isnan(x) else x)
             
         d = vcdict[vcdict.keys()[0]]['data']
-        for k in ('Eabs','Ei_inf','Ei_sup'):
+        # compute max value = sum of emmission of sources
+        _,eimax,_ = self.getIncidentEnergy()
+        for k in ('Ei_inf','Ei_sup','Eabs'):
             d[k] = map(_nan_to_zero,d[k])
-            #filter negative values occuring in EiInf/EiSup
-            d[k] = map(lambda(x): max(0,x), d[k])
+            #filter negative values occuring in EiInf/EiSup and values > Eimax
+            d[k] = map(lambda(x): min(eimax,max(0,x)), d[k])
         eabs = [e * a for e,a in izip(d['Eabs'],d['area'])]
         einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
         eincsup = [esup * a for esup,a in izip(d['Ei_sup'],d['area'])]
@@ -539,7 +541,7 @@ Scene:
         """
         # peut etre autoriser une liste de cid dans mapid et construire en premier une liste d'aggregateur, avec un indice -1 pour les valeurs n'appartenant pas au mapid
         # ainsi permet plusieur niveau d'aggregation
-        #+ une fonction input_by_id qui renverrai hmin, hmax, h, area et lai pour differents aggregateurs
+        #+ une fonction input_by_id qui renverrai hmin, hmax, h, normale, azimuth, area et lai pour differents aggregateurs
         res = {}
         
         if len(output) > 0:
