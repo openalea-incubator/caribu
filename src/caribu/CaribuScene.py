@@ -1,4 +1,21 @@
 """ This module defines CaribuScene and CaribuSceneError classes."""
+
+def _agregate(values,indices,fun = sum):
+    """ performs aggregation of outputs along indices """
+    from itertools import groupby, izip
+    ag = {}
+    for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
+        vals = [elt[1] for elt in group]
+        try:
+            ag[key] = fun(vals)
+        except TypeError:
+            ag[key] = vals[0]
+    return ag
+
+
+
+
+
 class CaribuSceneError(Exception): pass
 
 class CaribuScene(object):
@@ -495,7 +512,7 @@ Scene:
         return csdict  
     
     def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5, infinity = True):
-        """ Call Caribu and store relsults"""
+        """ Call Caribu and return results"""
         
         output = {}
         if len(self.scene_ids) > 0: #scene is not empty
@@ -542,21 +559,8 @@ Scene:
         """
         #
         #+ une fonction input_by_id qui renverrai hmin, hmax, h, normale, azimuth, area et lai pour differents aggregateurs
-        res = {}
-        
-        if len(output) > 0:
-            def _agregate(values,indices,fun = sum):
-                """ performss aggregation of outputs along indices """
-                from itertools import groupby, izip
-                ag = {}
-                for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
-                    vals = [elt[1] for elt in group]
-                    try:
-                        ag[key] = fun(vals)
-                    except TypeError:
-                        ag[key] = vals[0]
-                return ag
-            
+        res = {}        
+        if len(output) > 0:           
             indices = self.scene_ids
             
             if groups:
