@@ -21,3 +21,4 @@ def test_caribu_script():
         assert False, "This test should raise an CaribuOptionError"
     except CaribuOptionError:
         assert True
+
