@@ -555,11 +555,11 @@ def vperiodise(canopy, pattern):
     return periodic_scene
     
             
-def caribu_test(cas,debug = False):
+def caribu_run_case(cas,debug = False):
     d = path(__file__).dirname()
     scene = d/'data/filterT.can'
     print scene.splitext()
-    sim=Caribu(canfile=d/'data/filterT.can', skyfile=d/'data/zenith.light', optfiles=[d/'data/par.opt', d/'data/nir.opt'],debug=debug)
+    sim=Caribu(canfile=d/'data/filterT.can', skyfile=d/'data/zenith.light', optfiles=[d/'data/par.opt', d/'data/nir.opt'],resdir = None, resfile = None,debug=debug)
 
     sim.infinity = True       # consider a toric canopy
     sim.direct = True           # direct light only
@@ -608,7 +608,7 @@ def caribu_test(cas,debug = False):
         sim.pattern = None
 
     else:
-        print "\n>>>  caribu_test(case): case still not implemented, case in [-1, 1, 2, 3, 4, 5] - MC09"
+        print "\n>>>  caribu_run_case(case): case still not implemented, case in [-1, 1, 2, 3, 4, 5] - MC09"
         run=False
         return
 
