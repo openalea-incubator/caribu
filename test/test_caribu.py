@@ -6,19 +6,16 @@ from alinea.caribu.caribu import caribu_run_case,CaribuOptionError
 
 # Original test of caribu.csh script by M. Chelle
 def test_caribu_script():
-    caribu_run_case(1)
-    caribu_run_case(2)
-    caribu_run_case(3)
-    caribu_run_case(4)
-    caribu_run_case(5)
-    try:
-        caribu_run_case(-1)
-        assert False, "This test should raise an CaribuOptionError"
-    except CaribuOptionError:
-        assert True
-    try:
-        caribu_run_case(-2)
-        assert False, "This test should raise an CaribuOptionError"
-    except CaribuOptionError:
-        assert True
+    for i in range(1,6):
+        yield caribu_run_case,i#this makes nose generate 5 tests
+        
+def test_caribu_script_inconsistent():
+    for i in range(1,3):
+        yield caribu_run_inconsistent_case,i
 
+def caribu_run_inconsistent_case(i):
+    try:
+        caribu_run_case(-i)
+        assert False, "This test uses inconsistent options, it should raise an CaribuOptionError"
+    except CaribuOptionError:
+        assert True
