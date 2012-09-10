@@ -570,26 +570,26 @@ def caribu_run_case(cas,debug = False):
     run=True
     
     if cas ==1:
-        # Case 1: projection on non toric scene
+        print "\nCase 1: projection on non toric scene"
         sim.infinity = False
         pass
     elif cas ==2:
-        # Case 2: projection on  toric scene
+        print "\n Case 2: projection on  toric scene"
         sim.pattern = d/"data/filter.8"
     elif cas == 3:
-        # Case 3: classic radiosity on  non toric scene
+        print "\n Case 3: classic radiosity on  non toric scene"
         sim.infinity = False
         sim.direct = False           # NOT direct light only
         sim.sphere_diameter = -1 # classic radiosity
     elif cas == 4:
-        # Case 4: "projected mean fluxes" (SAIL) on  toric scene
+        print "\n Case 4: projection  + mean fluxes (SAIL) on  toric scene"
         sim.direct = False           # NOT direct light only
         sim.sphere_diameter = 0 # direct + sail (no radiosity)
         sim.pattern = d/"data/filter.8"
         sim.nb_layers = 6
         sim.can_height = 21
     elif cas == 5:
-        # Case 5: nested radiosity on   toric scene
+        print "\n Case 5: nested radiosity on a toric scene"
         sim.direct = False           # NOT direct light only
         sim.sphere_diameter = 10 
         sim.pattern = d/"data/filter.8"    
@@ -597,12 +597,12 @@ def caribu_run_case(cas,debug = False):
         sim.can_height = 21
     ## Test input incoherencies
     elif cas == -1:
-        # Erreur -1: classic radiosity on  toric scene
+        print "\n  Erreur -1: classic radiosity on  toric scene"
         sim.direct = False           # NOT direct light only
         sim.sphere_diameter = -1 # classic radiosity
         sim.pattern = d/"data/filter.8"
     elif cas == -2:
-        # Erreur -1: classic radiosity on  toric scene
+        print "\n Erreur -2: nested radiosity on non toric scene"
         sim.direct = False           # NOT direct light only
         sim.sphere_diameter = 1 # nested radiosity
         sim.pattern = None
@@ -613,7 +613,7 @@ def caribu_run_case(cas,debug = False):
         return
 
     if run:    
-        print "Calling Caribu.run() in case ",cas 
+        #print "Calling Caribu.run() in case ",cas 
         sim.run()  
         print "simulation nb =",len(sim.nrj)
         print sim.nrj.keys()
