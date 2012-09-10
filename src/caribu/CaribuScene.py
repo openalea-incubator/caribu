@@ -180,7 +180,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         return dict(zip(label,ids))
         
     def add_Shapes(self, shapes, tesselator = None, canlabels = None):
-        """Add shapes to scene and return a map of shapes id to carbu internal ids.
+        """Add shapes to scene and return a map of shapes id to caribu internal ids.
         """
         
         def _canString(ind, pts, label):
@@ -532,15 +532,15 @@ Scene:
             self.scene = newscene
             
     
-    def output_by_id(self, output, mapid = None,aggregate = True):
-        """ Group output by scene ids and aggregate results if asked to.
-        mapid is a dict of external_id -> caribu internal id. If given, the results are aggregated using external ids
-        if aggregate is True, one scalar is return by id (sum or weighted mean), otherwise the list of value of all triangles of the primitive is returned
-        return a dict of dict, firts key being the variable name, second key being the id
+    def output_by_id(self, output, mapid = None, groups = None, aggregate = True):
+        """ Return caribu outputs grouped or aggregated by ids 
+        mapid: a dict of external_id -> caribu internal id. If given, the results are given for external _ids
+        groups : a dict of id (internal of external) -> group_id. If given, results are computed for each group_id. Keys in groups are expected to be internal id if mapid is none, or external ids if mapid is given.
+        if aggregate is True, one scalar is return by id (sum or weighted mean), otherwise it returns the list of values of all triangles of the id.
+
         
         """
-        # peut etre autoriser une liste de cid dans mapid et construire en premier une liste d'aggregateur, avec un indice -1 pour les valeurs n'appartenant pas au mapid
-        # ainsi permet plusieur niveau d'aggregation
+        #
         #+ une fonction input_by_id qui renverrai hmin, hmax, h, normale, azimuth, area et lai pour differents aggregateurs
         res = {}
         
@@ -557,19 +557,37 @@ Scene:
                         ag[key] = vals[0]
                 return ag
             
+            indices = self.scene_ids
+            
+            if groups:
+                new_map = {} #dict of group_id -> reference internal id (reference id is the first one found belonging to a group)
+                aliases = {} #dict of internal_id -> reference id of a group
+                for id in groups:
+                    gid = groups[id]
+                    if mapid:
+                        id = mapid[id]
+                    if gid in new_map:
+                        aliases[id] = new_map[gid]
+                    else:
+                        new_map[gid] = id
+                mapid = new_map
+                indices = [aliases[id] if id in aliases else id for id in indices]
+                
+                        
+            
             # aggregation uses internal ids as unicity of scene_labels is not guarantee (eg if several scenes have been mixed)
             if aggregate:
                 #compute sums for area integrated variables
-                res = dict([(k, _agregate(output[k],self.scene_ids)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
+                res = dict([(k, _agregate(output[k],indices)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
                 # compute mean fluxes
                 res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['Eabs'].iterkeys()  ])
                 res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['EincInf'].iterkeys()])
                 res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['EincSup'].iterkeys()])
             else: 
-                res = dict([(k, _agregate(output[k],self.scene_ids,list)) for k in output.keys()])
+                res = dict([(k, _agregate(output[k],indices,list)) for k in output.keys()])
                 
             #re-index results if mapid is given
-            if mapid is not None:# empty mapid (corrresponding to absence of a list of shapes in the scene) should pass otherwise all res is returned
+            if mapid is not None:# empty mapid (corrresponding to absence of a list of shapes in the scene) should pass this test. Only none default options should skip and return all res
                 for var in res.keys():
                     res[var] = dict([(k,(res[var])[v]) for k,v in mapid.items()])
                 if len(res[res.keys()[0]]) <= 0:#pas de res trouve pour les mapid en entree

@@ -69,8 +69,8 @@ def WriteCan(caribuscene, filename):
 WriteCan.__doc__ = cdoc.writeCan.__doc__
     
     
-def output_by_id(caribuscene,output,mapid,aggregate):
-    return caribuscene.output_by_id(output,mapid,aggregate)
+def output_by_id(caribuscene,output,mapid,groups,aggregate):
+    return caribuscene.output_by_id(output,mapid,groups,aggregate)
 output_by_id.__doc__ = cdoc.output_by_id.__doc__
 
 
