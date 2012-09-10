@@ -17,7 +17,7 @@ __institutes__ = 'INRA'
 __icon__ = 'Caribou.png'
 
 
-__all__ = ['LIE', 'CaribuScene_functional_newFileCaribuScene', '_132861296', 'reduceDict_reduceDict', '_132861712', '_132861616', 'CaribuScene_functional_generate_scene', 'MCSail_MCSail', 'label_decode_label', 'CaribuScene_functional_newCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'S2v_S2v', 'CaribuScene_functional_WriteCan', 'vcaributest2', 'CaribuScene_functional_newObjCaribuScene', '_132860624', 'Canestra_Canestra', 'CaribuScene_functional_addShapes', 'mtg_to_canestra', 'CaribuZenithPar', 'CaribuScene_functional_GenOutput', 'label_encode_label', 'CaribuScene_functional_runCaribu', 'caribu_vcaribu', 'CaribuScene_functional_periodise', 'mydict_mydict', 'CaribuScene_functional_addSoil', 'CaribuScene_functional_output_by_id', '_132860784', 'CaribuScene_functional_getIncidentEnergy', 'selectOutput_selectOutput', 'PARsums', 'Tutorial', 'debug', 'lightString_lightString', 'CaribuScene_functional_getEi']
+__all__ = ['LIE', 'CaribuScene_nodes_newFileCaribuScene', '_132861296', 'reduceDict_reduceDict', '_132861712', '_132861616', 'CaribuScene_nodes_generate_scene', 'MCSail_MCSail', 'label_decode_label', 'CaribuScene_nodes_newCaribuScene', 'CarribuZenithParSoil', 'filterby_filterby', 'mtg_updateMTG', 'PARaggregators_PARaggregators', 'S2v_S2v', 'CaribuScene_nodes_WriteCan', 'vcaributest2', 'CaribuScene_nodes_newObjCaribuScene', '_132860624', 'Canestra_Canestra', 'CaribuScene_nodes_addShapes', 'mtg_to_canestra', 'CaribuZenithPar', 'CaribuScene_nodes_GenOutput', 'label_encode_label', 'CaribuScene_nodes_runCaribu', 'caribu_vcaribu', 'CaribuScene_nodes_periodise', 'mydict_mydict', 'CaribuScene_nodes_addSoil', 'CaribuScene_nodes_output_by_id', '_132860784', 'CaribuScene_nodes_getIncidentEnergy', 'selectOutput_selectOutput', 'PARsums', 'Tutorial', 'debug', 'lightString_lightString', 'CaribuScene_nodes_getEi']
 
 
 
@@ -234,11 +234,11 @@ LIE = CompositeNodeFactory(name='LIE',
 
 
 
-CaribuScene_functional_newFileCaribuScene = Factory(name='FileCaribuScene',
+CaribuScene_nodes_newFileCaribuScene = Factory(name='FileCaribuScene',
                 authors='C. Fournier',
                 description='',
                 category='io',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='newFileCaribuScene',
                 inputs=[{'interface': IFileStr(filter="*.can", save=False), 'name': 'CanFile', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.light", save=False), 'name': 'LightFile', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.8", save=False), 'name': 'PatternFile', 'value': None, 'desc': ''}, {'interface': IFileStr(filter="*.opt", save=False), 'name': 'OptFile', 'value': None, 'desc': ''}],
                 outputs=[{'interface': IStr, 'name': 'CaribuScene', 'desc': ''}, {'interface': IDict, 'name': 'Maping dict (see CaribuScene)'}],
@@ -1438,11 +1438,11 @@ _132861616 = CompositeNodeFactory(name='Tutorial getData',
 
 
 
-CaribuScene_functional_generate_scene = Factory(name='generate scene',
+CaribuScene_nodes_generate_scene = Factory(name='generate scene',
                 authors='C. Fournier, C Pradal',
                 description='generate a PlantGL scene form a Caribu Scene',
                 category='scene',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='generate_scene',
                 inputs=[{'interface': None, 'name': 'CaribuScene'}, {'interface': ISequence, 'name': 'colors', 'value': None}],
                 outputs=[{'interface': None, 'name': 'PlantGL scene'}],
@@ -1483,11 +1483,11 @@ label_decode_label = Factory(name='decode label',
 
 
 
-CaribuScene_functional_newCaribuScene = Factory(name='CaribuScene',
+CaribuScene_nodes_newCaribuScene = Factory(name='CaribuScene',
                 authors='C. Fournier',
                 description='',
                 category='io',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='newCaribuScene',
                 inputs=[{'interface': IFileStr(filter="*.can", save=False), 'name': 'Scene', 'value': None, 'desc': 'see help tab'}, {'interface': IFileStr(filter="*.light", save=False), 'name': 'LightFile', 'value': None, 'desc': 'see help tab'}, {'interface': IFileStr(filter="*.8", save=False), 'name': 'PatternFile', 'value': None, 'desc': 'see help tab'}, {'interface': IFileStr(filter="*.opt", save=False), 'name': 'OptFile', 'value': None, 'desc': 'see help tab'}],
                 outputs=[{'interface': IStr, 'name': 'CaribuScene', 'desc': ''}, {'interface': IDict, 'name': 'Maping of Scene id -> Caribu internals ids'}],
@@ -1727,11 +1727,11 @@ S2v_S2v = Factory(name='S2v',
 
 
 
-CaribuScene_functional_WriteCan = Factory(name='WriteCan',
+CaribuScene_nodes_WriteCan = Factory(name='WriteCan',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='',
                 category='io',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='WriteCan',
                 inputs=[{'interface': IInterface, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IFileStr, 'name': 'filename', 'value': None, 'desc': ''}],
                 outputs=[{'interface': IFileStr, 'name': 'filename', 'desc': ''}],
@@ -1883,11 +1883,11 @@ vcaributest2 = CompositeNodeFactory(name='vcaributest2',
 
 
 
-CaribuScene_functional_newObjCaribuScene = Factory(name='ObjCaribuScene',
+CaribuScene_nodes_newObjCaribuScene = Factory(name='ObjCaribuScene',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='',
                 category='codec,scene',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='newObjCaribuScene',
                 inputs=[{'interface': IData, 'name': 'CanObj', 'value': None, 'desc': 'Canopy object with to_canestra method'}, {'interface': IStr, 'name': 'LightString', 'value': None, 'desc': ''}, {'interface': ISequence, 'name': 'pattern', 'value': None, 'desc': 'Tuple describig pattern'}, {'interface': IStr, 'name': 'optstring', 'value': None, 'desc': 'Optical properties'}, {'interface': IStr, 'name': 'wavelength', 'value': None, 'desc': 'Current wavelength'}],
                 outputs=[{'interface': IStr, 'name': 'CaribuScene', 'desc': ''}, {'interface': IDict, 'name': 'Mapid', 'desc': ''}],
@@ -2405,11 +2405,11 @@ Canestra_Canestra = Factory(name='Canestra',
 
 
 
-CaribuScene_functional_addShapes = Factory(name='addShapes',
+CaribuScene_nodes_addShapes = Factory(name='addShapes',
                 authors='C. Fournier',
                 description='',
                 category='io',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='addShapes',
                 inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': None, 'name': 'Shapes', 'value': None, 'desc': ''}, {'interface': None, 'name': 'Tesselator', 'value': None, 'desc': 'PlantGL tesselator instance or None'}, {'interface': None, 'name': 'CanLabels', 'value': None, 'desc': 'Labels used by Caribu to make the association between opticals properties and shapes '}, {'interface': IBool, 'name': 'auto generates Can labels', 'value': True, 'desc': 'uses opt=1 and opak = 0 for all primitives, see label encode for alternatives'}, {'interface': IBool, 'name': 'Copy Caribuscene', 'value': True, 'desc': 'uncheck only if you know what you do (pass by reference)'}],
                 outputs=[{'interface': None, 'name': 'CaribuScene', 'desc': ''}, {'interface': IDict, 'name': 'Shape_id2Caribu_id', 'desc': 'mapping of shapes id to internal caribu id'}],
@@ -2582,11 +2582,11 @@ CaribuZenithPar = CompositeNodeFactory(name='CaribuZenithPar',
 
 
 
-CaribuScene_functional_GenOutput = Factory(name='GenOutput',
+CaribuScene_nodes_GenOutput = Factory(name='GenOutput',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='Generate a dictionnary from canestra outputs (Etri,Eabs)',
                 category='codec',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='GenOutput',
                 inputs=[{'interface': IStr, 'name': 'Etri', 'value': None, 'desc': ''}, {'interface': IStr, 'name': 'Eabs', 'value': None, 'desc': ''}],
                 outputs=[{'interface': None, 'name': 'OutDict', 'desc': ''}],
@@ -2612,11 +2612,11 @@ label_encode_label = Factory(name='encode label',
 
 
 
-CaribuScene_functional_runCaribu = Factory(name='Caribu',
+CaribuScene_nodes_runCaribu = Factory(name='Caribu',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='',
                 category='Unclassified',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='runCaribu',
                 inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IBool, 'name': 'No Multiple Scaterring', 'value': True, 'desc': 'Turn off multiple scattering calculations'}, {'interface': IDict, 'name': 'Multiple scattering options :', 'value': {'SphereDiameter': 0.5, 'Nz': 5, 'Zmax': 2}, 'desc': 'Dictionary of parameters for multiple scaterring'}, {'interface': IBool, 'name': 'Consider Toric Canopy (infinite)', 'value': True}],
                 outputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IDict, 'name': 'Energy'}],
@@ -2642,11 +2642,11 @@ caribu_vcaribu = Factory(name='vcaribu',
 
 
 
-CaribuScene_functional_periodise = Factory(name='Periodise',
+CaribuScene_nodes_periodise = Factory(name='Periodise',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='Fit the scene within its pattern',
                 category='scene',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='periodise',
                 inputs=[{'interface': None, 'name': 'CaribuScene'}, {'interface': IBool, 'name': 'Copy Caribuscene', 'value': True, 'desc': ''}],
                 outputs=[{'interface': None, 'name': 'FittedCaribuScene'}],
@@ -2672,11 +2672,11 @@ mydict_mydict = Factory(name='mydict',
 
 
 
-CaribuScene_functional_addSoil = Factory(name='addSoil',
+CaribuScene_nodes_addSoil = Factory(name='addSoil',
                 authors='C. Fournier',
                 description='',
                 category='scene.ecophysiology',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='addSoil',
                 inputs=[{'interface': IData, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IFloat, 'name': 'altitude (z)', 'value': 0.0}, {'interface': IBool, 'name': 'Copy Caribuscene', 'value': True, 'desc': ''}],
                 outputs=[{'interface': IData, 'name': 'CaribuScene', 'desc': ''}, {'interface': IDict, 'name': 'Soil_id2Caribu_id', 'desc': 'mapping of soil id to internal caribu id'}],
@@ -2687,11 +2687,11 @@ CaribuScene_functional_addSoil = Factory(name='addSoil',
 
 
 
-CaribuScene_functional_output_by_id = Factory(name='Output by id',
+CaribuScene_nodes_output_by_id = Factory(name='Output by id',
                 authors='C. Fournier',
                 description='',
                 category='io',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='output_by_id',
                 inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}, 
                 {'interface': None, 'name': 'Caribu Outputs', 'value': None, 'desc': ''}, 
@@ -2811,11 +2811,11 @@ _132860784 = CompositeNodeFactory(name='vcaribu_test',
 
 
 
-CaribuScene_functional_getIncidentEnergy = Factory(name='getIncidentEnergy',
+CaribuScene_nodes_getIncidentEnergy = Factory(name='getIncidentEnergy',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='',
                 category='scene.light',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='getIncidentEnergy',
                 inputs=[{'interface': None, 'name': 'CaribuScene'}],
                 outputs=[{'interface': IFloat, 'name': 'Qi', 'desc': 'incident light flux received on an horizontal surface (per scene unit area)'}, {'interface': IFloat, 'name': 'Qem', 'desc': 'sum of light fluxes emitted by sources in a plane perpendicular to their direction of emmission (per scene unit area)'}, {'interface': IFloat, 'name': 'Einc', 'desc': 'total incident energy received on the domain (Einc = Qi * domain_area), or None if pattern is not set'}],
@@ -4247,11 +4247,11 @@ lightString_lightString = Factory(name='light string',
 
 
 
-CaribuScene_functional_getEi = Factory(name='get Ei',
+CaribuScene_nodes_getEi = Factory(name='get Ei',
                 authors='M. Chelle,C. Fournier (wralea authors)',
                 description='',
                 category='scene.light',
-                nodemodule='CaribuScene_functional',
+                nodemodule='CaribuScene_nodes',
                 nodeclass='getEi',
                 inputs=[{'interface': None, 'name': 'CaribuScene'}],
                 outputs=[{'interface': IFloat, 'name': 'Qi', 'desc': 'incident light flux received on an horizontal surface (per scene unit area)'}],
