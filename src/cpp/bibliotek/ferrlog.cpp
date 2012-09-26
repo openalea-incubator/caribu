@@ -13,18 +13,24 @@ void ferrlog::open(char *filename)
   // La destruction du fichier précédent n'est possible que si
   // aucun autre process ne l'utilise, l'ouverture est soumise
   // aux memes conditions et "resette" l'ancien ==> on le laisse.
-
-  char *pcTmpName=NULL;
-  pcTmpName=GetAllFileName(filename);
-  if(pcTmpName) { 
-    out = new ofstream(pcTmpName, ios::out) ;
+    out = new ofstream(filename, ios::out) ;
     if (!out->good())
       {
         clog << "Pas pu ouvrir " << filename<< endl ;
         out = (ofstream*) NULL ;
       } 
-    free (pcTmpName);
-  }
+
+//X   char *pcTmpName=NULL;
+//X   pcTmpName=GetAllFileName(filename);
+//X   if(pcTmpName) { 
+//X     out = new ofstream(pcTmpName, ios::out) ;
+//X     if (!out->good())
+//X       {
+//X         clog << "Pas pu ouvrir " << filename<< endl ;
+//X         out = (ofstream*) NULL ;
+//X       } 
+//X     free (pcTmpName);
+//X   }
     
 #ifdef DEBUG_OBJ
   clog << "Le flux " <<  filename <<" est ouvert" << endl ;
@@ -80,11 +86,11 @@ ferrlog & ferrlog::operator << (const char *msg)
     if ( *msg == '\n' ) { // palliatif pour endl 
       clog << endl ;
       if (out != NULL)
-	*out << endl ;
+          *out << endl ;
     } else {
       clog << msg ;
       if (out != NULL)
-	*out << msg ;
+          *out << msg ;
     }
   }
   return *this ;

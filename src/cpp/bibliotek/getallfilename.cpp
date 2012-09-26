@@ -24,7 +24,7 @@ char *GetAllFileName(char *nom) {
     
     // this #def is to be set for every Win32 compiler to run
 #ifndef WIN32
-    // TEMP est une macro dans stytem.h
+    // TEMP est une macro dans system.h
     string sTmpName =TEMP ;
 #else
 
