@@ -248,12 +248,15 @@ void Voxel::construction(reel* bornemin, reel* bornemax,
 	 <<"\" pas trouve \n   => valeurs par defaut des parametres de subivision adaptative\n" ;
     SEUIL_NB_DIFF=50; //arret de la subdivision
     ratio=1; //ration entre arete de la grille et diametre de la sphere englobante
-    strcpy(grille_nom,"Valeurs par defaut ");
-  }
-  else
-    fscanf(grille_par,"%d %g",SEUIL_NB_DIFF,ratio);
-  Ferr <<"Seuil dans "  << grille_nom<<" = "  << SEUIL_NB_DIFF
+    //strcpy(grille_nom,"Valeurs par defaut");
+    Ferr <<"Default threshold "<<" = "  << SEUIL_NB_DIFF
        <<" - ratio = "  << ratio<<"\n" ;
+  }
+  else {
+    fscanf(grille_par,"%d %g",SEUIL_NB_DIFF,ratio);
+    Ferr <<"Seuil dans "  << grille_nom<<" = "  << SEUIL_NB_DIFF
+       <<" - ratio = "  << ratio<<"\n" ;
+    }
   O=bornemin;
   taille_vox=2.0*ratio*Renv;
   if(verbose>1) 

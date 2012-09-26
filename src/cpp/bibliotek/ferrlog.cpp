@@ -20,8 +20,8 @@ void ferrlog::open(char *filename)
     out = new ofstream(pcTmpName, ios::out) ;
     if (!out->good())
       {
-	clog << "Pas pu ouvrir " << filename<< endl ;
-	out = (ofstream*) NULL ;
+        clog << "Pas pu ouvrir " << filename<< endl ;
+        out = (ofstream*) NULL ;
       } 
     free (pcTmpName);
   }

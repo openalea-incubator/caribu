@@ -98,28 +98,28 @@ int main(int argc,char **argv){
     chrono.Start();
     if(byfile){
       scene.parse_can(maqname,optname,name8,bornemin, 
-		      bornemax,sol,nsolem,TabDiff);
+                      bornemax,sol,nsolem,TabDiff);
       Ferr<<__FILE__<<" : byfile"<<'\n';
     }else{
       scene.read_shm(clef_shm,optname,name8,bornemin, 
-		     bornemax,sol,nsolem,TabDiff); 
+                     bornemax,sol,nsolem,TabDiff); 
       Ferr<<__FILE__<<" : byshm"<<'\n';
     }
     cout <<"\n Nombre de faces (2*L+S) = "<<scene.radim<<endl;cout.flush();
     if(true ||verbose) {
       for(j=0; j<3; j++)
-	//  cout<<" main() : Bornemin["<<j<<"] = "<<bornemin[j]
-	//  <<"  Bornemax["<<j<<"] = "<<bornemax[j]<<endl;
-	Ferr<<" main() : Bornemin["<<j<<"] = "<<bornemin[j]
-	    <<"  Bornemax["<<j<<"] = "<<bornemax[j]<<'\n';
+          //  cout<<" main() : Bornemin["<<j<<"] = "<<bornemin[j]
+          //  <<"  Bornemax["<<j<<"] = "<<bornemax[j]<<endl;
+          Ferr<<" main() : Bornemin["<<j<<"] = "<<bornemin[j]
+              <<"  Bornemax["<<j<<"] = "<<bornemax[j]<<'\n';
     }
     if(denv<0){// Full-matrix case
       Ferr<<__FILE__<<" : Full Matrix"<<'\n';
       denv=0;
       double x;
       for(j=0; j<3; j++){
-	x=bornemax[j]-bornemin[j];
-	denv+=x*x;
+          x=bornemax[j]-bornemin[j];
+          denv+=x*x;
       }
     
       denv=sqrt(denv)/2.;
@@ -167,11 +167,11 @@ int main(int argc,char **argv){
     do {
       flight>>Esource;
       if(!flight) 
-	break;
+          break;
       flight>>dir_source[0]>>dir_source[1]>>dir_source[2];
     
       for(i=0;i<scene.radim;i++) {
-	Bsource[i]=0.0;
+          Bsource[i]=0.0;
       }
       scene.projplan(dir_source,infty,Bsource);
       //recommenter
@@ -309,7 +309,7 @@ int main(int argc,char **argv){
 	  //Ferr << __FILE__<< " : "<< __LINE__ << '\n' ;
 	  char carlu;
 	  Ferr <<"* ATTENTION - mode HD - Print la matrice a l'ecran\n"
-	    " Le voulez vous reellement \?(o/n)\?" ;
+	    " Le voulez vous reellement \?(o/n)\?"<<'\n' ;
 	  carlu=getchar();
 	  if(carlu=='o' || carlu=='O')
 	    print_hd_mat(TabDiff);
@@ -416,7 +416,7 @@ int main(int argc,char **argv){
     if(bMemoriseMatrix==false) {
       EffaceMatrices();
     }
-    Ferr <<"This is the end...\n";
+    Ferr <<"This is the end...\n"<<'\n';
     Ferr.close();
     return 0 ;
   } //main()
