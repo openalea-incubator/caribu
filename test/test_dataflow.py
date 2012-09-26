@@ -18,5 +18,7 @@ def test_caribu():
 
     res = run(('alinea.caribu', 'Tutorial'),
         inputs={}, vtx_id=11)
-    #assert 0.62 < res[0] < 0.63, res
+    efficiency = res[0]
+    if efficiency:
+        assert 0.62 < res[0] < 0.63, res
 
