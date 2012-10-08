@@ -131,3 +131,10 @@ def getEi(cs):
 def GenOutput(etri,eabs):
     """ This is a deprecated node, not functional anymore"""
     raise CaribuSceneDeprecatedError('This node is deprecated, use vcaribu/caribu interfaces to Canestra')
+
+import label
+
+def encode_label(*args, **kwd):
+    return label.encode_label(*args, **kwd),
+
+encode_label.__doc__ = label.encode_label.__doc__

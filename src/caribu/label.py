@@ -124,8 +124,8 @@ def encode_label(opt_id=1, opak=0, plant_id=1, elt_id=1, minlength = 1):
     
     opt_id, opak, plant_id, elt_id = map(lambda(x): _complete(x,maxlen),[opt_id,opak,plant_id,elt_id]) 
     
-    return [str(_newlabel(opt_id[i],opak[i], plant_id[i], elt_id[i])) for i in range(maxlen)],
-    
+    return [str(_newlabel(opt_id[i],opak[i], plant_id[i], elt_id[i])) for i in range(maxlen)]
+
     
 def decode_label(label):
     """ decode a (list of) canlabels into properties """
