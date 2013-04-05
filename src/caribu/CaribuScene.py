@@ -584,9 +584,9 @@ Scene:
                 #compute sums for area integrated variables
                 res = dict([(k, _agregate(output[k],indices)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
                 # compute mean fluxes
-                res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['Eabs'].iterkeys()  ])
-                res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['EincInf'].iterkeys()])
-                res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) if res['Area'][k] > 0 else 0 for k in res['EincSup'].iterkeys()])
+                res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k,0) for k in res['Eabs'].iterkeys()  ])
+                res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k,0) for k in res['EincInf'].iterkeys()])
+                res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k,0) for k in res['EincSup'].iterkeys()])
             else: 
                 res = dict([(k, _agregate(output[k],indices,list)) for k in output.keys()])
                 
