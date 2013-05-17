@@ -27,14 +27,17 @@ def _turtle(sectors='46', format='soc',energy=1):
             w = weights_soc
         else:
             w = weights_uoc
-    else:
+    elif sectors == '16':
         el = elevations16
         az = azimuths16
         if format =='soc':
             w = weights16_soc
         else:
             w= weights16_uoc
-    
+    else:
+        el =[90]
+        az = [0]
+        w =[1]
     for i in range(len(el)):
         yield el[i],az[i],w[i] * energy
 
