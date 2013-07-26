@@ -32,7 +32,7 @@ def RdRsH(Rg, DOY, heureTU, latitude):
     """ fraction diffus/Global en fonction du rapport Global(Sgd)/Extraterrestre(Sod)- pas de temps horaire """
     hrad = 2 * pi / 24 * (heureTU - 12)
     lat = radians(latitude)
-    dec = self.DecliSun(DOY)
+    dec = DecliSun(DOY)
     costheta = sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(hrad)
     Io = 1370 * (1 + 0.033 * cos(2 * pi * (DOY - 4) / 366))#eclairement (w/m2) a la limitte de l'atmosphere dans un plan perpendiculaire aux rayons du soleil, fonction du jour
     So = Io * costheta #eclairement dans un plan parallele a la surface du sol

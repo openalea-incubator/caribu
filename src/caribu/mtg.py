@@ -18,7 +18,7 @@ from numpy import array
 from openalea.plantgl.all import Tesselator,cross,Vector3,normSquared
 
 from itertools import groupby, izip
-from cStringIO import StringIO
+
 
 
 def _line(ind, pts, label):
