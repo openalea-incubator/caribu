@@ -448,6 +448,29 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
 
         return Qi,Qem,Einc
 
+    def getOptical(self):
+        """ return a list of tuple (reflectance, transmitance) for all triangles in the scene
+        """
+        from label import Label
+        def _reftrans(label, albedo, species):
+            if label.is_soil():
+                res = (albedo, 0, 0, 0)
+            else:
+                esp = label.optical_id
+                opts = species[esp]
+                if label.is_stem():
+                    res = (opts[0], 0, 0, 0)
+                else:
+                    res = (opts[1:])
+            return res
+            
+        labels = map(Label,self.scene_labels)
+        # pase opt
+        #self.PO.splitlines()
+        albedo = 0.2
+        species = {1:(10,1,1,1,1),2:(20,2,2,2,2)}
+        return [_reftrans(lab,albedo,species) for lab in labels]
+        
     def writeLight(self,lightfile):
         """  write a lightfile of the sources """ 
         if not self.hasSources:
