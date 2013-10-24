@@ -340,9 +340,9 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         scene = Scene()
         
         if len(self.scene_ids) > 0: #scene is not empty
-                                   
-            canstring = self.scene
-            triangles = [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
+            
+            triangles = self.getTriangles()
+
             geoms = {}
             
             for i,triangle in enumerate(triangles):
@@ -451,12 +451,12 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         """ return a list of tuple (reflectance, transmitance) for all triangles in the scene
         """
         from label import Label
-        def _reftrans(label, albedo, species):
+        def _reftrans(label, po):
             if label.is_soil():
-                res = (albedo, 0, 0, 0)
+                res = (po['albedo'], 0, 0, 0)
             else:
                 esp = label.optical_id
-                opts = species[esp]
+                opts = po['species'][esp]
                 if label.is_stem():
                     res = (opts[0], 0, 0, 0)
                 else:
@@ -464,11 +464,17 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             return res
             
         labels = map(Label,self.scene_labels)
-        # pase opt
+        # pase opt (in getPO)
         #self.PO.splitlines()
-        albedo = 0.2
-        species = {1:(10,1,1,1,1),2:(20,2,2,2,2)}
-        return [_reftrans(lab,albedo,species) for lab in labels]
+        po = {'albedo' : 0.2, 'species' : {1:(10,1,1,1,1),2:(20,2,2,2,2)}}
+        return [_reftrans(lab,po) for lab in labels]
+    
+    def getTriangles(self):
+        """ return a list of  triangles in the scene
+        """
+        canstring = self.scene
+        return [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
+
     
     def getNormals(self):
         """ return a list of normals (as pgl.vector3) for all triangles in the scene
@@ -479,8 +485,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             n = cross(B-A, C-A)
             return n.normed()
             
-        canstring = self.scene
-        triangles = [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
+        triangles = self.getTriangles()
         return [_normal(tri) for tri in triangles]
 
     def getCenters(self):
@@ -489,9 +494,8 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         def _center(triangle):
             A,B,C = triangle
             return (A + B + C) / 3.
-            
-        canstring = self.scene
-        triangles = [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
+           
+        triangles = self.getTriangles()
         return [_center(tri) for tri in triangles]
 
     
