@@ -18,4 +18,13 @@ def test_getOptical():
     #assert opts[0] == (0.1,0.05,0.1,0.05)
     return opts
     
-    
+def test_getNormals():
+    cs, out = test_tutorial()
+    norms = cs.getNormals()
+    #assert opts[0] == (0.1,0.05,0.1,0.05)
+    return norms
+  
+def test_getCenters():
+    cs, out = test_tutorial()
+    centers = cs.getCenters()
+    return centers

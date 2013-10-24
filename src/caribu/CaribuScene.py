@@ -13,7 +13,21 @@ def _agregate(values,indices,fun = sum):
     return ag
 
 
-
+def _get_triangle(line):
+    from openalea.plantgl.all import Vector3
+    line = line.strip()
+    if not line: 
+        return
+    if line[0] == '#':
+        return 
+    l = line.split()
+    nb_polygon = int(l[-10])
+    assert nb_polygon == 3
+    coords = map(float,l[-9:])   
+    triangle = (Vector3(*coords[:3]), 
+        Vector3(*coords[3:6]), 
+        Vector3(*coords[6:]))
+    return triangle
 
 
 class CaribuSceneError(Exception): pass
@@ -321,27 +335,12 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         Colors is an (optional) list of (rgb) tuples specifiying colors of individual triangles in the scene
 
         """
-        from openalea.plantgl.all import Scene, Vector3, TriangleSet, Index3, Color4, Shape,Color3,Material
+        from openalea.plantgl.all import Scene, TriangleSet, Index3, Color4, Shape,Color3,Material
         
         scene = Scene()
         
         if len(self.scene_ids) > 0: #scene is not empty
-                       
-            def _get_triangle(line):
-                line = line.strip()
-                if not line: 
-                    return
-                if line[0] == '#':
-                    return 
-                l = line.split()
-                nb_polygon = int(l[-10])
-                assert nb_polygon == 3
-                coords = map(float,l[-9:])   
-                triangle = (Vector3(*coords[:3]), 
-                    Vector3(*coords[3:6]), 
-                    Vector3(*coords[6:]))
-                return triangle
-            
+                                   
             canstring = self.scene
             triangles = [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
             geoms = {}
@@ -470,7 +469,32 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         albedo = 0.2
         species = {1:(10,1,1,1,1),2:(20,2,2,2,2)}
         return [_reftrans(lab,albedo,species) for lab in labels]
-        
+    
+    def getNormals(self):
+        """ return a list of normals (as pgl.vector3) for all triangles in the scene
+        """
+        from openalea.plantgl.all import cross
+        def _normal(triangle):
+            A,B,C = triangle
+            n = cross(B-A, C-A)
+            return n.normed()
+            
+        canstring = self.scene
+        triangles = [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
+        return [_normal(tri) for tri in triangles]
+
+    def getCenters(self):
+        """ return a list of center coordinates for all triangles in the scene
+        """
+        def _center(triangle):
+            A,B,C = triangle
+            return (A + B + C) / 3.
+            
+        canstring = self.scene
+        triangles = [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
+        return [_center(tri) for tri in triangles]
+
+    
     def writeLight(self,lightfile):
         """  write a lightfile of the sources """ 
         if not self.hasSources:
