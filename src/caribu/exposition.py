@@ -56,7 +56,7 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False):
     return out
 
 
-def exposition(scene_geometry, directions = 1, output_by_triangle = False, convUnit = 0.01):
+def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, convUnit = 0.01):
     """ 
     Compute exposition ('surface viewed(m2)') of scene elements from a given number of direction
 
@@ -71,24 +71,29 @@ def exposition(scene_geometry, directions = 1, output_by_triangle = False, convU
 
     :Returns:
     ---------
-    - a dict id:exposition
+    - a dict id:exposed_surface (m2) and a dict id: fraction of surface exposed
     """
-    energy_scaled = 1.0 * convUnit**2
-    energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=energy_scaled) 
+    energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
     sources = zip(energie,direction)
     out = run_caribu(sources, scene_geometry, output_by_triangle=output_by_triangle)
-    return(out['Einc'])
+    fraction_exposed = out['Ei']
+    areas = out['Area']
+    if output_by_triangle:
+        surface_exposed = dict([(vid,[fraction_exposed[vid][i] * areas[vid][i] * convUnit**2 for i in range(len(areas[vid]))]) for vid in areas])
+    else:
+        surface_exposed = dict([(vid,fraction_exposed[vid] * areas[vid] * convUnit**2) for vid in areas])
+    return fraction_exposed, surface_exposed
 
 def rain_and_light_expositions(g, light_sectors='16', output_by_triangle = False, convUnit = 0.01, dt = 1):
     geom = g.property('geometry')
-    rain_exposition = exposition(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit)
-    light_exposition = exposition(geom, directions = light_sectors, output_by_triangle=output_by_triangle, convUnit=convUnit)
-    if not 'rain_exposition' in g.properties():
-        g.add_property('rain_exposition')
-    if not 'light_exposition' in g.properties():
-        g.add_property('light_exposition')
-    g.property('rain_exposition').update(rain_exposition)
-    g.property('light_exposition').update(light_exposition)
+    _, rain_exposed_area = exposed_surface(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit)
+    light_exposed_fraction, _ = exposed_surface(geom, directions = light_sectors, output_by_triangle=output_by_triangle, convUnit=convUnit)
+    if not 'rain_exposed_area' in g.properties():
+        g.add_property('rain_exposed_area')
+    if not 'light_exposed_fraction' in g.properties():
+        g.add_property('light_exposed_fraction')
+    g.property('rain_exposed_area').update(rain_exposed_area)
+    g.property('light_exposed_fraction').update(light_exposed_fraction)
     return g
 
     

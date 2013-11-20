@@ -553,10 +553,11 @@ Scene:
             d[k] = map(lambda(x): min(eimax,max(0,x)), d[k])
         eabs = [e * a for e,a in izip(d['Eabs'],d['area'])]
         einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
+        ei = [esup + einf for esup,einf in izip(d['Ei_sup'],d['Ei_inf'])]
         eincsup = [esup * a for esup,a in izip(d['Ei_sup'],d['area'])]
         eincinf = [einf * a for einf,a in izip(d['Ei_inf'],d['area'])]
      
-        csdict = {'Eabs': eabs, 'Einc': einc, 'EincSup': eincsup, 'EincInf': eincinf, 
+        csdict = {'Eabs': eabs, 'Einc': einc, 'Ei': ei, 'EincSup': eincsup, 'EincInf': eincinf, 
                   'Area': d['area'],
                   'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
                   'label': d['label']} 
@@ -636,6 +637,7 @@ Scene:
                 res = dict([(k, _agregate(output[k],indices)) for k in ['Eabs','Einc','EincSup','EincInf','Area', 'label']])
                 # compute mean fluxes
                 res['Eabsm2'] = dict([(k,res['Eabs'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k,0) for k in res['Eabs'].iterkeys()  ])
+                res['Ei'] = dict([(k,(res['EincInf'][k] + res['EincSup'][k]) / res['Area'][k]) if res['Area'][k] > 0 else (k,0) for k in res['EincInf'].iterkeys()])
                 res['EiInf'] = dict([(k,res['EincInf'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k,0) for k in res['EincInf'].iterkeys()])
                 res['EiSup'] = dict([(k,res['EincSup'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k,0) for k in res['EincSup'].iterkeys()])
             else: 
