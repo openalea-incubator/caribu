@@ -25,7 +25,7 @@ def geom2shape(vid, mesh):
     return shape
 
 
-def run_caribu(sources, scene_geometry, output_by_triangle = False):
+def run_caribu(sources, scene_geometry, output_by_triangle = False, domain = None):
     """ 
     Calls Caribu for differents energy sources
 
@@ -43,11 +43,14 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False):
     - 'out_tri' (dict) only if output_by_triangle = True, return a tuple (out_moy, out_tri)
         A dict of intercepted variable (energy) per triangle
     """
-    c_scene = CaribuScene()
+    c_scene = CaribuScene(pattern = domain)
     shapes=[geom2shape(k,v) for k,v in scene_geometry.iteritems()]
     idmap = c_scene.add_Shapes(shapes)    
     c_scene.addSources(sources)
-    output = c_scene.runCaribu(infinity=False)
+    ifty = False
+    if domain is not None:
+        ifty = True
+    output = c_scene.runCaribu(infinity=ifty)
     
     if output_by_triangle:
         out = c_scene.output_by_id(output, idmap, aggregate = False)
@@ -56,7 +59,7 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False):
     return out
 
 
-def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, convUnit = 0.01):
+def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, convUnit = 0.01, domain = None):
     """ 
     Compute exposition ('surface viewed(m2)') of scene elements from a given number of direction
 
@@ -75,7 +78,7 @@ def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, 
     """
     energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
     sources = zip(energie,direction)
-    out = run_caribu(sources, scene_geometry, output_by_triangle=output_by_triangle)
+    out = run_caribu(sources, scene_geometry, output_by_triangle=output_by_triangle, domain = domain)
     fraction_exposed = out['Ei']
     areas = out['Area']
     if output_by_triangle:
@@ -84,10 +87,10 @@ def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, 
         surface_exposed = dict([(vid,fraction_exposed[vid] * areas[vid] * convUnit**2) for vid in areas])
     return fraction_exposed, surface_exposed
 
-def rain_and_light_expositions(g, light_sectors='16', output_by_triangle = False, convUnit = 0.01, dt = 1):
+def rain_and_light_expositions(g, light_sectors='16', output_by_triangle = False, convUnit = 0.01, domain = None, dt = 1):
     geom = g.property('geometry')
-    _, rain_exposed_area = exposed_surface(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit)
-    light_exposed_fraction, _ = exposed_surface(geom, directions = light_sectors, output_by_triangle=output_by_triangle, convUnit=convUnit)
+    _, rain_exposed_area = exposed_surface(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
+    light_exposed_fraction, _ = exposed_surface(geom, directions = light_sectors, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
     if not 'rain_exposed_area' in g.properties():
         g.add_property('rain_exposed_area')
     if not 'light_exposed_fraction' in g.properties():
