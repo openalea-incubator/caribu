@@ -58,7 +58,7 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False):
 
 def exposition(scene_geometry, directions = 1, output_by_triangle = False, convUnit = 0.01):
     """ 
-    Compute exposition ('surface viewed') of scene elements from a given number of direction
+    Compute exposition ('surface viewed(m2)') of scene elements from a given number of direction
 
     :Parameters:
     ------------
@@ -79,3 +79,17 @@ def exposition(scene_geometry, directions = 1, output_by_triangle = False, convU
     out = run_caribu(sources, scene_geometry, output_by_triangle=output_by_triangle)
     return(out['Einc'])
 
+def rain_and_light_expositions(g, light_sectors='16', output_by_triangle = False, convUnit = 0.01, dt = 1):
+    geom = g.property('geometry')
+    rain_exposition = exposition(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit)
+    light_exposition = exposition(geom, directions = light_sectors, output_by_triangle=output_by_triangle, convUnit=convUnit)
+    if not 'rain_exposition' in g.properties():
+        g.add_property('rain_exposition')
+    if not 'light_exposition' in g.properties():
+        g.add_property('light_exposition')
+    g.property('rain_exposition').update(rain_exposition)
+    g.property('light_exposition').update(light_exposition)
+    return g
+
+    
+    

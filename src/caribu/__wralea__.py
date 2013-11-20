@@ -4259,6 +4259,9 @@ CaribuScene_nodes_getEi = Factory(name='get Ei',
                 widgetclass=None,
                )
 
-
+exposition_rain_and_light = Factory(name='Rain and Light Expositions',
+                                    nodemodule = 'exposition',
+                                    nodeclass = 'rain_and_light_expositions')
+__all__.append('exposition_rain_and_light')
 
 
