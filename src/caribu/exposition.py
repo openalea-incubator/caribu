@@ -59,7 +59,7 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False, domain = Non
     return out
 
 
-def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, convUnit = 0.01, domain = None):
+def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, domain = None, convUnit = 0.01):
     """ 
     Compute exposition ('surface viewed(m2)') of scene elements from a given number of direction
 
@@ -87,7 +87,7 @@ def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, 
         surface_exposed = dict([(vid,fraction_exposed[vid] * areas[vid] * convUnit**2) for vid in areas])
     return fraction_exposed, surface_exposed
 
-def rain_and_light_expositions(g, light_sectors='16', output_by_triangle = False, convUnit = 0.01, domain = None, dt = 1):
+def rain_and_light(g, light_sectors='16', output_by_triangle = False, domain = None, convUnit = 0.01, dt = 1):
     geom = g.property('geometry')
     _, rain_exposed_area = exposed_surface(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
     light_exposed_fraction, _ = exposed_surface(geom, directions = light_sectors, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)

@@ -14,5 +14,5 @@ def test_exposition():
 def test_rain_and_light():
     wheat = AdelWheat()
     g,_ = new_canopy(wheat, age=100)
-    rain_and_light_expositions(g)
+    rain_and_light(g)
     return g
