@@ -59,9 +59,9 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False, domain = Non
     return out
 
 
-def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, domain = None, convUnit = 0.01):
+def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, domain = None, convUnit = 0.01):
     """ 
-    Compute exposition ('surface viewed(m2)') of scene elements from a given number of direction
+    Compute exposition ('surface_viewed-to_area ratio and exposed surface(m2)') of scene elements from a given number of direction
 
     :Parameters:
     ------------
@@ -74,29 +74,35 @@ def exposed_surface(scene_geometry, directions = 1, output_by_triangle = False, 
 
     :Returns:
     ---------
-    - a dict id:exposed_surface (m2) and a dict id: fraction of surface exposed
+    - a dict id:star (ratio viewed area / area) and id:exposed_surface (m2)
     """
     energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
     sources = zip(energie,direction)
     out = run_caribu(sources, scene_geometry, output_by_triangle=output_by_triangle, domain = domain)
-    fraction_exposed = out['Ei']
+    star = out['Ei']
     areas = out['Area']
     if output_by_triangle:
-        surface_exposed = dict([(vid,[fraction_exposed[vid][i] * areas[vid][i] * convUnit**2 for i in range(len(areas[vid]))]) for vid in areas])
+        exposed_area = {vid: [star[vid][i] * areas[vid][i] * convUnit**2 for i in range(len(areas[vid]))] for vid in areas}
     else:
-        surface_exposed = dict([(vid,fraction_exposed[vid] * areas[vid] * convUnit**2) for vid in areas])
-    return fraction_exposed, surface_exposed
+        exposed_area = {vid: star[vid] * areas[vid] * convUnit**2 for vid in areas}
+    return star, exposed_area
 
-def rain_and_light(g, light_sectors='16', output_by_triangle = False, domain = None, convUnit = 0.01, dt = 1):
+def rain_and_light_star(g, light_sectors='16', output_by_triangle = False, domain = None, convUnit = 0.01, dt = 1):
     geom = g.property('geometry')
-    _, rain_exposed_area = exposed_surface(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
-    light_exposed_fraction, _ = exposed_surface(geom, directions = light_sectors, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
+    rain_star, rain_exposed_area = caribu_star(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
+    light_star, light_exposed_area = caribu_star(geom, directions = light_sectors, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
     if not 'rain_exposed_area' in g.properties():
         g.add_property('rain_exposed_area')
-    if not 'light_exposed_fraction' in g.properties():
-        g.add_property('light_exposed_fraction')
+    if not 'rain_star' in g.properties():
+        g.add_property('rain_star')
+    if not 'light_exposed_area' in g.properties():
+        g.add_property('light_exposed_area')
+    if not 'light_star' in g.properties():
+        g.add_property('light_star')
     g.property('rain_exposed_area').update(rain_exposed_area)
-    g.property('light_exposed_fraction').update(light_exposed_fraction)
+    g.property('light_exposed_area').update(light_exposed_area)
+    g.property('rain_star').update(rain_star)
+    g.property('light_star').update(light_star)
     return g
 
     
