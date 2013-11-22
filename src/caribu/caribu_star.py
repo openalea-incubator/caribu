@@ -87,6 +87,18 @@ def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, doma
         exposed_area = {vid: star[vid] * areas[vid] * convUnit**2 for vid in areas}
     return star, exposed_area
 
+def caribu_rain_star(g, output_by_triangle = False, domain = None, convUnit = 0.01, dt = 1):
+    geom = g.property('geometry')
+    rain_star, rain_exposed_area = caribu_star(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
+    if not 'rain_exposed_area' in g.properties():
+        g.add_property('rain_exposed_area')
+    if not 'rain_star' in g.properties():
+        g.add_property('rain_star')
+    g.property('rain_exposed_area').update(rain_exposed_area)
+    g.property('rain_star').update(rain_star)
+    return g
+
+    
 def rain_and_light_star(g, light_sectors='16', output_by_triangle = False, domain = None, convUnit = 0.01, dt = 1):
     geom = g.property('geometry')
     rain_star, rain_exposed_area = caribu_star(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
