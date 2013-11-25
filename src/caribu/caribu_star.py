@@ -99,7 +99,7 @@ def caribu_rain_star(g, output_by_triangle = False, domain = None, convUnit = 0.
     return g
 
     
-def rain_and_light_star(g, light_sectors='16', output_by_triangle = False, domain = None, convUnit = 0.01, dt = 1):
+def rain_and_light_star(g, light_sectors='16', output_by_triangle = False, domain = None, convUnit = 0.01, trigger = 1):
     geom = g.property('geometry')
     rain_star, rain_exposed_area = caribu_star(geom, directions = 1, output_by_triangle=output_by_triangle, convUnit=convUnit, domain = domain)
     if light_sectors == '1':
