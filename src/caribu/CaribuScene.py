@@ -220,11 +220,11 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
 
         
         def _canString_fromShape(shape,tesselator,label = '100001000001'):
-            import numpy as np
+            import numpy
             shape.apply(tesselator)
             mesh = tesselator.triangulation
-            pts = np.array(mesh.pointList, ndmin=2)
-            indices = np.array(mesh.indexList, ndmin=2)
+            pts = numpy.array(mesh.pointList, ndmin=2)
+            indices = numpy.array(mesh.indexList, ndmin=2)
             return [_canString(ind, pts, label) for ind in indices]
 
         def _is_iterable(x):
@@ -427,7 +427,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         Einc is the total incident energy received on the domain (Einc = Qi * domain_area), or None if pattern is not set
 
         """
-        import numpy as np
+        import numpy
         Qi, Qem, Einc = None,None,None
 
         if self.hasSources:
@@ -436,13 +436,13 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             Qi = sources.energy.sum()
             
             # costheta = k . direction, k etant le vecteur (0,0,1) et theta l'angle avec la verticale = abs(zdirection) / norm(direction)
-            norm = np.sqrt(sources.vx**2 + sources.vy**2 + sources.vz**2)
+            norm = numpy.sqrt(sources.vx**2 + sources.vy**2 + sources.vz**2)
             costheta = abs(sources.vz) / norm
             Qem = (sources.energy / costheta).sum()
             
             if self.hasPattern:
                 domain = self.pattern_as_array()
-                d_area = abs(np.diff(domain.x) * np.diff(domain.y))[0]
+                d_area = abs(numpy.diff(domain.x) * numpy.diff(domain.y))[0]
                 Einc = Qi * d_area
 
         return Qi,Qem,Einc
