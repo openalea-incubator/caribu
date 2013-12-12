@@ -215,6 +215,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         """
         
         def _canString(ind, pts, label):
+            #ind = [ind[0], ind[2], ind[1]]
             s = "p 1 %s 3 %s"%(str(label), ' '.join('%.6f'%x for i in ind for x in pts[i]))
             return s + '\n'
 
