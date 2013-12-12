@@ -136,7 +136,7 @@ using namespace std ;
 
 #define NattMax 10
 #define LevelMax 6 //4:3,6
-#define NBOPT 10
+#define NBOPT 1000
 
 #define max(a,b) ((a>b)?a:b)
 #define min(a,b) ((a<b)?a:b)
