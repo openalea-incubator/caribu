@@ -175,7 +175,7 @@ Tabdyn<double,6>   xladia;
 Tabdyn<double,6> xpo;//je,jx,jy,jz,po,(Rf,Tf)
 Tabdyn<double,3> Tpo;
 
-double Rs[10], Stot;
+double Rs[1000], Stot;
 unsigned int nbtt,nbts; 
 #ifndef WIN32
 extern int errno;
@@ -321,9 +321,10 @@ int s2v(int argc, char **argv){
 
     // Optical properties
     npo=argc- MIN_OPT;
+    Ferr <<"npo: "<<npo <<", argc: "<< argc <<", min_opt:"<<MIN_OPT<<'\n';
     Tpo.alloue(npo,NBOPT,3);
     Tpo.maj(0);
-    for(po=0;po<npo;po++){
+    for(po=0;po<npo;po++){     
       sprintf(optname,"%s.opt",argv[MIN_OPT+po]);
       lect_po(Tpo,po,optname);
     }//for po
