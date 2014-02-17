@@ -1,7 +1,24 @@
 from alinea.caribu.caribu_star import *
 from alinea.adel.astk_interface import AdelWheat
 from alinea.astk.plant_interface import *
+from alinea.adel.data_samples import adel_one_leaf
+from alinea.adel.mtg_interpreter import mtg_interpreter
 
+def test_inclin():
+    g = adel_one_leaf()
+    # flaten the leaf
+    blade = g.node(8)
+    x,y,s,r = blade.shape_xysr
+    y *= 0
+    blade.shape_xysr = (x,y,s,r)
+    stars = []
+    for inclin in (0,0.5,1): #relative inclination compare to flat leaf
+        blade.inclination = inclin
+        mtg_interpreter(g)
+        geom = g.property('geometry')
+        star, exposed_area = caribu_star(geom)
+        stars.append(star)
+    return g, stars
 
 def test_star():
     wheat = AdelWheat()
