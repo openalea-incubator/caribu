@@ -59,7 +59,7 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False, domain = Non
     return out
 
 
-def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, domain = None, convUnit = 0.01):
+def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, domain = None, convUnit = 0.01, var='Ei'):
     """ 
     Compute exposition ('surface_viewed-to_area ratio and exposed surface(m2)') of scene elements from a given number of direction
 
@@ -71,6 +71,8 @@ def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, doma
         Default 'False'. Choose if return dict(id:exosition) or dict(id:[expositions_of_triangles])
     - 'convUnit' (float)
         Default '0.01'. Conversion factor to get meter from scene length unit.
+    - 'var' (str)
+        Default 'Ei'. The output variable to compute. 
 
     :Returns:
     ---------
@@ -79,7 +81,7 @@ def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, doma
     energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
     sources = zip(energie,direction)
     out = run_caribu(sources, scene_geometry, output_by_triangle=output_by_triangle, domain = domain)
-    star = out['Ei']
+    star = out[var]
     areas = out['Area']
     if output_by_triangle:
         exposed_area = {vid: [star[vid][i] * areas[vid][i] * convUnit**2 for i in range(len(areas[vid]))] for vid in areas}
