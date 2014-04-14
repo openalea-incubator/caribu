@@ -22,7 +22,7 @@ static REELLE **Zbuf8;
 static double cdist;
 static int **T, Ti,Tj, tr[8];
 static bool duplik;
-static Chrono chrono;
+static Chrono myclock;
 
 //proto
 void lateral(int x,int y, char idx) ;
@@ -100,7 +100,7 @@ void infinitise(void ***Zprim, REELLE **Zbuf,
 		double cste_dist,int** roof,int Tx, int Ty,bool dupli) {
   int i,j;
   if(verbose>1){
-    chrono.Start();
+    myclock.Start();
     cout<<"* infinitise(): DEBUT\n";
   }
   //init
@@ -156,8 +156,8 @@ void infinitise(void ***Zprim, REELLE **Zbuf,
   Zdat0.free();
   Zbuf0.free();
   if(verbose>1){
-    chrono.Stop();
-    cout<<"\n::::>  Infinitisation en "<<chrono<<endl;
+    myclock.Stop();
+    cout<<"\n::::>  Infinitisation en "<<myclock<<endl;
     fflush(stdout);
   }
 }//infinitise()

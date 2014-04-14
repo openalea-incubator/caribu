@@ -76,18 +76,18 @@ int main(int argc,char **argv){
   char * nsolem=NULL;
   reel bornemin[3]={99999999.0,99999999.0,99999999.0};
   reel bornemax[3]={-99999999.0,-99999999.0,-99999999.0};
-  Chrono chrono;	
+  Chrono clock;	
   Canopy scene;
   Diffuseur **TabDiff;
   //PAUSE("fin des declarations");
   
   //Chargement de la scene
   cout<<"Avant Chrono.start\n";
-  chrono.Start();
+  clock.Start();
    cout<<"Apres  Chrono.start et avant parse_can() \n";
   scene.parse_can(maqname,optname,name8,(reel *)bornemin, (reel *)bornemax,sol,nsolem,TabDiff);
   cout <<"-> scene.radim = "<<scene.radim<<endl;
-  chrono.Stop();
+  clock.Stop();
   //PAUSE("charge scene");
   for(j=0; j<3; j++)
     cout<<" Bornemin["<<j<<"] = "<<bornemin[j]<<"  Bornemax["<<j<<"] = "<<bornemax[j]<<endl;

@@ -480,7 +480,7 @@ int	Aj0, Bj0, Cj0;
 	    C[i][Cj0+j] += alpha*Mdot(p,&(A[i][Aj0]),&(B[j][Bj0]));
     ****************************************/
     for ( i = 0; i < m; i++ )
-	Mmv(n,p,alpha,&(A[i][Aj0]),B,Bj0,&(C[i][Cj0]));
+	Mmv(n,p,alpha,&(A[i][Aj0]),B,Bj0,(C[i][Cj0]));
 }
 
 /* Mmtrmtr -- C <- C + alpha.A^T.B^T */

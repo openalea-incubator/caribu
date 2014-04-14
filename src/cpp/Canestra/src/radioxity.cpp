@@ -83,7 +83,7 @@ int main(int argc,char **argv){
 #endif
     reel bornemin[3]={99999999.0,99999999.0,99999999.0};
     reel bornemax[3]={-99999999.0,-99999999.0,-99999999.0};
-    Chrono chrono;
+    Chrono clock;
     
     // Arret en cas d'erreur sur la ligne de commande
     if(options(argc,argv)) {
@@ -95,7 +95,7 @@ int main(int argc,char **argv){
     // ? traitement des surfaces trop grandes (sol, tiges) ?
   	
     //*********** Chargement de la scene et evt des capteurs virtuels ********
-    chrono.Start();
+    clock.Start();
     if(byfile){
       scene.parse_can(maqname,optname,name8,bornemin, 
                       bornemax,sol,nsolem,TabDiff);
@@ -125,8 +125,8 @@ int main(int argc,char **argv){
       denv=sqrt(denv)/2.;
       Ferr <<"<*> Full-matrix case: denv<0 ==> denv="  << denv<<"\n" ;
     }
-    chrono.Stop();
-    Ferr<<"\n>>> Canestra[main] Scene chargee en "<<chrono<< '\n';
+    clock.Stop();
+    Ferr<<"\n>>> Canestra[main] Scene chargee en "<<clock<< '\n';
     // BUG?F(IPD)
     //fflush(stdout); 
     // fflush(stderr); 
@@ -136,11 +136,11 @@ int main(int argc,char **argv){
     //pas besoin de grille si reuse ou 1er ordre ou SAIL pur
   
     if(!(radonly || ordre1 || denv==0))  {
-      chrono.Start();
+      clock.Start();
       //ex-pb effet de bord avec projplan car modifie les bornes => vmin et vmax
       scene.cstruit_grille(denv);
-      chrono.Stop();
-      Ferr<<">>> Canestra[main] Grille construite en "<<chrono<< '\n' ;//endl;
+      clock.Stop();
+      Ferr<<">>> Canestra[main] Grille construite en "<<clock<< '\n' ;//endl;
     }
     //scene.mesh.visu();
   
@@ -149,7 +149,7 @@ int main(int argc,char **argv){
     double *Bsource;
     opak=0;
   
-    chrono.Start();
+    clock.Start();
     Bsource = new double[scene.radim];
     B= B0 = new VEC*[nbsim]; //B=B0 si pas de calcul des rediffusions
     for(i=0;i<nbsim;i++) {
@@ -195,8 +195,8 @@ int main(int argc,char **argv){
       }   
     }while(flight);
     flight.close();
-    chrono.Stop();
-    Ferr<<">>> Canestra[main] calcul du direct en "<<chrono<<'\n' ; 
+    clock.Stop();
+    Ferr<<">>> Canestra[main] calcul du direct en "<<clock<<'\n' ; 
   
     if(byfile){//ecriture du direct dans un fichier E0	
       fres=fopen("E0.dat","w");
@@ -243,7 +243,7 @@ int main(int argc,char **argv){
 	      
     if(!ordre1){// Calcul des rediffusions
       //Calcul des FF et des Bfar
-      chrono.Start();
+      clock.Start();
     
       VEC  *r0,*x;
       Cenv = new VEC*[nbsim];
@@ -296,8 +296,8 @@ int main(int argc,char **argv){
 	  //Ferr << __FILE__<< " : "<< __LINE__ << '\n' ;
 	}
 #endif
-	chrono.Stop();
-	Ferr<<">>> Canestra[main] FF et Bfar calcules  en "<<chrono<< '\n';
+	clock.Stop();
+	Ferr<<">>> Canestra[main] FF et Bfar calcules  en "<<clock<< '\n';
 	//fflush(stderr);
       
 	/****************************************************/
@@ -321,7 +321,7 @@ int main(int argc,char **argv){
 	  B0[0]->ve[i]+=Cenv[0]->ve[i];
       
 	// Solve Ax=b; B precondionneur, tol seuil, limit nb_iter_max
-	chrono.Start();
+	clock.Start();
 	Ferr <<" MGCR-HD : seuil de cvgence = "  << seuil
 	     <<" - nb_iter_max = "  << nb_iter<<"\n " ;
       
@@ -383,19 +383,19 @@ int main(int argc,char **argv){
 	//sparse matrix resolution (Conjugate Gradient)
 	// Solve Ax=b; B precondionneur, tol seuil, limit nb_iter_max
 	//Methode  Leyk's MGCR
-	chrono.Start();
+	clock.Start();
 	Ferr <<" MGCR : seuil de cvgence = "  << seuil
 	     <<" - nb_iter_max = "  << nb_iter<<"\n " ;
       
 	B[0]=iter_spmgcr(FF, (SPMAT *)NULL, B0[0],seuil, B[0],
 			 20, nb_iter, &num_steps);
 #endif
-	chrono.Stop();
+	clock.Stop();
 	if(num_steps<nb_iter)
 	  Ferr <<" MGCR CONVERGE en "  << num_steps<<" iteration(s) \n" ;
 	else
 	  Ferr <<" MGCRN'A PAS CONVERGE' ! \n" ;
-	Ferr<<">>> Canestra[main] Resolution du SL par MGCR en "<<chrono<<'\n';
+	Ferr<<">>> Canestra[main] Resolution du SL par MGCR en "<<clock<<'\n';
       }//if denv<>0
 
       /************************************************************************/
