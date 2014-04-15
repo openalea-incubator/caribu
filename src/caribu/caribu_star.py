@@ -2,7 +2,7 @@ from openalea.plantgl import all as pgl
 from alinea.caribu.CaribuScene import CaribuScene
 import alinea.caribu.sky_tools.turtle as turtle
 from math import radians, degrees, sin , cos
-
+from openalea.color.colormap import ColorMap
 
 
 def vecteur_direction(elevation,azimuth):
@@ -18,21 +18,36 @@ def emission_inv(elevation, energy):
     return received_energy
 
 
-def geom2shape(vid, mesh):
-    """ Create a shape """
-    shape = pgl.Shape(mesh)
-    shape.id = vid
-    return shape
+def caribu_lighted_scene(scene, directions = 1, domain = None):
+    """ generate a per-triangle colored lighted scene  (like ViewMapOnCan)
+    """
+    energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
+    sources = zip(energie,direction)
+    
+    c_scene = CaribuScene(pattern = domain)
+    idmap = c_scene.add_Shapes(scene)    
+    c_scene.addSources(sources)
+    ifty = False
+    if domain is not None:
+        ifty = True
+        
+    output = c_scene.runCaribu(infinity=ifty)
+    eabs = output['Eabsm2']
+    minval = min(eabs)
+    maxval = max(eabs)
+    cmap = ColorMap()
+    colors = map(lambda x: cmap(x,minval,maxval,250., 20.),eabs)
+    return c_scene.generate_scene(colors)
 
 
-def run_caribu(sources, scene_geometry, output_by_triangle = False, domain = None):
+def run_caribu(sources, scene, output_by_triangle = False, domain = None):
     """ 
     Calls Caribu for differents energy sources
 
     :Parameters:
     ------------
     - `sources` (int)
-    - `scene_geometry`
+    - `scene` : any scene format accepted by CaribuScene
     - `output_by_triangle` (bool) 
         Default 'False'. Return is done by id of geometry. If 'True', return is done by triangle. 
 
@@ -44,8 +59,7 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False, domain = Non
         A dict of intercepted variable (energy) per triangle
     """
     c_scene = CaribuScene(pattern = domain)
-    shapes=[geom2shape(k,v) for k,v in scene_geometry.iteritems()]
-    idmap = c_scene.add_Shapes(shapes)    
+    idmap = c_scene.add_Shapes(scene)    
     c_scene.addSources(sources)
     ifty = False
     if domain is not None:
@@ -58,7 +72,7 @@ def run_caribu(sources, scene_geometry, output_by_triangle = False, domain = Non
         out = c_scene.output_by_id(output, idmap)
     return out
 
-
+# add two entry po and sources po 
 def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, domain = None, convUnit = 0.01, var='Ei'):
     """ 
     Compute exposition ('surface_viewed-to_area ratio and exposed surface(m2)') of scene elements from a given number of direction
@@ -132,5 +146,5 @@ def rain_and_light_star(g, light_sectors='16', output_by_triangle = False, domai
     g.property('light_star').update(light_star)
     return g
 
-    
+
     

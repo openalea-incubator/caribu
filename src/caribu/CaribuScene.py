@@ -1,5 +1,7 @@
 """ This module defines CaribuScene and CaribuSceneError classes."""
 
+import openalea.plantgl.all as pgl
+
 def _agregate(values,indices,fun = sum):
     """ performs aggregation of outputs along indices """
     from itertools import groupby, izip
@@ -14,7 +16,6 @@ def _agregate(values,indices,fun = sum):
 
 
 def _get_triangle(line):
-    from openalea.plantgl.all import Vector3
     line = line.strip()
     if not line: 
         return
@@ -24,9 +25,9 @@ def _get_triangle(line):
     nb_polygon = int(l[-10])
     assert nb_polygon == 3
     coords = map(float,l[-9:])   
-    triangle = (Vector3(*coords[:3]), 
-        Vector3(*coords[3:6]), 
-        Vector3(*coords[6:]))
+    triangle = (pgl.Vector3(*coords[:3]), 
+        pgl.Vector3(*coords[3:6]), 
+        pgl.Vector3(*coords[6:]))
     return triangle
 
 
@@ -90,7 +91,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
                 try:
                     self.add_Shapes(scene)
                 except:
-                    raise CaribuSceneError("Scene should be one of : None, filename, file content (string)  or plantgl scene or shape")
+                    raise CaribuSceneError("Scene should be one of : None, filename, file content (string), MTG geometry property  or plantgl scene or shape")
                 
         self.hasSources = False
         self.sources = ""
@@ -234,11 +235,19 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             except TypeError: 
                 return False
             return True
-             
+          
+        def _geom2shape(vid, mesh):
+            """ Create a shape """
+            shape = pgl.Shape(mesh)
+            shape.id = vid
+            return shape
             
         if not tesselator:
-            from openalea.plantgl.all import Tesselator
-            tesselator = Tesselator()
+            tesselator = pgl.Tesselator()
+        
+        if isinstance(shapes, dict):
+            #assume this is a geom property of an mtg
+            shapes = [_geom2shape(k,v) for k,v in shapes.iteritems()]
         
         if not _is_iterable(shapes):
             shapes = [shapes]
