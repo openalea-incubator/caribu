@@ -100,6 +100,16 @@ def _newlabel(opt,opak,plant,elt):
     lab.elt_id = elt
     return lab
     
+def canlabel_string(opt,opak,plant,elt):
+    return str(_newlabel(opt,opak, plant, elt))
+    
+def simple_canlabel(what, plant = 1, elt = 1, opt = 1):
+    opak_mapping = {'leaf':1, 'soil':0, 'stem': 0}
+    opak = opak_mapping.get(what, 0)
+    if what is 'soil':
+        plant, opt, elt = 0,0,0
+    return canlabel_string(opt, opak, plant, elt)
+    
 def encode_label(opt_id=1, opak=0, plant_id=1, elt_id=1, minlength = 1):
     """Create canlabels from list of properties to be encoded.
     canlabels allow to associate optical properties and geometry for Caribu
@@ -124,7 +134,7 @@ def encode_label(opt_id=1, opak=0, plant_id=1, elt_id=1, minlength = 1):
     
     opt_id, opak, plant_id, elt_id = map(lambda(x): _complete(x,maxlen),[opt_id,opak,plant_id,elt_id]) 
     
-    return [str(_newlabel(opt_id[i],opak[i], plant_id[i], elt_id[i])) for i in range(maxlen)]
+    return [canlabel_string(opt_id[i],opak[i], plant_id[i], elt_id[i]) for i in range(maxlen)]
 
     
 def decode_label(label):

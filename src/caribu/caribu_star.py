@@ -1,5 +1,6 @@
 from openalea.plantgl import all as pgl
 from alinea.caribu.CaribuScene import CaribuScene
+from alinea.caribu.label import simple_canlabel
 import alinea.caribu.sky_tools.turtle as turtle
 from math import radians, degrees, sin , cos
 from openalea.color.colormap import ColorMap
@@ -17,7 +18,11 @@ def emission_inv(elevation, energy):
     received_energy = energy * abs(cos(theta))
     return received_energy
 
-
+def diffuse_source(directions = 1):
+    energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
+    return zip(energie,direction)
+    
+    
 def caribu_lighted_scene(scene, directions = 1, domain = None):
     """ generate a per-triangle colored lighted scene  (like ViewMapOnCan)
     """
@@ -40,14 +45,15 @@ def caribu_lighted_scene(scene, directions = 1, domain = None):
     return c_scene.generate_scene(colors)
 
 
-def run_caribu(sources, scene, output_by_triangle = False, domain = None):
+def run_caribu(sources, scene, opticals = 'stem', output_by_triangle = False, domain = None):
     """ 
     Calls Caribu for differents energy sources
 
     :Parameters:
     ------------
     - `sources` (int)
-    - `scene` : any scene format accepted by CaribuScene
+    - `scene` : any scene format accepted by CaribuScene. This will be cast to a list of plantGL shapes
+    - opticals : a list of optical property labels ('leaf', 'soil' or 'stem') for all shapes in scene. If a shorter opticale list is provided, it will be recycled to match eength of shape list
     - `output_by_triangle` (bool) 
         Default 'False'. Return is done by id of geometry. If 'True', return is done by triangle. 
 
@@ -59,7 +65,13 @@ def run_caribu(sources, scene, output_by_triangle = False, domain = None):
         A dict of intercepted variable (energy) per triangle
     """
     c_scene = CaribuScene(pattern = domain)
-    idmap = c_scene.add_Shapes(scene)    
+    if not isinstance(opticals, list):
+        opticals = [opticals]
+    if len(opticals) < len(scene):
+        opticals = opticals * (len(scene) / len(opticals)) + [opticals[i] for i in range(len(scene) % len(opticals))]
+    
+    labels = [simple_canlabel(opt) for opt in opticals]
+    idmap = c_scene.add_Shapes(scene, canlabels=labels)    
     c_scene.addSources(sources)
     ifty = False
     if domain is not None:
