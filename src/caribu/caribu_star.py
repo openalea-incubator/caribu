@@ -45,7 +45,7 @@ def caribu_lighted_scene(scene, directions = 1, domain = None):
     return c_scene.generate_scene(colors)
 
 
-def run_caribu(sources, scene, opticals = 'stem', output_by_triangle = False, domain = None):
+def run_caribu(sources, scene, opticals = 'stem', output_by_triangle = False, domain = None, zsoil=None):
     """ 
     Calls Caribu for differents energy sources
 
@@ -65,6 +65,7 @@ def run_caribu(sources, scene, opticals = 'stem', output_by_triangle = False, do
         A dict of intercepted variable (energy) per triangle
     """
     c_scene = CaribuScene(pattern = domain)
+        
     if not isinstance(opticals, list):
         opticals = [opticals]
     if len(opticals) < len(scene):
@@ -73,9 +74,14 @@ def run_caribu(sources, scene, opticals = 'stem', output_by_triangle = False, do
     labels = [simple_canlabel(opt) for opt in opticals]
     idmap = c_scene.add_Shapes(scene, canlabels=labels)    
     c_scene.addSources(sources)
+    
     ifty = False
     if domain is not None:
         ifty = True
+        if zsoil is not None:
+            idmap_soil = c_scene.addSoil(zsoil=zsoil)
+            idmap.update(idmap_soil)
+        
     output = c_scene.runCaribu(infinity=ifty)
     
     if output_by_triangle:
