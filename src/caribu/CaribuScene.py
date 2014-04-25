@@ -619,6 +619,7 @@ Scene:
 
         
         """
+        import numpy
         #
         #+ une fonction input_by_id qui renverrai hmin, hmax, h, normale, azimuth, area et lai pour differents aggregateurs
         res = {}        
@@ -656,7 +657,7 @@ Scene:
             #re-index results if mapid is given
             if mapid is not None:# empty mapid (corrresponding to absence of a list of shapes in the scene) should pass this test. Only none default options should skip and return all res
                 for var in res.keys():
-                    res[var] = dict([(k,(res[var])[v]) for k,v in mapid.items()])
+                    res[var] = dict([(k,(res[var]).get(v, numpy.nan)) for k,v in mapid.items()])
                 if len(res[res.keys()[0]]) <= 0:#pas de res trouve pour les mapid en entree
                     res={}
         
