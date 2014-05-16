@@ -6,6 +6,8 @@ from alinea.adel.mtg_interpreter import mtg_interpreter
 from alinea.caribu.lightString import lightString
 from openalea.plantgl.all import * 
 from math import pi
+from alinea.caribu.CaribuScene import CaribuScene
+from nose.tools import assert_almost_equal, assert_not_almost_equals
 
 def test_inclin():
     g = adel_one_leaf()
@@ -52,4 +54,33 @@ def test_unit_square():
     scene = Scene([Shape(carre)])
     sources = '\n'.join([lightString(emission_inv(10,1),80,90),lightString(emission_inv(10,1),80,-90)])
     return scene, sources, run_caribu(sources, scene, opticals='leaf')
+
+def test_exposed_area():
+    '''Test the validity of exposed_area according to the number of slices for cylinder reconstruction.
+    '''
+    radius = 0.5
+    height = 3.0
+    projected_area = radius * 2 * height
+    
+    def compute_exposed_area(slices):
+        cyl = Cylinder(radius, height, False, slices)
+        cyl_rotated = AxisRotated((0,1,0), pi/2., cyl)
+        scene = {1: cyl_rotated}
+        sources = diffuse_source(1)
+        c_scene = CaribuScene()
+        idmap = c_scene.add_Shapes(scene)
+        c_scene.addSources(sources)
+        output = c_scene.runCaribu(infinity=False)
+        out = c_scene.output_by_id(output, idmap)
+        star = out['Ei'].values()[0]
+        area = out['Area'].values()[0]
+        exposed_area = star * area
+        return exposed_area
+    
+    exposed_area = compute_exposed_area(3) #3 slices (too few)
+    assert_not_almost_equals(exposed_area, projected_area, delta=0.01) # to low
+    
+    exposed_area = compute_exposed_area(8) #8 slices (enough)
+    assert_almost_equal(exposed_area, projected_area, delta=0.01)
+    
    
