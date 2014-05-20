@@ -485,7 +485,15 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         canstring = self.scene
         return [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
 
-    
+    def getAreas(self):
+        """ return a list of areas for all triangles in the scene
+        """
+        def _surf(triangle):
+            A,B,C = triangle
+            return pgl.norm(pgl.cross(B-A, C-A)) / 2.0
+        triangles = self.getTriangles()
+        return [_surf(tri) for tri in triangles]
+        
     def getNormals(self):
         """ return a list of normals (as pgl.vector3) for all triangles in the scene
         """
@@ -625,6 +633,11 @@ Scene:
         res = {}        
         if len(output) > 0:           
             indices = self.scene_ids
+            
+            if len(indices) is not len(next(output.itervalues())):
+                # caribu/periodise have filtered 0 areas triangle
+                areas = self.getAreas()
+                indices = numpy.array(indices)[numpy.array(areas) > 0]
             
             if groups:
                 new_map = {} #dict of group_id -> reference internal id (reference id is the first one found belonging to a group)
