@@ -1,9 +1,8 @@
-from openalea.plantgl import all as pgl
 from alinea.caribu.CaribuScene import CaribuScene
 from alinea.caribu.label import simple_canlabel
 import alinea.caribu.sky_tools.turtle as turtle
 from math import radians, degrees, sin , cos
-from openalea.color.colormap import ColorMap
+
 
 
 def vecteur_direction(elevation,azimuth):
@@ -26,6 +25,8 @@ def diffuse_source(directions = 1):
 def caribu_lighted_scene(scene, directions = 1, domain = None, minval=None, maxval=None):
     """ generate a per-triangle colored lighted scene  (like ViewMapOnCan)
     """
+    # This import makes matplotlib with TkAgg frontend crash for some mysterious reason : don't import it on top
+    from openalea.color.colormap import ColorMap
     energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
     sources = zip(energie,direction)
     
