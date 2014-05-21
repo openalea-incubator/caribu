@@ -106,6 +106,8 @@ def canlabel_string(opt,opak,plant,elt):
 def simple_canlabel(what, plant = 1, elt = 1, opt = 1):
     opak_mapping = {'leaf':1, 'soil':0, 'stem': 0}
     opak = opak_mapping.get(what, 0)
+    opt_mapping = {'awn': 3}
+    opt = opt_mapping.get(what, 1)
     if what is 'soil':
         plant, opt, elt = 0,0,0
     return canlabel_string(opt, opak, plant, elt)

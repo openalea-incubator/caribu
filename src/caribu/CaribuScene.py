@@ -50,7 +50,9 @@ class CaribuScene(object):
         
         - `pattern` is a filename (*.8), a string (8 file format) or a tuple ((xmin,ymin), (xmax,ymax))
         
-        - `opt` is a filename (*.opt) or a string (opt file format)
+        - `opt` is a filename (*.opt), a string (opt file format) or a dict. 
+          If `opt` is a dict, its structure is: {species: (r_opaque, r_translucent_sup, t_translucent_sup, r_translucent_inf, t_translucent_inf)}
+          species is: 's' for soil, 'e1' for species 1, 'e2' for species 2, and so on. If species == 's' (i.e. soil), then just r_opaque is required.   
         
         File format specifications are in data/CanestraDoc.pdf
 
@@ -124,6 +126,8 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
                 fin.close()
             elif isinstance(opt,str):
                 self.setOptical(opt,waveLength)
+            elif isinstance(opt,dict):
+                self.setOpticalFromDict(opt,waveLength)
         
     
     def resetScene(self):
@@ -297,6 +301,21 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         """  Set optical properties """
         self.PO = optstring
         self.wavelength = wavelength
+        
+    def setOpticalFromDict(self,optdict,wavelength):
+        """ Set optical properties from a dict: {species: (r_opaque, r_translucent_sup, t_translucent_sup, r_translucent_inf, t_translucent_inf)}
+          species is: 's' for soil, 'e1' for species 1, 'e2' for species 2, and so on. If species == 's' (i.e. soil), then just r_opaque is required. """   
+        optdict = optdict.copy()
+        soil_opt = optdict.pop('s')
+        n = len(optdict)
+        if isinstance(soil_opt,tuple):
+            soil_opt = soil_opt[0]
+        optstr = 'n %s\ns d %s\n' % (n, soil_opt)
+        optdict_sorted_keys = sorted(optdict.keys())
+        for key in optdict_sorted_keys:
+            optstr += 'e d %s   d %s %s  d %s %s\n' % optdict[key]
+        self.setOptical(optstr,wavelength)
+        
 
     def addSources(self,sources):
         """ Set light sources from a filename (*.light), a string (light file format) or(a list of) tuples (energy,(vx,vy,vz).

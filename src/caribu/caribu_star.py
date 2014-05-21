@@ -48,7 +48,7 @@ def caribu_lighted_scene(scene, directions = 1, domain = None, minval=None, maxv
     return c_scene.generate_scene(colors)
 
 
-def run_caribu(sources, scene, opticals = 'stem', output_by_triangle = False, domain = None, zsoil=None):
+def run_caribu(sources, scene, opticals = 'stem', optical_properties=None, output_by_triangle = False, domain = None, zsoil=None):
     """ 
     Calls Caribu for differents energy sources
 
@@ -56,7 +56,10 @@ def run_caribu(sources, scene, opticals = 'stem', output_by_triangle = False, do
     ------------
     - `sources` (int)
     - `scene` : any scene format accepted by CaribuScene. This will be cast to a list of plantGL shapes
-    - opticals : a list of optical property labels ('leaf', 'soil' or 'stem') for all shapes in scene. If a shorter opticale list is provided, it will be recycled to match eength of shape list
+    - opticals : a list of optical property labels ('leaf', 'soil', 'stem', 'ear' or 'awn') for all shapes in scene. If a shorter opticale list is provided, it will be recycled to match eength of shape list
+    - `optical_properties`: a filename (*.opt), a string (opt file format) or a dict. 
+      If optical_properties is a dict, its structure is: {species: (r_opaque, r_translucent_sup, t_translucent_sup, r_translucent_inf, t_translucent_inf)}
+      species is: 's' for soil, 'e1' for species 1, 'e2' for species 2, and so on. If species == 's' (i.e. soil), then just r_opaque is required.   
     - `output_by_triangle` (bool) 
         Default 'False'. Return is done by id of geometry. If 'True', return is done by triangle. 
 
@@ -67,7 +70,7 @@ def run_caribu(sources, scene, opticals = 'stem', output_by_triangle = False, do
     - 'out_tri' (dict) only if output_by_triangle = True, return a tuple (out_moy, out_tri)
         A dict of intercepted variable (energy) per triangle
     """
-    c_scene = CaribuScene(pattern = domain)
+    c_scene = CaribuScene(pattern = domain, opt=optical_properties)
         
     if not isinstance(opticals, list):
         opticals = [opticals]
