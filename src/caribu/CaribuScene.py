@@ -638,6 +638,8 @@ Scene:
                 # caribu/periodise have filtered 0 areas triangle
                 areas = self.getAreas()
                 indices = numpy.array(indices)[numpy.array(areas) > 0]
+                if len(indices) is not len(next(output.itervalues())):
+                    raise CaribuSceneError("Caribu outputs can't be aggregated due to a mismatch between the number of input triangles and the number of output values")
             
             if groups:
                 new_map = {} #dict of group_id -> reference internal id (reference id is the first one found belonging to a group)

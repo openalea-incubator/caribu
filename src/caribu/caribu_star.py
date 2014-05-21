@@ -23,7 +23,7 @@ def diffuse_source(directions = 1):
     return zip(energie,direction)
     
     
-def caribu_lighted_scene(scene, directions = 1, domain = None):
+def caribu_lighted_scene(scene, directions = 1, domain = None, minval=None, maxval=None):
     """ generate a per-triangle colored lighted scene  (like ViewMapOnCan)
     """
     energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
@@ -38,8 +38,10 @@ def caribu_lighted_scene(scene, directions = 1, domain = None):
         
     output = c_scene.runCaribu(infinity=ifty)
     eabs = output['Eabsm2']
-    minval = min(eabs)
-    maxval = max(eabs)
+    if minval is None:
+        minval = min(eabs)
+    if maxval is None:
+        maxval = max(eabs)
     cmap = ColorMap()
     colors = map(lambda x: cmap(x,minval,maxval,250., 20.),eabs)
     return c_scene.generate_scene(colors)
