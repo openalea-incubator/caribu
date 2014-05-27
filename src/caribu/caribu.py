@@ -143,7 +143,7 @@ class Caribu(object):
             print "Caribu.__del__ called, tmp dir kept: %s"%self.tempdir
         else:
             if self.tempdir.exists():
-                print 'Remove tempfile %s'%self.tempdir
+                #print 'Remove tempfile %s'%self.tempdir
                 self.tempdir.rmtree()
 
     def __str__(self):         

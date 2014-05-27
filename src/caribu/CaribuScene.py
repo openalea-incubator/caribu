@@ -653,11 +653,25 @@ Scene:
         if len(output) > 0:           
             indices = self.scene_ids
             
-            if len(indices) is not len(next(output.itervalues())):
+            if len(indices) != len(next(output.itervalues())):
                 # caribu/periodise have filtered 0 areas triangle
                 areas = self.getAreas()
                 indices = numpy.array(indices)[numpy.array(areas) > 0]
                 if len(indices) != len(next(output.itervalues())):
+                    # tries (exprerimental and limited to 10 mismatchs) to match input/output values based on area comparison
+                    print "caribu: Warning : there is a mismatch between input and output, try to repair..."
+                    in_areas = numpy.array(areas)[numpy.array(areas) > 0]
+                    out_areas = numpy.array(output['Area'])
+                    tried = 0
+                    while ((len(in_areas) != len(out_areas)) and tried < 10):
+                        tried += 1
+                        isel = numpy.arange(len(out_areas))
+                        r = in_areas[isel] / out_areas[isel]
+                        notclose = numpy.invert(numpy.isclose(r,numpy.ones(len(out_areas)),1e-2))
+                        delindex = min(isel[notclose])
+                        indices = numpy.delete(indices,delindex)
+                        in_areas = numpy.delete(in_areas,delindex)
+                if len(indices) != len(next(output.itervalues())):        
                     raise CaribuSceneError("Caribu outputs can't be aggregated due to a mismatch between the number of input triangles (%d) and the number of output values(%d)"%(len(indices),len(next(output.itervalues()))))
             
             if groups:
