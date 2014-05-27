@@ -392,7 +392,8 @@ class Caribu(object):
         name, ext = self.scene.splitext()
         outscene = name + '_8' + ext
         cmd = '%s -m %s -8 %s -o %s '%(self.periodise_name,self.scene, self.pattern, outscene)
-        print ">>> periodise() : ",cmd
+        if self.my_dbg:
+            print ">>> periodise() : ",cmd
         status = _process(cmd, d, d/"periodise.log")
         if (d/outscene).exists():
             self.scene = outscene
@@ -408,7 +409,8 @@ class Caribu(object):
         d = self.tempdir
         wavelength = ' '.join([fn.stripext() for fn in self.opticals])
         cmd = "%s %s %d %f %s "%(self.s2v_name,self.scene, self.nb_layers, self.can_height, self.pattern) + wavelength
-        print ">>> s2v() : ",cmd
+        if self.my_dbg:
+            print ">>> s2v() : ",cmd
         status = _process(cmd, d, d/"s2v.log")
         # Raise an exception if s2v crashed...
         leafarea= d/'leafarea'
@@ -426,8 +428,9 @@ class Caribu(object):
         (d/optname+'.spec').copy(d/'spectral')
             
         cmd = "%s %s "%(self.sail_name,self.sky)
-   
-        print ">>> mcsail(): ",cmd
+    
+        if self.my_dbg:
+            print ">>> mcsail(): ",cmd
         logfile = "sail-%s.log"%(optname)
         logfile = d/logfile
         status = _process(cmd, d, logfile)
@@ -448,7 +451,8 @@ class Caribu(object):
         #canestrad -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r  $argv[1] -1
         d = self.tempdir        
         optname, ext = path(opt.basename()).splitext()
-        print optname
+        if self.my_dbg:
+            print optname
         str_pattern = str_direct = str_FF = str_diam = str_env = ""
         
         if self.infinity:
@@ -469,8 +473,9 @@ class Caribu(object):
             if self.sphere_diameter >= 0 :
                 str_env=" -e %s.env "%(optname)
                 
-        cmd = "%s -M %s -l %s -p %s -A %s %s %s %s %s "%(self.canestra_name,self.scene, self.sky,  opt, str_pattern,str_direct,str_diam, str_FF, str_env)  
-        print(">>> Canestrad(): %s"%(cmd))
+        cmd = "%s -M %s -l %s -p %s -A %s %s %s %s %s "%(self.canestra_name,self.scene, self.sky,  opt, str_pattern,str_direct,str_diam, str_FF, str_env)
+        if self.my_dbg:
+            print(">>> Canestrad(): %s"%(cmd))
         status = _process(cmd, self.tempdir,d/"nr.log")
 
         ficres = d/'Etri.vec0'
