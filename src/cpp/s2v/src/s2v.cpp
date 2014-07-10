@@ -103,7 +103,7 @@
 /* MC jan 00 - Creation du fichier de temperature pour SailT, modifie fev00 */
 /* MC jan 00 - Calcul du profil de sinT pour mcsellers */
 /* MC jan 00 - Creation d'un ficier .can trie par couche et avec un 2e id couche */
-
+/* MC mai 2011 - passage en 1D pour regler bug espece
 /* MC avr 97 -  */
 
 #include <iostream>	//.h>
@@ -136,7 +136,7 @@ using namespace std ;
 
 #define NattMax 10
 #define LevelMax 6 //4:3,6
-#define NBOPT 1000
+#define NBOPT 10
 
 #define max(a,b) ((a>b)?a:b)
 #define min(a,b) ((a<b)?a:b)
@@ -146,10 +146,11 @@ using namespace std ;
 
 /***************      Prototypes      ********************/
 double lectri(signed char&,char&,int&,long [],int&,Patch&,FILE *);
-int repart(Patch ,char);
+int repart(Patch ,char, int);
 void calcjp(Patch, int[3][3], char&);
 void classe(double, int&);
-void affect(Patch,int*);
+// BUG multi-specie - MCoct2010 : void affect(Patch,int*);
+void affect(Patch,int*, int);
 double proscal(double*, double*);
 void provec(double*, double*, double*);
 void norme(double*, double*);
@@ -163,7 +164,7 @@ void Sfclose(FILE ** fic, int line=161) ; // HA nov 2003
 
 /**********************************************************/
 
-unsigned short ji,ja,nbz=0,nbzm=0;
+int  ji,ja,nbz=0,nbzm=0;
 int nbpatc=0;
 short je;
 int njx,njy,njz;
@@ -171,11 +172,11 @@ int njx,njy,njz;
 double dx, dy, proscal_to_surf;
 double *dz = NULL,*bz = NULL;
 int i,j,k,po,npo=0;
-Tabdyn<double,6>   xladia;
-Tabdyn<double,6> xpo;//je,jx,jy,jz,po,(Rf,Tf)
+Tabdyn<double,4>   xladia; //je, jz, theta, phi
+Tabdyn<double,4> xpo;//je,jz,po,(Rf,Tf)
 Tabdyn<double,3> Tpo;
 
-double Rs[1000], Stot;
+double Rs[10], Stot;
 unsigned int nbtt,nbts; 
 #ifndef WIN32
 extern int errno;
@@ -200,8 +201,8 @@ bool segpar=false,genopt=false;
 ferrlog Ferr((char*)"s2v.log") ;
 
 int s2v(int argc, char **argv){
-//int main(int argc, char **argv){
-  int nja,nji,nje;
+  //int main(int argc, char **argv){
+  int nja,nji,nje, nje_reel=-1, cptr=0;;
   char ntype,optname[200];
   signed  char test;
   int natt,nsom;
@@ -213,8 +214,8 @@ int s2v(int argc, char **argv){
   long i_att[NattMax];
   FILE *fpar=NULL, *fmlsail=NULL, *fsail=NULL, 
     *ftri=NULL, *fsurf=NULL ;
-  Tabdyn<double,4> xlad;
-  Tabdyn<double,5> xladi;
+  Tabdyn<double,2> xlad;// je, jz
+  Tabdyn<double,3> xladi;//jz, jz, ji
   Tabdyn<double ,2> disti;
   Tabdyn<double ,2> dista;
   double *xlai = NULL;
@@ -260,16 +261,16 @@ int s2v(int argc, char **argv){
 #else
       sprintf ( clef_alphanum, "%d", clef) ;
       assert ((hSharedSeg = OpenFileMapping (
-	FILE_MAP_ALL_ACCESS,
-	FALSE,
-	clef_alphanum)) != NULL ) ;
+					     FILE_MAP_ALL_ACCESS,
+					     FALSE,
+					     clef_alphanum)) != NULL ) ;
 
       lpSharedSeg = MapViewOfFile (
-	hSharedSeg,
-	FILE_MAP_ALL_ACCESS,
-	0,
-	0,
-	SEGSIZE*sizeof(Patch) ) ;
+				   hSharedSeg,
+				   FILE_MAP_ALL_ACCESS,
+				   0,
+				   0,
+				   SEGSIZE*sizeof(Patch) ) ;
       assert ( lpSharedSeg != NULL ) ;
       Ts = (Patch *)lpSharedSeg ;
 #endif
@@ -320,27 +321,27 @@ int s2v(int argc, char **argv){
     gencan=true;
 
     // Optical properties
+    genopt=true;
     npo=argc- MIN_OPT;
-    Ferr <<"npo: "<<npo <<", argc: "<< argc <<", min_opt:"<<MIN_OPT<<'\n';
     Tpo.alloue(npo,NBOPT,3);
     Tpo.maj(0);
-    for(po=0;po<npo;po++){     
+    for(po=0;po<npo;po++){
       sprintf(optname,"%s.opt",argv[MIN_OPT+po]);
       lect_po(Tpo,po,optname);
     }//for po
     xpo.alloue(nje,njx,njy,njz,npo,2); xpo.maj(0);
    
   }
-  else{// by file
+  else{// by file si argc == 1 
     fpar=stdin;
     ftri=fopen("fort.51","r");
     if(ftri==NULL){
       Ferr<<"<!> Ouverture de fort.51 achoppee..."<<'\n';
       return -2;
-    }
+    }// if ftri
     Ferr<<"Lecture du fichier parametre dans fichier :"<<'\n';
     fscanf(fpar,"%d %d %d",&nji,&nja,&njz);
-    //printf("nji=%d, nja=%d, njz=%hd \n",nji,nja,njz);
+    printf("nji=%d, nja=%d, njz=%hd \n",nji,nja,njz);
     Ferr <<"nji="<<nji <<", nja="<<nja<< ", njz="<<njz<< '\n';
     volume=new double[njz];
     dz=new double[njz];
@@ -351,7 +352,7 @@ int s2v(int argc, char **argv){
 	bz[i]=dz[i];
       else      
 	bz[i]=dz[i]+bz[i+1];
-    }
+    }// for i
     //printf("bz[0]=%lf\n",bz[0]);
     Ferr<<"bz[0]="<<bz[0]<<'\n';
     // fscanf(fpar,"%lf %d %lf",&xl,&njx,&dx);
@@ -359,7 +360,8 @@ int s2v(int argc, char **argv){
     //printf("%lf %d %lf  %lf %d %lf %d\n",xl,njx,dx,yl,njy,dy,nje);
     Ferr<<xl<<", "<<njx<<", "<<dx<<", "<<yl<<", ";
     Ferr <<njy<<", "<<dy<<", "<<nje<<'\n';
-  }
+    //printf(" DEBUG: nje par lecture .par  = %d\n", nje);
+  }// else by file (argc = 1 => fort.51: old use)
   
   //alloc des tableaux de resultats
   xlai= new double[nje];
@@ -370,9 +372,9 @@ int s2v(int argc, char **argv){
   }
   disti.alloue(nje,nji); disti.maj(0);
   dista.alloue(nje,nja); dista.maj(0);
-  xlad.alloue(nje,njx,njy,njz); xlad.maj(0);
-  xladi.alloue(nje,njx,njy,njz,nji); xladi.maj(0);
-  xladia.alloue(nje,njx,njy,njz,nji,nja); xladia.maj(0);
+  xlad.alloue(nje,njz); xlad.maj(0);
+  xladi.alloue(nje,njz,nji); xladi.maj(0);
+  xladia.alloue(nje,njz,nji,nja); xladia.maj(0);
   //calcul des var globales
   di = 90.0/(double)nji;
   da = 360.0/(double)nja;
@@ -386,7 +388,7 @@ int s2v(int argc, char **argv){
   FILE *fcan = NULL;
   double sT;
   int nbtri=0;
-  nje=0;
+  // bug mc 2011?  nje=0;
 
   if( gencan){
     fcan=fopen("s2v.can","w");
@@ -409,42 +411,44 @@ int s2v(int argc, char **argv){
 	i_att[0]=0; //Opak: Tige
       if(T.t==0) test=-1;
       je=fabs(double(T.t))-1;
-      if(je+1>nje)nje=je+1;
+      if(je+1>nje_reel)nje_reel=je+1;
       //printf("it=%d/%d :: T.t=%d, je=%d\n",it,Nt,T.t,je);
       it++;
       
     }else{
       id=lectri(test,ntype,natt,i_att,nsom,T,ftri);
-       
+      //printf(">dbg apres call lectri, test = %d\n", test);
       if(test==1){
         long opak;
 	nbtri++;
 	//i_att[0] = label1/1000
 	je=(i_att[0]/100000000)-1; //je : de 0 à nje (indice tableau C)
-	if(je+1>nje)nje=je+1;
+	if(je+1>nje_reel)nje_reel=je+1;
 	// Bug MC09 T.t=je+1;
 	T.t= - je+1; // default OPak
 	if(je==-1) test=-2;//Sol
 	opak= i_att[0] - i_att[0]/1000*1000;
-	printf("i_att=%ld, iatt/1e3=%ld \n",i_att[0],i_att[0]/1000);
+	// dbug: printf("i_att=%ld, iatt/1e3=%ld \n",i_att[0],i_att[0]/1000);
 	// MC09 i_att[0]=i_att[0]%1000;
 	i_att[0]=T.t=(opak>0)?1:0;
 	//if(i_att[0]>0) T.t= -T.t;
 	// i_att[0] = 1 => Transparent: feuille
 	// i_att[0] = 0 => Opak: Tige
-	printf("> s2v: lectri() => id:%.0f, opak=%ld,  i_att[0]=%ld,  je=%d, T.t=%d\n",id, opak,i_att[0], je, T.t);
+	// printf("> s2v: lectri() => id:%.0f, opak=%ld,  i_att[0]=%ld,  je=%d, T.t=%d\n",id, opak,i_att[0], je, T.t);
 
       }
     }//else segpar
 
+    //debug MC2011
+    //  printf(">>>> Apres lcture fichier fort.51 nje = %d, nje_reel =%d\n", nje, nje_reel) ;
     if(test>-1){
-      //fprintf(stderr,"label=%d, esp=%d, nbid=%d ,nbs=%d\n",i_att[0],je,natt,nsom);
+      // fprintf(stderr,"label=%d, esp=%d, nbid=%d ,nbs=%d\n",i_att[0],je,natt,nsom);
       if((je<0)&&(je>=nje)&&(natt<=0)&&(natt>NattMax)&&(nsom!=3)){
 	fprintf(stderr,"*** Incorect data format in fort.51 file -> break\n");
 	exit(-1);
       }
       
-     // feuille ou tige pour le coef de surface
+      // feuille ou tige pour le coef de surface
       proscal_to_surf=0.5;
       if(i_att[0]==0)
 	proscal_to_surf=0.25;
@@ -460,13 +464,14 @@ int s2v(int argc, char **argv){
       ji = min(nji-1, ji);
       ja = min(nja-1,ja);
 
-     // printf("inc=%lf, azi=%lf => ji=%d, ja=%d\n",incl,azi,ji,ja);
+      // printf("inc=%lf, azi=%lf => ji=%d, ja=%d\n",incl,azi,ji,ja);
       //calcul recursif des coord discretes du T et du cas cheval
-      //printf("Repart called 1\n");
+      //printf("Repart called 1, je=%d\n", je);
       // for(int q=0;q<3;q++) printf("Patch(%d,2)=%g\n",q,T.P[q][2]);
-      
-      il=repart(T,0);
-     
+      if(je>=0){
+	il=repart(T,0, je);
+        //printf(">>>> apres call repart:  je =%d \n",je);
+      }
       if(gencan){
 	if(segpar) {
 	  id=(int)T.t;
@@ -485,7 +490,7 @@ int s2v(int argc, char **argv){
     if(test==-2 && gencan){//cas du sol
 
  
-      printf("==>test=%d\n",test);
+      //printf("==>test=%d\n",test);
       sT=area(T);
       fprintf(fsurf,"0 \t\t 999\t %g\n",sT);
       fprintf(fcan,"p 2 0 999  3 ");
@@ -494,8 +499,11 @@ int s2v(int argc, char **argv){
 	  fprintf(fcan,"%lf ", T.P[ii][jj]);
       fprintf(fcan,"\n");
     }
+    //printf("> dbg: juste avant while(!segpar && feof(ftri): cptr = %d\n", cptr++); 
 
   }while((!segpar && !feof(ftri)) || (segpar && (it<Nt)) );
+  //printf("> dbg: juste apres while(!segpar && feof(ftri)\n"); 
+
   printf("\n***  nbtri=%d, nbpatch=%d\n\n",nbtri, nbpatc);
 
   if(segpar){
@@ -514,6 +522,7 @@ int s2v(int argc, char **argv){
     Ferr<<__FILE__<<":"<<__LINE__<<" -> Fin de lecture de fichier\n";
     Ferr <<"=> Calcul des distributions"<<'\n';
   }
+  printf(">>>> Apres lcture fichier fort.51 nje = %d, nje_reel =%d\n", nje, nje_reel);
   Ferr<<"==> nje rel = "<<nje<<'\n';
   /* Calcul des distributions spatiales de surface 
      foliaire et des frequences d'angle 
@@ -524,37 +533,54 @@ int s2v(int argc, char **argv){
     for (jz=0; jz<njz ; jz++) {
       volume[jz] = xymaille * dxdy * dz[jz];
     }
+    printf("> debut boucle nje =%d\n\n", nje);fflush(stdout); fflush(stderr); 
     double tmp;
     /* Inversion de l'ordre des boucles en mettant je en 1er pour eviter les cas
        ou une couche ne contient pas une espece et pour faire des calculs
        especes confondues - MC98 */
-
-    for (jx=0; jx<njx; jx++) {
-      for (jy=0; jy<njy; jy++) {
-	for (jz=0; jz<njz; jz++) {
-	  for (je=0; je <nje; je++) {
-	    for (ji=0; ji<nji; ji++) {
-	      for (ja=0; ja<nja; ja++) {
-		tmp=xladia(je,jx,jy,jz,ji,ja);
-		xladi(je,jx,jy,jz,ji) += tmp;
-		disti(je, ji) += tmp;
-		dista(je, ja) += tmp;
-		surft[je] += tmp;
-	      }
-	      xlad(je, jx, jy, jz) +=xladi(je, jx, jy, jz, ji);
+    int ii=0;
+    // bug mai 2011
+    jx=jy=0; // jy n'avait pas l'air d'etre init et il n'y a pas de bocle sur x et y
+    for (jz=0; jz<njz; jz++) {
+      for (je=0; je <nje; je++) {
+	for (ji=0; ji<nji; ji++) {
+	  for (ja=0; ja<nja; ja++) {
+	    if(jz==1){
+	      // dbug:  printf(">> (jz=%d, je=%d, ji=%d) \n",jz,je,ji);
+	      fflush(stdout);fflush(stderr);
 	    }
-	    /* 	  passage aux frequences d'angles.... */
-	    if (xlad(je,jx,jy,jz) > 0) {
-	      tmp=xlad(je, jx, jy, jz);
-	      for (ji=0; ji < nji; ji++) {
-		xladi(je, jx, jy, jz, ji) /= tmp;
-	      }//for ji
-	    }//if xlad>0 
-	  }//for je
-	}//for jz
-      }//for jy
-    }//for jx
-    //printf("big loop :  subT=%lf, surft=%lf\n", nbts/(double)nbtt,surft[0]);fflush(stdout);
+	    tmp=xladia(je,jz,ji,ja);
+	    xladi(je,jz,ji) += tmp;
+	    
+	    disti(je, ji) += tmp;
+	    dista(je, ja) += tmp;
+	    surft[je] += tmp;
+	  }//for ja
+	  xlad(je,  jz) +=xladi(je, jz, ji);
+	  //   xladi(je,  jz, ji)=ii++; //dbug mc 2010
+	   // dbug: printf(">> xladi(jz=%d, je=%d, ji=%d) =%.0lf\n",jz,je,ji, xladi(je,  jz, ji));fflush(stdout);fflush(stderr);
+	}//for ji
+	/* 	  passage aux frequences d'angles.... */
+	if (xlad(je,jz) > 0) {
+	  tmp=xlad(je,  jz);
+	  for (ji=0; ji < nji; ji++) {
+	    xladi(je, jz, ji) /= tmp;  //bug fixé - mai 2011
+	  }//for ji
+	}//if xlad>0 
+      }//for je
+    }//for jz
+    // dbug:    printf("big loop :  subT=%lf, surft=%lf\n", nbts/(double)nbtt,surft[0]);fflush(stdout);
+
+
+    //dbug
+    for (jz=0; jz<njz && false; jz++) 
+      for (je=0; je <nje; je++) 
+	for (ji=0; ji<nji; ji++) {
+	  printf("<<<  xladi(jz=%d, je=%d, ji=%d) =%.0lf\n",jz,je,ji, xladi(je,  jz, ji));
+	}
+
+
+
     /* 	Calcul des distributions globales d'orientation des feuilles */
     for (je=0; je<nje; je++) {
       for (ja=0; ja<nja; ja++) {
@@ -608,58 +634,54 @@ int s2v(int argc, char **argv){
     //genere stat par cellule et leafarea
     double t = 0.;
     printf("\n STATISTIQUES PAR CELLULE\n");
-    printf("\n nje=%d, njx=%d, njy=%d, njz=%d, nji=%d\n",nje,njx,njy,njz,nji);
+    printf("\n nje=%d,  njz=%d, nji=%d\n",nje,njz,nji);
+    printf("\n# iz  iesp  LAD distrib azimuth");
 
     for (je=0; je <nje; je++) {  
-      for (jx=0; jx<njx; jx++) {
-	for (jy=0; jy<njy; jy++) {
-	  for (jz=0; jz<njz; jz++) {
-	    t += xlad(je,jx,jy,jz);
-	    if(xlad(je,jx,jy,jz)>0.){
-	      printf("\n %d %d %d %d \t %5.3lf\t ",jx+1,jy+1,jz+1,je+1,(xlad(je,jx,jy,jz)/volume[jz]));
-	      for(ji=0;ji<nji;ji++)
-		printf("%5.3lf  ",xladi(je,jx,jy,jz,ji));
-	    }
-	  }
+      for (jz=0; jz<njz; jz++) {
+	t += xlad(je,jz);
+	if(xlad(je,jz)>0.){ // -1000 MCoct2010 debug
+	  printf("\n %d  %d \t %7.6lf\t ",jz+1,je+1,(xlad(je,jz)/volume[jz]));
+	  for(ji=0;ji<nji;ji++)
+	    printf("%7.6lf  ",xladi(je,jz,ji));
 	}
       }
     }
+    
     printf("\n\n");
     
     //genere le fichier mlsail.env necessaire a  canestra 
     double Uz,x,xx;
 
-    for (jx=0; jx<njx; jx++) {
-      for (jy=0; jy<njy; jy++) {
-	for (jz=0; jz<njz; jz++) {
-	  Uz=0;
-	  fprintf(fmlsail,"  %d  %d  ",(jx+1)+njx*(jy+1),jz+1);
-	  for (je=0; je <nje; je++) {
-	    Uz+=xlad(je,jx,jy,jz);// u(jz) densite vol. de LAI
-	  }//for je
-	  for(ji=0;ji<nji;ji++){
-	    xx=0;
-	    for (je=0; je <nje; je++) {
-	      xx+=xladi(je,jx,jy,jz,ji)*xlad(je,jx,jy,jz);
-	    }//for je
+    for (jz=0; jz<njz; jz++) {
+      Uz=0;
+      fprintf(fmlsail,"  %d  %d  ",0,jz+1);
+      for (je=0; je <nje; je++) {
+	Uz+=xlad(je,jz);// u(jz) densite vol. de LAI
+      }//for je
+      for(ji=0;ji<nji;ji++){
+	xx=0;
+	for (je=0; je <nje; je++) {
+	  xx+=xladi(je,jz,ji)*xlad(je,jz);
+	}//for j
 
-	    // Note: Div / 0 !
-	    if ((Uz<S2EPSILON) && (Uz >-S2EPSILON)) {
-	      Uz = Uz<0 ? -S2EPSILON : S2EPSILON ;
-	      Ferr << "\t: xx= "<< xx<<" ; Uz= "<<Uz<<'\n';
-	    }
-	    fprintf(fmlsail,"%lf ",xx/Uz);
+	// Note: Div / 0 !
+	if ((Uz<S2EPSILON) && (Uz >-S2EPSILON)) {
+	  Uz = Uz<0 ? -S2EPSILON : S2EPSILON ;
+	  Ferr << "\t: xx= "<< xx<<" ; Uz= "<<Uz<<'\n';
+	}
+	fprintf(fmlsail,"%lf ",xx/Uz);
 
-	  }//for ji
+      }//for ji
 
-	  fprintf(fmlsail,"0 0 %lf\n",Uz/volume[jz]*dz[jz]);
-	}//for jz
-      }//for jy
-    }//forjx
+      fprintf(fmlsail,"0 0 %lf\n",Uz/volume[jz]*dz[jz]);
+    }//for jz
+
 
     if(genopt){
       double Rf, Tf;
       //Genere les fichiers SPECTRAL necessaire a MCsail
+      //printf(">dbg: genere fichier spectral\n");
       for(po=0;po<npo;po++){
 	sprintf(optname,"%s.spec",argv[MIN_OPT+po]);
 	fpar=fopen(optname,"w");
@@ -668,11 +690,11 @@ int s2v(int argc, char **argv){
 	  Rf=Tf=x=0;
 	  for (je=0; je<nje; je++) {
 	    //printf("lai(%d,%d)=%g ",je,jz,xlad(je,0,0,jz));
-	    if(xlad(je,0,0,jz)>0){
-	      xx=xlad(je,0,0,jz);// /(double)nje;
+	    if(xlad(je,jz)>0){
+	      xx=xlad(je,jz);// /(double)nje;
 	      x+=xx;
-	      Rf+=xpo(je,0,0,jz,po,0);
-	      Tf+=xpo(je,0,0,jz,po,1);
+	      Rf+=xpo(je,jz,po,0);
+	      Tf+=xpo(je,jz,po,1);
 	      //printf("=> po(je=%d/%d)=%g, Rfz=%g, Rft=%g\n",je,nje,xpo(je,0,0,jz,po,0),xpo(je,0,0,jz,po,0)*100./xx, Rf*100./x);
 	      //printf("      => xx=%g,x=%g\n",xx,x);
 	    }
@@ -794,7 +816,7 @@ double  lectri(signed char &test,char &ntype,int &natt,long i_att[],int &nsom,Pa
 }// lectri()
 
 /**************************************************************************/
-int repart(Patch T,char level){
+int repart(Patch T,char level, int je){
   Patch exT,ssT;
   char acv;
   int jp[3][3];
@@ -802,6 +824,7 @@ int repart(Patch T,char level){
   int il=-10,iln;
   //Ferr<<" => repart called"<<'\n';
   //  Ferr<<"\t** debut repart "<<'\n';
+  //printf(">>> repart(): DEBUT\n");
   level++;
   for(i=0;i<3;i++)
     for(j=0;j<3;j++){
@@ -810,16 +833,22 @@ int repart(Patch T,char level){
   exT.t=T.t;
   calcjp(exT,jp,acv);
   if (acv==0) {
-    //  T appartient a une seule cell
+    //  T appartient a une seule cell    
+    //printf("Non ACV: T appartient a une seule cell  \n");
+
    G[2]=(exT.P[0][2]+exT.P[1][2]+exT.P[2][2])/3.;
    if(G[2]>=0){
-     affect(exT,jp[0]);
+     //printf(">dbg Avant call affect...\n");
+     affect(exT,jp[0], je);
      il=jp[0][2];
      //printf("Non ACV: level = %d\n",(int)level);
     //if(level>1){nbtt++;nbts++;}
-   }else{
+   }else{     
+     
      nbzm++;
-     il= -2;
+     il= -2;     
+     //printf("else Non ACV: il = %d, nbzm=%d\n",(int)il, nbzm);
+
    }
   }else{
     if(level==LevelMax){
@@ -831,7 +860,7 @@ int repart(Patch T,char level){
 	jp[0][0]=(int)(G[0] / dx);
 	jp[0][1]=(int)(G[1] / dy);
 	classe(G[2], jp[0][2]);
-	affect(exT,jp[0]);
+	affect(exT,jp[0],je);
 	il=jp[0][2];
 	// printf("...> nbt=%d\n",nbtt);
 	//nbtt++;
@@ -851,7 +880,7 @@ int repart(Patch T,char level){
 	T.P[2][i]=ssT.P[2][i];
       }
       //for(int q=0;q<3;q++) printf("Sub1(%d,2)=%g\n",q,T.P[q][2]);
-      iln=repart(T,level);
+      iln=repart(T,level,je);
       il=max(il,iln);
       for (i=0; i<3; i++){
 	T.P[0][i]=ssT.P[0][i];
@@ -859,7 +888,7 @@ int repart(Patch T,char level){
 	T.P[2][i]=ssT.P[1][i];
       }
       // for(int q=0;q<3;q++) printf("Sub2(%d,2)=%g\n",q,T.P[q][2]);
-      iln=repart(T,level);
+      iln=repart(T,level,je);
       il=max(il,iln);
       for (i=0; i<3; i++){
 	T.P[0][i]=ssT.P[1][i];
@@ -867,7 +896,7 @@ int repart(Patch T,char level){
 	T.P[2][i]=exT.P[2][i];
       }
       //for(int q=0;q<3;q++) printf("Sub3(%d,2)=%g\n",q,T.P[q][2]);
-      iln=repart(T,level);
+      iln=repart(T,level,je);
       il=max(il,iln);
       for (i=0; i<3; i++){
 	T.P[0][i]=ssT.P[0][i];
@@ -875,11 +904,12 @@ int repart(Patch T,char level){
 	T.P[2][i]=ssT.P[2][i];
       }
       // for(int q=0;q<3;q++) printf("Sub4(%d,2)=%g\n",q,T.P[q][2]);
-      iln=repart(T,level);
+      iln=repart(T,level,je);
       il=max(il,iln);
     }
   }
-  //Ferr<<"\t** sortie repart "<<'\n';
+  //Ferr<<"\t** sortie repart "<<'\n';  
+  // printf(">>> repart(): sortie il=%d\n", il);
   return il;
 }//repart()
 
@@ -941,19 +971,19 @@ void  classe(double z, int &jz){
 }// classe()
 
 /*******************************************************************/
-void affect(Patch T,int *jp){
+  // BUG multi-specie - MC oct 2010
+  //void affect(Patch T,int *jp){ 
+void affect(Patch T,int *jp, int je){ 
+  
   double a[3], b[3], c[3];
   int  jx, jy, jz,po;
   double  surftri;
-  
+
   /*  mise a jour du tableau xladia avec un triangle dont les 3 sommets appar tiennent a une meme cellule
    */
-  jx = jp[0] % njx;
-  jy = jp[1] % njy;
   jz = jp[2];
   /* decalage de 1 et prise en compte de possibles coordonnees negatives */
-  jx = (jx + njx) % njx;
-  jy = (jy + njy) % njy;
+
   for (i = 0; i < 3; i++) {
     a[i] = T.P[1][i] - T.P[0][i];
     b[i] = T.P[2][i] - T.P[0][i];
@@ -963,23 +993,24 @@ void affect(Patch T,int *jp){
   Stot+=surftri;
   nbpatc++;
   //printf("surftri=%lf\n",surftri);
-  // printf("affect() je=%d, jx=%d, jy=%d, jz=%d, ji=%d et ja=%d\n",je,jx,jy,jz,ji,ja);
+  //printf("affect() je=%d, jx=%d, jy=%d, jz=%d, ji=%d et ja=%d\n",je,jx,jy,jz,ji,ja);
   // printf("affect() je=%d, T.t=%d, [%.2lf,%.2lf,%.2lf]\n",je,T.t,Tpo(1,fabs(T.t),0),Tpo(1,fabs(T.t),1),Tpo(1,fabs(T.t),2));
-  xladia(je, jx, jy, jz, ji, ja) +=  surftri;
-  norme(c,c);
-  
-  if(genopt){
+   xladia(je, jz, ji, ja) +=  surftri;
+   //printf(">>> affect(): avnt call norme()\n"); 
+   norme(c,c);
+   //printf(">>> affect(): je = %d\n",je);
+   if(genopt){
     for(po=0;po<npo;po++){
       //Bug MC feb 2006
       // pour caribu T.t>0 = transparent, T.t<=0 = opak !!
       //BUG  if(T.t<0){//Transparent
 	 if(T.t>0){//Transparent
-	xpo(je, jx, jy, jz,po,0)+=surftri*Tpo(po,je,1); //Rf
-	xpo(je, jx, jy, jz,po,1)+=surftri*Tpo(po,je,2); //Tf
-	printf("> affect(): cas transperentt: je=%d, jz=%d :: surftri=%.3g, Tpo(%d,%d,0)=%g\n",je,jz,surftri,po,T.t,Tpo(po,je,0));
+	xpo(je,  jz,po,0)+=surftri*Tpo(po,je,1); //Rf
+	xpo(je,  jz,po,1)+=surftri*Tpo(po,je,2); //Tf
+	//printf("> affect(): cas transperentt: je=%d, jz=%d :: surftri=%.3g, Tpo(%d,%d,0)=%g\n",je,jz,surftri,po,T.t,Tpo(po,je,0));
       }else{//Opak
 	printf("> affect() :Cas opak: Tpo(%d,%d,0)=%g\n",po,T.t,Tpo(po,je,0));
-	xpo(je, jx, jy, jz,po,0)+=surftri*Tpo(po,je,0); //Rt
+	xpo(je,  jz,po,0)+=surftri*Tpo(po,je,0); //Rt
       }
     }//for po
   }//if segpar
@@ -1008,8 +1039,10 @@ void norme(double *x, double *xn){
   double xnor;
   
   xnor = sqrt(proscal(x, x));
-  if (xnor < 1e-10) 
+  if (xnor < 1e-20){ 
+    fprintf(stderr, "<!> s2v.cpp: norme() erreur: nombre=%g < 1e-20!! => exit(-1)\n", xnor); 
     exit(-1);
+  }
   for(i=0; i<3; i++) 
     xn[i] = x[i] / xnor;
 }// norme()
