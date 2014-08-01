@@ -176,7 +176,7 @@ Tabdyn<double,4>   xladia; //je, jz, theta, phi
 Tabdyn<double,4> xpo;//je,jz,po,(Rf,Tf)
 Tabdyn<double,3> Tpo;
 
-double Rs[10], Stot;
+double Rs[1000], Stot;
 unsigned int nbtt,nbts; 
 #ifndef WIN32
 extern int errno;
