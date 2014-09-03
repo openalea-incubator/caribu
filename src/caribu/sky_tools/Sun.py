@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from math import *
 
 
@@ -42,9 +43,10 @@ class Sun(object):
     def SunAzim(self,lat,dec,ah):
         """ azimut du soleil en fonction de la latitude, decli et de l'angle horaire (rad) ; Nord = 0, Est = pi/2 """
         a1 = sin(lat)*cos(ah)-cos(lat)*tan(dec)
-        az = atan(sin(ah)/a1)
-        if a1<0:
-            az=-az
+        #az = atan(sin(ah)/a1)
+        #if a1<0:
+        #    az=-az
+        az = atan2(sin(ah),a1)
                
         # a1 = asin(sin(lat)*sin(dec)+cos(lat)*cos(dec)*cos(ah+3.14/2))
         # a2 = sin (lat)*sin(a1)-sin(dec) # agregado el 24-10 por J Prieto
@@ -75,5 +77,28 @@ class Sun(object):
         Su._get_pos_astro()
         
 
+if __name__ == "__main__":
+    import unittest
+    
+    class TestSimple(unittest.TestCase):
+        def setUp(self):
+            #import numpy as np
+            self.lat=45
+            self.delai=2
+            self.DOY=200
+            
+            pass
+        def tearDown(self):
+            pass
 
+        def test00_SunAzim(self):
+            Su = Sun()
+            Su._set_pos_astro(self.DOY,self.delai,self.lat)
+            az1=Su.azim
+            Su._set_pos_astro(self.DOY,self.delai+1,self.lat)
+            az2=Su.azim
+            print "(az1,az2) = (%5.3f,%5.3f)" %(az1,az2)
+            # the earth rotates ccw, so the sun's azimut must always decrease 
+            self.assertTrue(az1>az2)
 
+    unittest.main()
