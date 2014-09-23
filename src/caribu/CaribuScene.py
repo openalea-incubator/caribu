@@ -668,7 +668,10 @@ Scene:
                         isel = numpy.arange(len(out_areas))
                         r = in_areas[isel] / out_areas[isel]
                         notclose = numpy.invert(numpy.isclose(r,numpy.ones(len(out_areas)),1e-2))
-                        delindex = min(isel[notclose])
+                        if not any(notclose): # mismatch is for triangle at the end of in_areas
+                            delindex = max(isel) + 1
+                        else:
+                            delindex = min(isel[notclose])
                         indices = numpy.delete(indices,delindex)
                         in_areas = numpy.delete(in_areas,delindex)
                 if len(indices) != len(next(output.itervalues())):        
