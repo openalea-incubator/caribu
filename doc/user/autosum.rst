@@ -7,15 +7,33 @@ Reference guide
 ###################################
 .. contents::
 
-.. currentmodule:: Alinea.Caribu.__init__
+.. currentmodule:: alinea.caribu.__init__
 
 
-:mod:`Alinea.Caribu` module
+:mod:`alinea.caribu.caribu_star` module
 ===============================================
-.. automodule:: Alinea.Caribu.__init__
+.. automodule:: alinea.caribu.caribu_star
     :members:
     :undoc-members:
     :inherited-members:
     :show-inheritance:
     :synopsis: doc todo
 
+
+:mod:`alinea.caribu.CaribuScene` module
+===============================================
+.. automodule:: alinea.caribu.CaribuScene
+    :members:
+    :undoc-members:
+    :inherited-members:
+    :show-inheritance:
+    :synopsis: doc todo
+
+:mod:`alinea.caribu.sky_tools` package
+===============================================
+.. automodule:: alinea.caribu.sky_tools
+    :members:
+    :undoc-members:
+    :inherited-members:
+    :show-inheritance:
+    :synopsis: doc todo
