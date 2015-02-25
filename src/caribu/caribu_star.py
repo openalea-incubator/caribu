@@ -117,8 +117,12 @@ def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, doma
     energie, emission, direction, elevation, azimuth = turtle.turtle(sectors=str(directions), energy=1) 
     sources = zip(energie,direction)
     out = run_caribu(sources, scene_geometry, output_by_triangle=output_by_triangle, domain = domain)
-    star = out['Ei']
-    areas = out['Area']
+    if len(out)>0:
+        star = out['Ei']
+        areas = out['Area']
+    else:
+        star = {}
+        areas = {}
     if output_by_triangle:
         exposed_area = {vid: [star[vid][i] * areas[vid][i] * convUnit**2 for i in range(len(areas[vid]))] for vid in areas}
     else:
