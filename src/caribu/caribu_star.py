@@ -103,7 +103,7 @@ def caribu_star(scene_geometry, directions = 1, output_by_triangle = False, doma
 
     :Parameters:
     ------------
-    - `sectors` (int) : number of directions (1, 16 or 46)
+    - `directions` (int) : number of directions (1, 16 or 46)
     - `scene_geometry`
     - 'output_by_triangle' (bool)
         Default 'False'. Choose if return dict(id:exosition) or dict(id:[expositions_of_triangles])
