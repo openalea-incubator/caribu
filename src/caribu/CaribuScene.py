@@ -111,7 +111,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
                 self.setPattern(pattern)
             else:
                 try:
-                    pat = '\n'.join([' '.join(map(str,pattern[0])),' '.join(map(str,pattern[1])),' '])
+                    pat = '\n'.join([' '.join(map(lambda x:str(float(x)),pattern[0])),' '.join(map(lambda x:str(float(x)),pattern[1])),' '])
                     self.setPattern(pat)
                 except:
                     pass
