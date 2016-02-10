@@ -9,7 +9,7 @@
 
 #include <iostream> // introduire la notion de namespace
 using namespace std ;
-
+#include <cmath>
 
 #include <ferrlog.h>
 #include <system.h>     // raytools::include::bibliotek
@@ -161,7 +161,7 @@ int main(int argc,char **argv){
   
     //    calcul de visibilite (purely geometric)
     Vecteur dir_source;
-    double Esource,rho;
+    double Esource,rho,frac;
     //     calcul de l'eclairage direct (soleil, ciel)
     ifstream flight(lightname,ios::in);
     do {
@@ -180,11 +180,14 @@ int main(int argc,char **argv){
       for(i=0;i<scene.radim;i++) {   
 	if(Bsource[i]!=0.0) {  
 	  TabDiff[i]->activ_num(i);
+	  // ensure that projected area < primitive area CF 2016
+	  frac = Bsource[i] / TabDiff[i]->surface();
+	  frac = ((frac > 0) ? 1 : -1) * ((fabs(frac) > 1) ? 1 : fabs(frac));
 	  if(Bsource[i]>0) 
-	    rho=TabDiff[i]->rho()*Bsource[i]/TabDiff[i]->surface();
+	    rho=TabDiff[i]->rho() * frac;
 	  else { 
 	    TabDiff[i]->togle_face();
-	    rho=-TabDiff[i]->tau()*Bsource[i]/TabDiff[i]->surface();
+	    rho=-TabDiff[i]->tau() * frac;
 	  }
 	  // Cumule les contrib des differents angles solides
 	  B0[0]->ve[i]+=Esource*rho;

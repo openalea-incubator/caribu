@@ -85,7 +85,8 @@ class Caribu(object):
                  sphere_diameter = -1,
                  debug = False,
                  resdir = "./Run",
-                 resfile = None
+                 resfile = None,
+                 projection_image_size=1536
                  ):
         """
         Class fo Nested radiosity illumination on a 3D scene.
@@ -103,6 +104,7 @@ class Caribu(object):
         debug : print messages and prevent removal of tempdir
         resdir : store caribu results as files in resdir if resdir is not None, store nothing otherwise
         resfile : store caribu output dictionary in file resfile (with pickle) if resfile is not None, store nothing otherwise
+        projection_image_size : the size (pixel) of the projection image used to compute the first order lighting of the scene
         """
         if debug:
             print "\n >>>> Caribu.__init__ starts...\n"
@@ -135,6 +137,7 @@ class Caribu(object):
         self.periodise_name = "periodise"
         self.s2v_name = "s2v"
         self.ready = True
+        self.img_size = projection_image_size
         if debug:
             print "\n <<<< Caribu.__init__ ends...\n"
 
@@ -473,7 +476,9 @@ class Caribu(object):
             if self.sphere_diameter >= 0 :
                 str_env=" -e %s.env "%(optname)
                 
-        cmd = "%s -M %s -l %s -p %s -A %s %s %s %s %s "%(self.canestra_name,self.scene, self.sky,  opt, str_pattern,str_direct,str_diam, str_FF, str_env)
+        str_img = "-L %d"%(self.img_size)
+                
+        cmd = "%s -M %s -l %s -p %s -A %s %s %s %s %s %s "%(self.canestra_name,self.scene, self.sky,  opt, str_pattern,str_direct,str_diam, str_FF, str_env, str_img)
         if self.my_dbg:
             print(">>> Canestrad(): %s"%(cmd))
         status = _process(cmd, self.tempdir,d/"nr.log")
@@ -541,6 +546,9 @@ def vcaribu(canopy, lightsource, optics, pattern, options):
         #--names of optical properties (usefull if opticals are given as strings
         if 'wavelength' in options.keys():
             sim.optnames = options['wavelength']
+        # size of the projection image for first order
+        if 'projection_image_size' in options.keys():
+            sim.img_size = options['projection_image_size']
     status = str(sim)
     sim.run()
     irradiances=sim.nrj

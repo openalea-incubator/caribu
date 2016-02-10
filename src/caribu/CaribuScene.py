@@ -583,11 +583,11 @@ Scene:
             
         d = vcdict[vcdict.keys()[0]]['data']
         # compute max value = sum of emmission of sources
-        _,eimax,_ = self.getIncidentEnergy()
+        #_,eimax,_ = self.getIncidentEnergy()
         for k in ('Ei_inf','Ei_sup','Eabs'):
             d[k] = map(_nan_to_zero,d[k])
-            #filter negative values occuring in EiInf/EiSup and values > Eimax
-            d[k] = map(lambda(x): min(eimax,max(0,x)), d[k])
+            #filter negative values occuring in EiInf/EiSup
+            d[k] = map(lambda(x): max(0,x), d[k])
         eabs = [e * a for e,a in izip(d['Eabs'],d['area'])]
         einc = [(esup + einf) * a for esup,einf,a in izip(d['Ei_sup'],d['Ei_inf'],d['area'])]
         ei = [esup + einf for esup,einf in izip(d['Ei_sup'],d['Ei_inf'])]
@@ -600,7 +600,7 @@ Scene:
                   'label': d['label']} 
         return csdict  
     
-    def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5, infinity = True):
+    def runCaribu(self, direct = True, nz = 10, dz = 5, ds = 0.5, infinity = True, projection_image_size=1536):
         """ Call Caribu and return results"""
         
         output = {}
@@ -616,7 +616,7 @@ Scene:
             opticals = self.PO
             if self.hasPattern:
                 pattern = self.pattern
-            optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'infinity': infinity, 'wavelength':self.wavelength}
+            optiondict = {'1st':direct,'Nz':nz,'Hc':dz,'Ds':ds,'infinity': infinity, 'wavelength':self.wavelength, 'projection_image_size':projection_image_size}
        
             vcout,status = vcaribu(scene, lightsources, opticals, pattern, optiondict)
             output = self.get_caribu_output(vcout)
