@@ -9,21 +9,22 @@ from math import pi
 from alinea.caribu.CaribuScene import CaribuScene
 from nose.tools import assert_almost_equal, assert_not_almost_equals
 
-def test_inclin():
-    g = adel_one_leaf()
+# broken : xysr not there
+# def test_inclin():
+    # g = adel_one_leaf()
     # flaten the leaf
-    blade = g.node(8)
-    x,y,s,r = blade.shape_xysr
-    y *= 0
-    blade.shape_xysr = (x,y,s,r)
-    stars = []
-    for inclin in (0,0.5,1): #relative inclination compare to flat leaf
-        blade.inclination = inclin
-        mtg_interpreter(g)
-        geom = g.property('geometry')
-        star, exposed_area = caribu_star(geom)
-        stars.append(star)
-    return g, stars
+    # blade = g.node(10)
+    # x,y,s,r = blade.shape_xysr
+    # y *= 0
+    # blade.shape_xysr = (x,y,s,r)
+    # stars = []
+    # for inclin in (0,0.5,1): #relative inclination compare to flat leaf
+        # blade.inclination = inclin
+        # mtg_interpreter(g)
+        # geom = g.property('geometry')
+        # star, exposed_area = caribu_star(geom)
+        # stars.append(star)
+    # return g, stars
 
 def test_star():
     wheat = AdelWheat()

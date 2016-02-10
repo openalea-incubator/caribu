@@ -1,4 +1,4 @@
-from alinea.caribu.exposition import *
+from alinea.caribu.caribu_star import *
 from alinea.adel.astk_interface import AdelWheat
 from alinea.astk.plant_interface import *
 from alinea.astk.plantgl_utils import *
