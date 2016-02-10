@@ -1,10 +1,10 @@
 """ This module defines CaribuScene and CaribuSceneError classes."""
 
 import openalea.plantgl.all as pgl
+from itertools import groupby, izip
 
 def _agregate(values,indices,fun = sum):
     """ performs aggregation of outputs along indices """
-    from itertools import groupby, izip
     ag = {}
     for key,group in groupby(sorted(izip(indices,values),key=lambda x: x[0]),lambda x : x[0]) :
         vals = [elt[1] for elt in group]
@@ -30,6 +30,82 @@ def _get_triangle(line):
         pgl.Vector3(*coords[6:]))
     return triangle
 
+#copied from  openalea.color.colormap, as
+# import openalea.color.colormap makes matplotlib with TkAgg frontend crash for some mysterious reason !!
+class ColorMap(object):
+    """A RGB color map, between 2 colors defined in HSV code
+
+    :Examples: 
+
+    >>> minh,maxh = minandmax([height(i) for i in s2])
+    >>> colormap = ColorMap(minh,maxh)
+    >>> s3 = [ Shape(i.geometry, Material
+    >>>    (Color3(colormap(height(i))), 1), i.id)
+    >>>    for i in s2]
+
+    """
+
+    def __init__(self, minval=0., maxval=1.):
+        self.minval = float(minval)
+        self.maxval = float(maxval)
+
+    def color(self, normedU):
+        """
+        
+        :param normedU: todo
+        
+        """
+        inter = 1/5.
+        winter = int(normedU/inter)
+        a = (normedU % inter)/inter
+        b = 1 - a
+        
+        if winter < 0:
+            col = (self.coul2, self.coul2, self.coul1)
+        elif winter == 0:
+            col = (self.coul2, self.coul2*b+self.coul1*a, self.coul1)
+        elif winter == 1:
+            col = (self.coul2, self.coul1, self.coul1*b+self.coul2*a)
+        elif winter == 2:
+            col = (self.coul2*b+self.coul1*a, self.coul1, self.coul2)
+        elif winter == 3:
+            col = (self.coul1, self.coul1*b+self.coul2*a, self.coul2)
+        elif winter > 3:
+            col = (self.coul1, self.coul2, self.coul2)
+        return (int(col[0]), int(col[1]), int(col[2]))
+
+    def greycolor(self, normedU):
+        """
+        
+        :param normedU: todo
+        :returns: todo
+        """
+        return (int(255*normedU), int(255*normedU), int(255*normedU))
+
+    def grey(self, u):
+        """
+        :param u: 
+        :returns: todo
+        """
+        return self.greycolor(self.normU(u))
+
+    def normU(self, u):
+        """
+        :param u:
+        :returns: todo
+        """
+        if self.minval == self.maxval:
+            return 0.5
+        return (u - self.minval) / (self.maxval - self.minval)
+
+    def __call__(self, u, minval=0, maxval=1, coul1=80, coul2=20):
+        self.coul1 = coul1
+        self.coul2 = coul2
+        self.minval = float(minval)
+        self.maxval = float(maxval)
+        return self.color(self.normU(u))
+
+    
 
 class CaribuSceneError(Exception): pass
 
@@ -363,10 +439,8 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
         
         Colors is an (optional) list of (rgb) tuples specifiying colors of individual triangles in the scene
 
-        """
-        from openalea.plantgl.all import Scene, TriangleSet, Index3, Color4, Shape,Color3,Material
-        
-        scene = Scene()
+        """        
+        scene = pgl.Scene()
         
         if len(self.scene_ids) > 0: #scene is not empty
             
@@ -377,7 +451,7 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             for i,triangle in enumerate(triangles):
                 id = self.scene_ids[i]                
                 if id not in geoms:
-                    geoms[id] = TriangleSet([],[])
+                    geoms[id] = pgl.TriangleSet([],[])
                     if colors:
                         geoms[id].colorList = []
                         geoms[id].colorPerVertex = False
@@ -386,24 +460,36 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
                 shape.pointList.append(triangle[0])
                 shape.pointList.append(triangle[1])
                 shape.pointList.append(triangle[2])
-                shape.indexList.append(Index3(count, count+1,count+2))
+                shape.indexList.append(pgl.Index3(count, count+1,count+2))
                 if colors:
                     r,g,b = colors[i]
-                    shape.colorList.append(Color4(r,g,b,0))
+                    shape.colorList.append(pgl.Color4(r,g,b,0))
                     
             for id,geom in geoms.iteritems():
                 if colors:
                     shape = geom
                     shape.id = id
                 else:
-                    material = Material(Color3(*self.colors[id]))
-                    shape = Shape(geom, material)
+                    material = pgl.Material(pgl.Color3(*self.colors[id]))
+                    shape = pgl.Shape(geom, material)
                     shape.id = id
       
                 scene += shape
             
             
         return(scene)
+        
+    def plot(self, output,what='Eabsm2', minval=None, maxval=None):
+        eabs = output[what]
+        if minval is None:
+            minval = min(eabs)
+        if maxval is None:
+            maxval = max(eabs)
+        cmap = ColorMap()
+        colors = map(lambda x: cmap(x,minval,maxval,250., 20.),eabs)
+        scene = self.generate_scene(colors)
+        pgl.Viewer.display(scene)
+        return scene
         
     def writeCan(self,canfile):
         """  write the scene in a file (can format) """ 
