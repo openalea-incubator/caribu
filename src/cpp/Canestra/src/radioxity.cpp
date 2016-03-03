@@ -15,12 +15,12 @@ using namespace std ;
 #include <system.h>     // raytools::include::bibliotek
 
 #ifdef WIN32
-#include <windows.h>	// Mem partagée via CerateFileMapping/MapViewOfFile
-char pcClefNum[12] ;	// pour transcription itoa de "clef" signée si y faut
-HANDLE	hSharedSeg ;	// Handle du fichier mappé
-LPVOID	lpSharedSeg ;	// pointeur LPVOID sur seg. partagé
+#include <windows.h>	// Mem partagï¿½e via CerateFileMapping/MapViewOfFile
+char pcClefNum[12] ;	// pour transcription itoa de "clef" signï¿½e si y faut
+HANDLE	hSharedSeg ;	// Handle du fichier mappï¿½
+LPVOID	lpSharedSeg ;	// pointeur LPVOID sur seg. partagï¿½
 
-#include <assert.h>	// associé à detection d'erreurs IO Windows
+#include <assert.h>	// associï¿½ ï¿½ detection d'erreurs IO Windows
 #endif
 
 #include <outils.h>
@@ -182,6 +182,7 @@ int main(int argc,char **argv){
 	  TabDiff[i]->activ_num(i);
 	  // ensure that projected area < primitive area CF 2016
 	  frac = Bsource[i] / TabDiff[i]->surface();
+	  // Borner Ã  1 a cause des erreurs d'arrondi du Zbuffer- MC16
 	  frac = ((frac > 0) ? 1 : -1) * ((fabs(frac) > 1) ? 1 : fabs(frac));
 	  if(Bsource[i]>0) 
 	    rho=TabDiff[i]->rho() * frac;
@@ -451,7 +452,7 @@ int main(int argc,char **argv){
     // Ecriture des radiosites totales => B.dat
     if(byfile){
       fres=fopen("B.dat","w");
-      Ferr <<"==> Impression des résultats radim="  << scene.radim<<", nbcell="  << scene.nbcell<<"\n" ;
+      Ferr <<"==> Impression des rï¿½sultats radim="  << scene.radim<<", nbcell="  << scene.nbcell<<"\n" ;
       for(j=0;j<nbf;j++) {
 	fprintf(fres,"%.10lf \n ",B[0]->ve[j]);
       }
@@ -712,7 +713,7 @@ int main(int argc,char **argv){
 #else
       // Complicated Way
       UnmapViewOfFile(lpSharedSeg) ; // invalidation du ptr sur mem partagee
-      CloseHandle(hSharedSeg) ;	   // Fermeture du fichier mappé
+      CloseHandle(hSharedSeg) ;	   // Fermeture du fichier mappï¿½
 #endif
     
       delete [] Ei; delete [] Eabs;
