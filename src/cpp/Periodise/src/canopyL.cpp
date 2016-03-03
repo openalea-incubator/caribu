@@ -197,75 +197,76 @@ void Canopy::parse_can(char *ngeom,char *nopti,reel *bornemin,reel*bornemax,bool
   }
   // Ok
   fgeom.open(ngeom,ios::in);
-    
-  //   if (nopti == NULL){
-  if (access(nopti,R_OK )){
-    if (nopti != NULL){
-      cerr << "ERREUR  - Impossible d'ouvrir le nir : ";
-      cerr <<nopti<<endl ;
-    } else {
-      cerr << "Attention - Pas de proprietes optiques"<<endl;
-    }
-    cerr << " ==> Utilisation des valeur par defaut du NIR" <<endl ;
-    cerr.flush();
-    //exit(-1);
-    // Chargement des proprietes par default pour 5 especes en NIR
-    tabtransp.alloue(No,2);
-    tabopaque.alloue(No+1);
-    //sol
-    tabopaque(0) = new Lambert(.35, 0);
-    for(short ie=0;ie<No;ie++){
-      tabopaque(ie+1) = new Lambert(.40, 0);
-      tabtransp(ie,0) = new Lambert(.40, 0.45);
-      tabtransp(ie,1) = new Lambert(.40, 0.45);
-    }
+
+  bool nopti_is_null = (nopti == NULL);
+  bool file_exists = access(nopti,R_OK );
+
+  if (!nopti_is_null && file_exists) {
+	  // lecture des proprietes optiques (fichier '.opt')
+	  fopti.open(nopti,ios::in);
+	  do{
+		  fopti>>c; //cerr<<c;
+		  if(!fopti) break;
+		  switch(c) {
+		  case '#':
+			  fopti.getline(line,256);
+			  break;
+		  case 'n':
+			  fopti>>ii;
+			  cerr<<" nb especes (optiques) = "<<ii<<endl;
+			  tabtransp.alloue(ii,2);
+			  tabopaque.alloue(ii+1);
+
+			  fopti.getline(line,256);
+			  break;
+		  case 's':
+			  if(ii==0) syntax_error(nopti);
+			  cout<<"p.o. sol lues\n";
+			  //cerr<<"Canopy[parse_can]ficoptik : sol lu\n";
+			  tabopaque(nbopt) = lectop(fopti, opak);
+			  raus(tabopaque(nbopt)==NULL,"Canopy[parse_can] allocation tabopaque impossible!");
+			  nbopt++;
+			  fopti.getline(line,256);
+			  break;
+		  case 'e':
+			  if(ii==0) syntax_error(nopti);
+			  //cerr<<"Canopy[parse_can]ficoptik : espece no "<<nbopt<<endl;
+			  tabopaque(nbopt) =  lectop(fopti, opak);
+			  raus(tabopaque(nbopt)==NULL,"Canopy[parse_can] allocation tabopaque impossible!");
+			  tabtransp(nbopt-1,0)= lectop(fopti);
+			  raus(tabtransp(nbopt-1,0)==NULL,"Canopy[parse_can] allocation tabtransp_sup impossible!");
+			  tabtransp(nbopt-1,1)= lectop(fopti); //face inf
+			  raus(tabtransp(nbopt-1,1)==NULL,"Canopy[parse_can] allocation tabtransp_inf impossible!");
+			  nbopt++;
+			  fopti.getline(line,256);
+			  break;
+		  default  :
+			  syntax_error(nopti);
+		  }//switch c
+		  // cout <<"fopti="<<!fopti<<endl;
+	  } while(fopti && (nbopt<=ii));
+	  if(nbopt<ii)  syntax_error(nopti);
+  } else {
+	  if (nopti_is_null) {
+		  cerr << "Attention - Pas de proprietes optiques"<<endl;
+	  } else { // => file_exists == False
+		  cerr << "ERREUR  - Impossible d'ouvrir le fichier : ";
+		  cerr <<nopti<<endl ;
+	  }
+	  cerr << " ==> Utilisation des valeur par defaut du NIR" <<endl ;
+	  cerr.flush();
+	  //exit(-1);
+	  // Chargement des proprietes par default pour 5 especes en NIR
+	  tabtransp.alloue(No,2);
+	  tabopaque.alloue(No+1);
+	  //sol
+	  tabopaque(0) = new Lambert(.35, 0);
+	  for(short ie=0;ie<No;ie++){
+		  tabopaque(ie+1) = new Lambert(.40, 0);
+		  tabtransp(ie,0) = new Lambert(.40, 0.45);
+		  tabtransp(ie,1) = new Lambert(.40, 0.45);
+	  }
   }
-  else{
-    // lecture des proprietes optiques (fichier '.opt')
-    fopti.open(nopti,ios::in);
-    do{
-      fopti>>c; //cerr<<c;
-      if(!fopti) break;
-      switch(c) {
-      case '#':
-	fopti.getline(line,256);
-	break;
-      case 'n':
-	fopti>>ii;
-	cerr<<" nb especes (optiques) = "<<ii<<endl;
-	tabtransp.alloue(ii,2);
-	tabopaque.alloue(ii+1); 
-	
-	fopti.getline(line,256);		        
-	break; 
-      case 's':
-	if(ii==0) syntax_error(nopti);
-	cout<<"p.o. sol lues\n";
-	//cerr<<"Canopy[parse_can]ficoptik : sol lu\n";
-	tabopaque(nbopt) = lectop(fopti, opak); 
-	raus(tabopaque(nbopt)==NULL,"Canopy[parse_can] allocation tabopaque impossible!");  
-	nbopt++;
-	fopti.getline(line,256);
-	break;
-      case 'e':
-	if(ii==0) syntax_error(nopti);
-	//cerr<<"Canopy[parse_can]ficoptik : espece no "<<nbopt<<endl;
-	tabopaque(nbopt) =  lectop(fopti, opak); 
-	raus(tabopaque(nbopt)==NULL,"Canopy[parse_can] allocation tabopaque impossible!");
-	tabtransp(nbopt-1,0)= lectop(fopti); 
-	raus(tabtransp(nbopt-1,0)==NULL,"Canopy[parse_can] allocation tabtransp_sup impossible!");
-	tabtransp(nbopt-1,1)= lectop(fopti); //face inf
-	raus(tabtransp(nbopt-1,1)==NULL,"Canopy[parse_can] allocation tabtransp_inf impossible!");      
-	nbopt++;
-	fopti.getline(line,256);
-	break; 
-      default  :
-	syntax_error(nopti);  
-      }//switch c
-      // cout <<"fopti="<<!fopti<<endl; 
-    } while(fopti && (nbopt<=ii));
-    if(nbopt<ii)  syntax_error(nopti);
-  }  
   //cerr<<"-_-_-_-_-_  Proprietes optiques chargee\n";
   
   // lecture des primitives geometriques (fichier '.can')
@@ -289,7 +290,7 @@ void Canopy::parse_can(char *ngeom,char *nopti,reel *bornemin,reel*bornemax,bool
     fgeom>> T; 
     //cerr<<T;
     if(fgeom.eof()) {
-      cerr <<" -_-_-_-_-_  Primitive chargé chargees\n"<<(char)7<<endl;
+      cerr <<" -_-_-_-_-_  Primitive chargï¿½ chargees\n"<<(char)7<<endl;
       break;
     }
     valid=false;
