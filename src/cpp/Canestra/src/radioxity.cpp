@@ -15,12 +15,12 @@ using namespace std ;
 #include <system.h>     // raytools::include::bibliotek
 
 #ifdef WIN32
-#include <windows.h>	// Mem partag�e via CerateFileMapping/MapViewOfFile
-char pcClefNum[12] ;	// pour transcription itoa de "clef" sign�e si y faut
-HANDLE	hSharedSeg ;	// Handle du fichier mapp�
-LPVOID	lpSharedSeg ;	// pointeur LPVOID sur seg. partag�
+#include <windows.h>	// Mem partagee via CerateFileMapping/MapViewOfFile
+char pcClefNum[12] ;	// pour transcription itoa de "clef" signee si y faut
+HANDLE	hSharedSeg ;	// Handle du fichier mappe
+LPVOID	lpSharedSeg ;	// pointeur LPVOID sur seg. partage
 
-#include <assert.h>	// associ� � detection d'erreurs IO Windows
+#include <assert.h>	// associe a detection d'erreurs IO Windows
 #endif
 
 #include <outils.h>
@@ -452,7 +452,7 @@ int main(int argc,char **argv){
     // Ecriture des radiosites totales => B.dat
     if(byfile){
       fres=fopen("B.dat","w");
-      Ferr <<"==> Impression des r�sultats radim="  << scene.radim<<", nbcell="  << scene.nbcell<<"\n" ;
+      Ferr <<"==> Impression des resultats radim="  << scene.radim<<", nbcell="  << scene.nbcell<<"\n" ;
       for(j=0;j<nbf;j++) {
 	fprintf(fres,"%.10lf \n ",B[0]->ve[j]);
       }
@@ -713,7 +713,7 @@ int main(int argc,char **argv){
 #else
       // Complicated Way
       UnmapViewOfFile(lpSharedSeg) ; // invalidation du ptr sur mem partagee
-      CloseHandle(hSharedSeg) ;	   // Fermeture du fichier mapp�
+      CloseHandle(hSharedSeg) ;	   // Fermeture du fichier mappe
 #endif
     
       delete [] Ei; delete [] Eabs;

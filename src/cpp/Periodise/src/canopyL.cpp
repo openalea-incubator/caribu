@@ -290,7 +290,7 @@ void Canopy::parse_can(char *ngeom,char *nopti,reel *bornemin,reel*bornemax,bool
     fgeom>> T; 
     //cerr<<T;
     if(fgeom.eof()) {
-      cerr <<" -_-_-_-_-_  Primitive charg� chargees\n"<<(char)7<<endl;
+      cerr <<" -_-_-_-_-_  Primitives chargees\n"<<(char)7<<endl;
       break;
     }
     valid=false;
