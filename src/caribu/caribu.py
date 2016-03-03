@@ -621,7 +621,7 @@ def caribu_run_case(cas,debug = False):
         sim.pattern = None
 
     else:
-        print "\n>>>  caribu_run_case(case): case still not implemented, case in [-1, 1, 2, 3, 4, 5] - MC09"
+        print "\n>>>  caribu_run_case(case): case {} still not implemented, case in [-1, 1, 2, 3, 4, 5] - MC09".format(cas)
         run=False
         return
 
