@@ -8,6 +8,7 @@
 */
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 #include <sstream>
 
@@ -58,6 +59,7 @@ void Canopy::gencan(char *fname){
 
 
 void syntax_error(char *);
+bool fexists(const char *);
 
 // FONCTION QUI CREE LA LISTE DES DIFFUSEURS DE LA SCENE
 // FORMAT FICHIER : 1entier : libelle ; 3 coordonees (double) pour 3 sommets d'un triangle
@@ -143,6 +145,14 @@ void syntax_error(char * nomfic){
   exit(-1); 
 }  
 
+bool fexists(const char *filename) {
+  if (ifstream(filename)) {
+    return true;
+  } else {
+	return false;
+  }
+}
+
 //-********************   Canopy::parse_can()    ***********************
 //-**** format des libelles : espece, no plante, no tige/feuille, no triangle
 
@@ -199,7 +209,7 @@ void Canopy::parse_can(char *ngeom,char *nopti,reel *bornemin,reel*bornemax,bool
   fgeom.open(ngeom,ios::in);
 
   bool nopti_is_null = (nopti == NULL);
-  bool file_exists = access(nopti,R_OK );
+  bool file_exists = fexists(nopti);
 
   if (!nopti_is_null && file_exists) {
 	  // lecture des proprietes optiques (fichier '.opt')
