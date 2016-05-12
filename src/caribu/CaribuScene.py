@@ -479,14 +479,17 @@ e d 0.10   d 0.10 0.05  d 0.10 0.05
             
         return(scene)
         
-    def plot(self, output,what='Eabsm2', minval=None, maxval=None):
-        eabs = output[what]
-        if minval is None:
-            minval = min(eabs)
-        if maxval is None:
-            maxval = max(eabs)
-        cmap = ColorMap()
-        colors = map(lambda x: cmap(x,minval,maxval,250., 20.),eabs)
+    def plot(self, output=None, what='Eabsm2', minval=None, maxval=None):
+        if output is not None:
+            eabs = output[what]
+            if minval is None:
+                minval = min(eabs)
+            if maxval is None:
+                maxval = max(eabs)
+            cmap = ColorMap()
+            colors = map(lambda x: cmap(x,minval,maxval,250., 20.),eabs)
+        else:
+            colors = None
         scene = self.generate_scene(colors)
         pgl.Viewer.display(scene)
         return scene
@@ -749,7 +752,7 @@ Scene:
                     in_areas = numpy.array(areas)[numpy.array(areas) > 0]
                     out_areas = numpy.array(output['Area'])
                     tried = 0
-                    while ((len(in_areas) != len(out_areas)) and tried < 10):
+                    while ((len(in_areas) != len(out_areas)) and tried < 100):
                         tried += 1
                         isel = numpy.arange(len(out_areas))
                         r = in_areas[isel] / out_areas[isel]
