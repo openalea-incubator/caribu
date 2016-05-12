@@ -1,3 +1,0 @@
-Michael Chelle (c codes)
-Christian Fournier (python & node)
-Christophe Pradal (visualisation)

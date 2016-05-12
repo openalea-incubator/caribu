@@ -1,0 +1,115 @@
+{
+    "./.gitignore": [
+        "qjNCPJeHxa13D5OULnvej7cascQn4lPV1hgdEL4HN1wgdtAG+bsTV66h0bJDczAH6PAvQCg2HM7f8c6H0suEgQ=="
+    ], 
+    "./AUTHORS.rst": [], 
+    "./CONTRIBUTING.rst": [], 
+    "./HISTORY.rst": [], 
+    "./LICENSE": [
+        "9qFmtEGEmWgvAgcsDfDqOn0QoWPM+uGcXcJV791dozHluWnmNH1pbtZvUgTd86com23kmCJfliph9o2jO1m2sQ=="
+    ], 
+    "./MANIFEST.in": [
+        "3meNDzhR7/SrrS0avuhRWhxSFljYX1U2Cyn/KeUeuF637GJx6r5mzaPl/a2WtujFgNr5GsPiG7vVXGhKo9JQbQ=="
+    ], 
+    "./README.rst": [
+        "NpInImcdK7HQFLVdzLlDEZbA9uAEZaKM6lTCUCfQi5aOf93nTfnCh9DJp9Dr0ZWsxXLXTQrH3g+rbgh7kRECnA=="
+    ], 
+    "./SConstruct": [], 
+    "./doc/authors.rst": [], 
+    "./doc/contributing.rst": [], 
+    "./doc/history.rst": [], 
+    "./doc/index.rst": [], 
+    "./doc/installation.rst": [], 
+    "./doc/readme.rst": [], 
+    "./doc/usage.rst": [], 
+    "./dvlpt_requirements.txt": [
+        "U2EahhtPTGYpFfJ1ngM+LACMPL/HLCfaES8YlkVslJRGRyoGCaFvH8A9Ih4W2Kzhl7cBhPDsAHkw/WtM94Fv0g=="
+    ], 
+    "./requirements.txt": [
+        "AWuoxM/eZa+Zy1+ouKN+Lrc/SBs640mRZm3y4E/rbAOGZuvR7CtvYjlndWAzxwLd5fQj99R6tu0YJ/9TeDcx9w=="
+    ], 
+    "./setup.cfg": [
+        "QYCnUVMayyDRu7c/wBEMVaGu9NHjEMOS/UhuN7hNdyAPOqPIZjW7dRKEMuIhm8twpcIXxHhMNmGsxWodD3fqgg=="
+    ], 
+    "./setup.py": [
+        "KJXQXgGF//e/3o3+tu+qL76FbKbEDNby7dJ6IDpGvdELt0ALNotHkzT0DBRp49IquCVWpqvbT+TjhkRDtCsD2g==", 
+        "6tA9s9cbDHz4mx0PGt+gMLM9HamuOYqFGjwc7LYZcM72XjiUaG0A7g6hNS+gy8cS0FyZDnf46GLNwx0mNZUs7Q=="
+    ], 
+    "./src/alinea/__init__.py": [
+        "2sk8h+XTWcTrTYSvRscCbTRjJWyGdgJ2THbA3Zxte+SsX5+26bbGIwhHi8qUCrhYN6Tk86o3wjiPrTg+2wmDuA=="
+    ], 
+    "./src/alinea/caribu/CaribuScene.py": [], 
+    "./src/alinea/caribu/__init__.py": [
+        "bXi4YRtInDLkaTvGi4V/ZIZpKXGCIgIw/Qm7wX5YZ+tM5kkkAAGCzzuDhxJDzcpoWKBE1UxDj7mT+40YH1DZQA==", 
+        "fIn+GWAvhWfY/9NV/Sw6VXI4UIvx1OTgGxXQ1U5+9JFQ4vhuETzkaQvz8W4M9rMDYlL0vAeRmP2p2DyMgcvb9A=="
+    ], 
+    "./src/alinea/caribu/caribu.py": [], 
+    "./src/alinea/caribu/caribu_star.py": [], 
+    "./src/alinea/caribu/data/__init__.py": [], 
+    "./src/alinea/caribu/data_access.py": [
+        "+6uASpVkdkFly1vhTueAlW70HFW3czp+bDGAL3W5ZpCaH1CUzGAXTyMDz001OjT/kUueT1RosWf+IFbW0H03mg=="
+    ], 
+    "./src/alinea/caribu/label.py": [], 
+    "./src/alinea/caribu/lightString.py": [], 
+    "./src/alinea/caribu/sky_tools/Filename.py": [], 
+    "./src/alinea/caribu/sky_tools/GenSky.py": [], 
+    "./src/alinea/caribu/sky_tools/Genlight.py": [], 
+    "./src/alinea/caribu/sky_tools/Gensun.py": [], 
+    "./src/alinea/caribu/sky_tools/GetLight.py": [], 
+    "./src/alinea/caribu/sky_tools/GetLightsSun.py": [], 
+    "./src/alinea/caribu/sky_tools/IOtable.py": [], 
+    "./src/alinea/caribu/sky_tools/Normalise_Sky.py": [], 
+    "./src/alinea/caribu/sky_tools/Sky.py": [], 
+    "./src/alinea/caribu/sky_tools/Sun.py": [], 
+    "./src/alinea/caribu/sky_tools/__init__.py": [], 
+    "./src/alinea/caribu/sky_tools/add_sun.py": [], 
+    "./src/alinea/caribu/sky_tools/get_meteo_dat.py": [], 
+    "./src/alinea/caribu/sky_tools/group_seq.py": [], 
+    "./src/alinea/caribu/sky_tools/merge2skies.py": [], 
+    "./src/alinea/caribu/sky_tools/mergeNskies.py": [], 
+    "./src/alinea/caribu/sky_tools/place_sun.py": [], 
+    "./src/alinea/caribu/sky_tools/read_meteo_file.py": [], 
+    "./src/alinea/caribu/sky_tools/spitters_horaire.py": [], 
+    "./src/alinea/caribu/sky_tools/sunDome.py": [], 
+    "./src/alinea/caribu/sky_tools/turtle.py": [], 
+    "./src/alinea/caribu/version.py": [
+        "mPHBwlvqnaicfSc02L8efifj8/3KQT94H708Ty5qbSg/ILufpJg0581hhFaR5t8rAv4rOT/qG+hfrjo+bAZatw=="
+    ], 
+    "./src/caribu_data/__init__.py": [], 
+    "./src/cpp/Canestra/src/SConscript": [], 
+    "./src/cpp/Canestra/src/contient_shm.txt": [], 
+    "./src/cpp/GLprojection/SConscript": [], 
+    "./src/cpp/GLprojection/SConstruct": [], 
+    "./src/cpp/Periodise/Modifs.txt": [], 
+    "./src/cpp/Periodise/Test/readme": [], 
+    "./src/cpp/Periodise/readme": [], 
+    "./src/cpp/Periodise/src/SConscript": [], 
+    "./src/cpp/Periodise/test.py": [], 
+    "./src/cpp/bibliotek/SConscript": [], 
+    "./src/cpp/mc-sail/Readme.txt": [], 
+    "./src/cpp/mc-sail/src/SConscript": [], 
+    "./src/cpp/meschach/Doc/fnindex": [], 
+    "./src/cpp/meschach/Doc/tutorial": [], 
+    "./src/cpp/meschach/Readme.txt": [], 
+    "./src/cpp/meschach/mesch12a/src/Archie/mictest": [], 
+    "./src/cpp/meschach/mesch12a/src/FILELIST": [], 
+    "./src/cpp/meschach/mesch12a/src/SConscript": [], 
+    "./src/cpp/meschach/mesch12a/src/configure": [], 
+    "./src/cpp/meschach/mesch12a/src/configure.in": [], 
+    "./src/cpp/meschach/mesch12a/src/copyright": [], 
+    "./src/cpp/meschach/mesch12a/src/macheps": [], 
+    "./src/cpp/meschach/mesch12a/src/machine.h.in": [], 
+    "./src/cpp/meschach/mesch12a/src/makefile": [], 
+    "./src/cpp/meschach/mesch12a/src/makefile.in": [], 
+    "./src/cpp/meschach/mesch12a/src/maxint": [], 
+    "./src/cpp/meschach/mesch12a_v0/lib/Makefile": [], 
+    "./src/cpp/meschach/mesch12a_v0/lib/Makelinux": [], 
+    "./src/cpp/meschach/mesch12a_v0/src/SConscript": [], 
+    "./src/cpp/meschach/mesch12a_v0/src/copyright": [], 
+    "./src/cpp/meschach/mesch12a_v0/tests/Makebcc": [], 
+    "./src/cpp/meschach/mesch12a_v0/tests/Makefile": [], 
+    "./src/cpp/meschach/mesch12a_v0/tests/Makelinux": [], 
+    "./src/cpp/s2v/src/SConscript": [], 
+    "./test/__init__.py": [], 
+    "./test/test_simple_triangle.py": []
+}

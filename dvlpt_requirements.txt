@@ -1,0 +1,6 @@
+# {{pkglts pysetup.dvlpt_requirements,
+github3.py
+nose
+mock
+
+# }}

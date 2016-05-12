@@ -1,0 +1,40 @@
+{
+    "_pkglts": {
+        "auto_install": true, 
+        "install_front_end": "stdout", 
+        "use_prompts": false
+    }, 
+    "base": {
+        "namespace": "alinea", 
+        "owner": "openalea-incubator", 
+        "pkgname": "caribu", 
+        "url": null
+    }, 
+    "data": {}, 
+    "doc": {
+        "description": "Python/Visualea interface to Caribu Light model", 
+        "keywords": []
+    }, 
+    "github": {
+        "project": "{{key, base.pkgname}}"
+    }, 
+    "license": {
+        "name": "INRA_License_agreement", 
+        "organization": "openalea", 
+        "project": "{{key, base.pkgname}}", 
+        "year": 2016
+    }, 
+    "pysetup": {
+        "author_email": "Christian.Fournier@supagro.inra.fr", 
+        "author_name": "Christian Fournier", 
+        "intended_versions": [
+            "27"
+        ]
+    }, 
+    "test": {}, 
+    "version": {
+        "major": 7, 
+        "minor": 0, 
+        "post": 0
+    }
+}
