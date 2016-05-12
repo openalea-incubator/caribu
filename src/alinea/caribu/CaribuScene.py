@@ -691,7 +691,7 @@ Scene:
         
         output = {}
         if len(self.scene_ids) > 0: #scene is not empty
-            from alinea.caribu.caribu import vcaribu            
+            from alinea.caribu.caribu_shell import vcaribu
             scene = None
             lightsources = None
             pattern = None
@@ -713,7 +713,7 @@ Scene:
     def runPeriodise(self):
         """ Call periodise and modify position of triangle in the scene to fit inside pattern"""
         if len(self.scene_ids) > 0: #scene is not empty
-            from alinea.caribu.caribu import vperiodise            
+            from alinea.caribu.caribu_shell import vperiodise
             scene = None
             pattern = None
             if self.hasScene:    
