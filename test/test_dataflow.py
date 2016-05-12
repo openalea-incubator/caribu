@@ -1,7 +1,7 @@
 """Caribu dataflow Tests"""
 
 __license__ = "Cecill-C"
-__revision__ = " $Id$"
+__revision__ = " $Id: test_dataflow.py 2216 2012-09-26 09:47:07Z pradal $"
 
 from openalea.core import alea
 from openalea.core.alea import run, function
