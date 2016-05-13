@@ -37,7 +37,7 @@ def light_string(lights):
 def opt_string_and_labels(materials):
     """ format materials as caribu opt file string content and encode label
     """
-    opts = {i: po for i, po in enumerate(list(set(materials)))}
+    opts = {i+1: po for i, po in enumerate(list(set(materials)))}
     n = len(opts)
     opt_string = 'n %s\n' % (n)
     opt_string += "s d 0.15\n"
