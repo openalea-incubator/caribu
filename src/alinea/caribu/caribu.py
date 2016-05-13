@@ -40,12 +40,12 @@ def opt_string_and_labels(materials):
     opts = {i+1: po for i, po in enumerate(list(set(materials)))}
     n = len(opts)
     opt_string = 'n %s\n' % (n)
-    opt_string += "s d 0.15\n"
+    opt_string += "s d -1\n"
     opts_sorted_keys = sorted(opts.keys())
     for key in opts_sorted_keys:
         po = opts[key]
         if len(po) > 1:
-            opt_string += 'e d 1   d %s %s  d %s %s\n' % po
+            opt_string += 'e d -1   d %s %s  d %s %s\n' % po
         else:
             opt_string += 'e d %s   d 0.5 0.5  d 0.5 0.5\n' % po
 
@@ -71,7 +71,7 @@ def triangles_string(triangles, labels):
     def _can_string(triangle, label):
         s = "p 1 %s 3" % str(label)
         for pt in triangle:
-            s += " %f %f %f" % pt
+            s += " %.9f %.9f %.9f" % pt
         return s + '\n'
 
     lines = [_can_string(t, l) for t, l in zip(triangles, labels)]
