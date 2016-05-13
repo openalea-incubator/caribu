@@ -124,7 +124,7 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
                     patternfile=pattern_str,
                     direct=True,
                     infinitise=infinitise,
-                    projection_image_size=screen_size, debug=True
+                    projection_image_size=screen_size
                     )
     caribu.run()
     out = caribu.nrj
@@ -147,11 +147,11 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
                  if None (default), scene is not repeated
-        mixed_radiosity: (None or tuple) Control of  mixed
+        mixed_radiosity: (None or tuple) Control of mixed
                          radiosity algorithm.
-                         None means do not used mixed radiosity (default)
-                         (radius, nb_layers, height):
-                          - radius: radius of the spheric neighbourhood of triangles for which pure radiosity is used.
+                         None means do not use mixed radiosity (default)
+                         (diameter, nb_layers, height):
+                          - diameter: diameter of the spheric neighbourhood of triangles for which pure radiosity is used.
                           - nb_layers: vertical subdivisions of scene used for approximation of far contrbution
                           - height: maximum height of scene layers
         screen_size: (int) buffer size for projection images
@@ -165,9 +165,38 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
-    del triangles
-    del materials
-    del lights
-    del domain
-    del mixed_radiosity
-    del screen_size
+    
+    opt_string, labels = opt_string_and_labels(materials)
+    can_string = triangles_string(triangles, labels)
+    sky_string = light_string(lights)
+
+    if domain is None:
+        infinitise = False
+        pattern_str = None
+    else:
+        infinitise = True
+        pattern_str = pattern_string(domain)
+        
+    if mixed_radiosity is None:
+        diameter = -1
+        nb_layers = None
+        can_height = None
+    else
+        diameter, nb_layers, can_height = mixed_radiosity
+
+    caribu = Caribu(canfile=can_string,
+                    skyfile=sky_string,
+                    optfiles=opt_string,
+                    patternfile=pattern_str,
+                    direct=False,
+                    infinitise=infinitise,
+                    nb_layers=nblayers,
+                    can_height=can_height,
+                    sphere_diameter=diameter,
+                    projection_image_size=screen_size
+                    )
+    caribu.run()
+    out = caribu.nrj
+
+    return out
+
