@@ -39,7 +39,7 @@ def opt_string_and_labels(materials):
     """
     opts = {i+1: po for i, po in enumerate(list(set(materials)))}
     n = len(opts)
-    opt_string = 'n %s\n' % (n)
+    opt_string = 'n %s\n' % n
     opt_string += "s d -1\n"
     opts_sorted_keys = sorted(opts.keys())
     for key in opts_sorted_keys:
@@ -181,7 +181,7 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
         diameter = -1
         nb_layers = None
         can_height = None
-    else
+    else:
         diameter, nb_layers, can_height = mixed_radiosity
 
     caribu = Caribu(canfile=can_string,
@@ -190,7 +190,7 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
                     patternfile=pattern_str,
                     direct=False,
                     infinitise=infinitise,
-                    nb_layers=nblayers,
+                    nb_layers=nb_layers,
                     can_height=can_height,
                     sphere_diameter=diameter,
                     projection_image_size=screen_size
