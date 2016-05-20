@@ -81,17 +81,20 @@ def triangles_string(triangles, labels):
 
 def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
                screen_size=1536):
-    """Compute  illumination of triangles using caribu raycasting mode.
+    """Compute monochrome illumination of triangles using caribu raycasting mode.
 
     Args:
-        triangles: (list of list of tuples) a list of triangles defined
-                    by ordered triplets of 3D points coordinates.
-        materials: (list of tuple) a list of optical properties of materials
-                    of each triangle in a given wavelength.
-                    An optical property can be a (reflectance) tuple for opaque materials
-                    or  a (reflectance_sup, transmitance_sup, reflectance_inf, transmitance_inf) tuple for translucent materials
-        lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources in a given wavelength
-                By default a normalised zenital light is used. Energy is ligth flux passing throuh a unit area horizontal plane.
+        triangles: (list of list of tuples) a list of triangles, each being defined
+                    by an ordered triplet of 3-tuple points coordinates.
+        materials: (list of tuple) a list of materials defining optical properties of triangles
+                    A material is a 1-, 2- or 4-tuple depending on its optical behavior.
+                    A 1-tuple encode the reflectance of an opaque material
+                    A 2-tuple encode the reflectance and transmittance of a symetric translucent material
+                    A 4 tuple encode the reflectance and transmittance                     
+                    of the upper and lower side of an asymetric translucent material
+        lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
+                By default a normalised zenital light is used. 
+                Energy is ligth flux passing throuh a unit area horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
                  if None (default), scene is not repeated
@@ -107,6 +110,9 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
 
+    if len(triangles) != len(materials):
+        raise ValueError('The number of triangles and materials should match')
+    
     opt_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -136,15 +142,20 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
 def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
               mixed_radiosity=None,
               screen_size=1536):
-    """Compute triangles illumination using radiosity model.
+    """Compute monochrome illumination of triangles using radiosity model.
 
     Args:
-        triangles: (list of list of tuples) a list of triangles defined by ordered triplets of 3D points coordinates.
-        materials: (list of tuple) a list of optical properties of materials of each triangle in a given wavelength. 
-                    An optical property can be a (reflectance) singleton for opaque materials
-                    or  a (reflectance_sup, transmitance_sup, reflectance_inf, transmitance_inf) tuple for translucent materials
-        lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources in a given wavelength
-                By default a normalised zenital light is used. Energy is ligth flux passing throuh a unit area horizontal plane.
+        triangles: (list of list of tuples) a list of triangles, each being defined
+                    by an ordered triplet of 3-tuple points coordinates.
+        materials: (list of tuple) a list of materials defining optical properties of triangles
+                    A material is a 1-, 2- or 4-tuple depending on its optical behavior.
+                    A 1-tuple encode the reflectance of an opaque material
+                    A 2-tuple encode the reflectance and transmittance of a symetric translucent material
+                    A 4 tuple encode the reflectance and transmittance                     
+                    of the upper and lower side of an asymetric translucent material
+        lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
+                By default a normalised zenital light is used. 
+                Energy is ligth flux passing throuh a unit area horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
                  if None (default), scene is not repeated
@@ -169,6 +180,9 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
     
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
+    
+    if len(triangles) != len(materials):
+        raise ValueError('The number of triangles and materials should match')
     
     opt_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
