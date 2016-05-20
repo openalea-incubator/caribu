@@ -4,7 +4,7 @@
 from alinea.caribu.label import Label
 from alinea.caribu.caribu_shell import Caribu
 
-green_leaf_PAR = (0.06, 0.07, 0.06, 0.07)
+green_leaf_PAR = (0.06, 0.07)
 green_stem_PAR = 0.13
 soil_reflectance_PAR = 0.2
 
@@ -45,9 +45,12 @@ def opt_string_and_labels(materials):
     for key in opts_sorted_keys:
         po = opts[key]
         if hasattr(po,'__iter__'):
-            opt_string += 'e d -1   d %s %s  d %s %s\n' % po
+            if len(po) == 2:
+                opt_string += 'e d -1   d %s %s' % po + ' d %s %s\n' % po
+            else:
+                opt_string += 'e d -1   d %s %s  d %s %s\n' % po
         else:
-            opt_string += 'e d %s   d 0.5 0.5  d 0.5 0.5\n' % po
+            opt_string += 'e d %s   d -1 -1  d -1 -1\n' % po
 
     mapping = {v: k for k, v in opts.iteritems()}
 
