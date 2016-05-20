@@ -1,7 +1,7 @@
 from math import sqrt
 from nose.tools import assert_almost_equal
 
-from alinea.caribu.caribu import green_leaf_PAR, raycasting
+from alinea.caribu.caribu import green_leaf_PAR, radiosity, raycasting
 
 
 def test_incident_energy_when_no_occlusion_single_triangle():
@@ -79,3 +79,32 @@ def test_incident_energy_when_full_occlusion_two_shapes():
     assert_almost_equal(res['area'][1], 1, 3)
     assert_almost_equal(res['Ei_sup'][1], 100, 0)
     assert_almost_equal(res['Ei_inf'][1], 0, 3)
+
+
+# def test_radiosity_energy_when_no_occlusion_single_triangle():
+#     points = [(0, 0, 1), (sqrt(2), 0, 1), (0, sqrt(2), 1)]
+#     triangles = [points]
+#     mats = [green_leaf_PAR]
+#
+#     # vertical light
+#     lights = [(100, (0, 0, -1))]
+#     res = radiosity(triangles, mats, lights)
+#     assert_almost_equal(res['area'][0], 1, 3)
+#     assert_almost_equal(res['Ei_sup'][0], 100, 0)
+#     assert_almost_equal(res['Ei_inf'][0], 0, 3)
+#
+#     # # vertical light, no intensity
+#     # lights = [(0, (0, 0, -1))]
+#     # res = raycasting(triangles, mats, lights)
+#     # assert_almost_equal(res['area'][0], 1, 3)
+#     # assert_almost_equal(res['Ei_sup'][0], 0, 0)
+#     # assert_almost_equal(res['Ei_inf'][0], 0, 3)
+#     #
+#     # # diagonal light
+#     # lights = [(100, (-1, 0, -1))]
+#     # res = raycasting(triangles, mats, lights)
+#     # assert_almost_equal(res['area'][0], 1, 3)
+#     # assert_almost_equal(res['Ei_sup'][0], 100, 0)
+#     # assert_almost_equal(res['Ei_inf'][0], 0, 3)
+
+
