@@ -12,7 +12,6 @@ def test_incident_energy_when_horizontal_direction_light():
     # horizontal light no intensity
     lights = [(0, (-1, 0, 0))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
 
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 0, 0)
@@ -21,7 +20,6 @@ def test_incident_energy_when_horizontal_direction_light():
     # horizontal light no intensity
     lights = [(100, (-1, 0, 0))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
 
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 0, 0)

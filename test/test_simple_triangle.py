@@ -12,7 +12,6 @@ def test_incident_energy_when_no_occlusion_single_triangle():
     # vertical light
     lights = [(100, (0, 0, -1))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 100, 0)
     assert_almost_equal(res['Ei_inf'][0], 0, 3)
@@ -20,7 +19,6 @@ def test_incident_energy_when_no_occlusion_single_triangle():
     # vertical light, no intensity
     lights = [(0, (0, 0, -1))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 0, 0)
     assert_almost_equal(res['Ei_inf'][0], 0, 3)
@@ -28,7 +26,6 @@ def test_incident_energy_when_no_occlusion_single_triangle():
     # diagonal light
     lights = [(100, (-1, 0, -1))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 100, 0)
     assert_almost_equal(res['Ei_inf'][0], 0, 3)
@@ -43,7 +40,6 @@ def test_incident_energy_when_no_occlusion_two_triangles():
     # vertical light
     lights = [(100, (0, 0, -1))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
     for i in (0, 1):
         assert_almost_equal(res['area'][i], 1, 3)
         assert_almost_equal(res['Ei_sup'][i], 100, 0)
@@ -52,7 +48,6 @@ def test_incident_energy_when_no_occlusion_two_triangles():
     # vertical light, no intensity
     lights = [(0, (0, 0, -1))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
     for i in (0, 1):
         assert_almost_equal(res['area'][i], 1, 3)
         assert_almost_equal(res['Ei_sup'][i], 0, 0)
@@ -61,7 +56,6 @@ def test_incident_energy_when_no_occlusion_two_triangles():
     # diagonal light
     lights = [(100, (-1, 0, -1))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
     for i in (0, 1):
         assert_almost_equal(res['area'][i], 1, 3)
         assert_almost_equal(res['Ei_sup'][i], 100, 0)
@@ -77,7 +71,6 @@ def test_incident_energy_when_full_occlusion_two_shapes():
     # vertical light
     lights = [(100, (0, 0, -1))]
     res = raycasting(triangles, mats, lights)
-    res = res['band0']['data']
 
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 0, 0)

@@ -4,14 +4,14 @@
  ****                Michael Chelle - 1996-1997                     ****
  *******************************************************************/
 // Compilation Solaris-x86
-// g++ -w -O2 -I . -I ../bibliotek -o periodise  periodise.C ../binobj/canopy_io.o ../binobj/diffuseur.o  ../binobj/primitive.o ../binobj/actop.o ../binobj/outils.o ../binobj/anamatide.o ../binobj/T_geometrie.o ../binobj/grille.o ../binobj/boite.o -lm 
+// g++ -w -O2 -I . -I ../bibliotek -o periodise  periodise.C ../binobj/canopy_io.o ../binobj/diffuseur.o  ../binobj/primitive.o ../binobj/actop.o ../binobj/outils.o ../binobj/anamatide.o ../binobj/T_geometrie.o ../binobj/grille.o ../binobj/boite.o -lm
 
 // Compilation Radia
-//g++ -w -O2 -I . -I ../bibliotek -o periodise  periodise.C $EXE/canopy_io.o $EXE/diffuseur.o  $EXE/primitive.o $EXE/actop.o $EXE/outils.o $EXE/anamatide.o $EXE/T_geometrie.o $EXE/grille.o $EXE/boite.o -lm 
+//g++ -w -O2 -I . -I ../bibliotek -o periodise  periodise.C $EXE/canopy_io.o $EXE/diffuseur.o  $EXE/primitive.o $EXE/actop.o $EXE/outils.o $EXE/anamatide.o $EXE/T_geometrie.o $EXE/grille.o $EXE/boite.o -lm
 
 /*
 #######################################
-05/04/05 : ajout de l'option -p pour permettre de specifier 
+05/04/05 : ajout de l'option -p pour permettre de specifier
 le fichier de proprietes optiques
 14/09/09 : gestionde primitives non correctes pour conserver le .can original (-> pyCaribu)
 #######################################
@@ -35,24 +35,24 @@ int periodise(int argc,char **argv){
   // Gestion des options
   char *outname=NULL,*maqname=NULL,*name8=NULL,*optname=NULL;
   char ok=0;
-  GetOpt option(argc,argv,"h8:o:m:p:"); 
+  GetOpt option(argc,argv,"h8:o:m:p:");
   int c;
   while((c=option())!=EOF)
     switch(c){
-    case '8' : name8=option.optarg;   ok++; break;//infinity  
+    case '8' : name8=option.optarg;   ok++; break;//infinity
     case 'o' : outname=option.optarg;       break;// out.can
-    case 'm' : maqname=option.optarg; ok++; break;// canopy.can 
-    case 'p' : optname=option.optarg;  break; // *.opt 
+    case 'm' : maqname=option.optarg; ok++; break;// canopy.can
+    case 'p' : optname=option.optarg;  break; // *.opt
     case 'h' : cerr<<"usage : "<<argv[0]<<" [8<infty> o<out> m<in> p<opt>]\n"; return 0 ;
     default  : cerr<<"usage : "<<argv[0]<<" [8<infty> o<out> m<in> p<opt>]\n"; return -1;
     }// switch
-  
+
   if(ok<2) {
     printf(" ==> les options -m  et -8 sont strictement necessaires. \n");
     exit(0);
   }//pas good opt
   FILE * fout,*fz;
-  if(outname==NULL) 
+  if(outname==NULL)
     fout=fopen("motif.can","w");
   else
     fout=fopen(outname,"w");
@@ -63,8 +63,8 @@ int periodise(int argc,char **argv){
   reel  bmin[3]={99999999.0,99999999.0,99999999.0};
   double minr;
   reel bmax[3]={-99999999.0,-99999999.0,-99999999.0};
-  double D[2],delta[3],G,Gz,Px,Py,Pz;//delta x et y 
-   
+  double D[2],delta[3],G,Gz,Px,Py,Pz;//delta x et y
+
   int nbs,m;
   int bps[3];//Bon Pour le Service
   scene.parse_can(maqname,optname,bmin, bmax,false,name8);
@@ -78,14 +78,14 @@ int periodise(int argc,char **argv){
   else
     delta[2] = 0.;
   printf(" delta2 = %g\n", delta[2]);
-  for (i = 0; i < 3; i++) 
+  for (i = 0; i < 3; i++)
     cout<<" [1]Bornemin["<<(int)i<<"] = "<<bmin[i]<<"  Bornemax["<<(int)i<<"] = "<<bmax[i]<<endl;
   for ( scene.liste_diff_scene.debut() ; !scene.liste_diff_scene.finito() ; scene.liste_diff_scene.suivant() ) {
     delta[0] = delta[1] = 0;
-    pdiff = scene.liste_diff_scene.contenu(); 
-    if ( &(pdiff->primi()) == NULL ){// maintient des pas bon triangles - MC09
-      fprintf(fout,"p  1 -1 3 0 0 0  0 0 0  0 0 0\n");
-    } else {
+    pdiff = scene.liste_diff_scene.contenu();
+//    if ( &(pdiff->primi()) == NULL ){// maintient des pas bon triangles - MC09
+//      fprintf(fout,"p  1 -1 3 0 0 0  0 0 0  0 0 0\n");
+//    } else {
       Gz = pdiff->primi().centre()[2] + delta[2];
       fprintf(fz,"%g\n",Gz);
       if (!pdiff->isopaque())
@@ -113,10 +113,10 @@ int periodise(int argc,char **argv){
 	fprintf(fout," %.6g  ",Px);
 	fprintf(fout," %.6g",Py);
 	fprintf(fout," %.6g",Pz);
-	
+
       }
       fprintf(fout,"\n");
-    }//if pas bon triangle
+//    }//if pas bon triangle
   }//for Ldiff
   fclose(fout);
   fclose(fz);
