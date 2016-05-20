@@ -93,7 +93,7 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
                     A material is a 1-, 2- or 4-tuple depending on its optical behavior.
                     A 1-tuple encode the reflectance of an opaque material
                     A 2-tuple encode the reflectance and transmittance of a symetric translucent material
-                    A 4 tuple encode the reflectance and transmittance                     
+                    A 4-tuple encode the reflectance and transmittance                     
                     of the upper and lower side of an asymetric translucent material
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
                 By default a normalised zenital light is used. 
@@ -134,7 +134,6 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
                     direct=True,
                     infinitise=infinitise,
                     projection_image_size=screen_size,
-                    debug=True
                     )
     caribu.run()
     out = caribu.nrj['band0']['data']
@@ -154,7 +153,7 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
                     A material is a 1-, 2- or 4-tuple depending on its optical behavior.
                     A 1-tuple encode the reflectance of an opaque material
                     A 2-tuple encode the reflectance and transmittance of a symetric translucent material
-                    A 4 tuple encode the reflectance and transmittance                     
+                    A 4-tuple encode the reflectance and transmittance                     
                     of the upper and lower side of an asymetric translucent material
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
                 By default a normalised zenital light is used. 
