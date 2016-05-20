@@ -71,7 +71,7 @@ def triangles_string(triangles, labels):
     def _can_string(triangle, label):
         s = "p 1 %s 3" % str(label)
         for pt in triangle:
-            s += " %.9f %.9f %.9f" % pt
+            s += " %.6f %.6f %.6f" % pt
         return s + '\n'
 
     lines = [_can_string(t, l) for t, l in zip(triangles, labels)]
@@ -124,7 +124,8 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
                     patternfile=pattern_str,
                     direct=True,
                     infinitise=infinitise,
-                    projection_image_size=screen_size
+                    projection_image_size=screen_size,
+                    debug=True
                     )
     caribu.run()
     out = caribu.nrj
