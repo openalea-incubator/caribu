@@ -1,7 +1,7 @@
 from math import sqrt
 from nose.tools import assert_almost_equal
 
-from alinea.caribu.caribu import green_leaf_PAR, radiosity, raycasting
+from alinea.caribu.caribu import green_leaf_PAR, radiosity, raycasting, mixed_radiosity
 
 
 def test_incident_energy_when_no_occlusion_single_triangle():
@@ -125,8 +125,8 @@ def test_mixed_radiosity_energy_when_full_occlusion_three_shapes():
     
     # vertical light
     lights = [(100, (0, 0, -1))]
-    diameter, nlayers, height = 0.6, 3, 1.2
-    res = radiosity(triangles, mats, lights, domain, mixed_radiosity=(diameter, nlayers, height))
+    diameter, layers, height = 0.6, 3, 1.2
+    res = mixed_radiosity(triangles, mats, lights, domain, diameter, layers, height)
 
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 0, 0)

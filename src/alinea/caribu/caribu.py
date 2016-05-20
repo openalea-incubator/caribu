@@ -141,10 +141,8 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
     return out
 
 
-def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
-              mixed_radiosity=None,
-              screen_size=1536):
-    """Compute monochrome illumination of triangles using radiosity model.
+def radiosity(triangles, materials, lights=(1, (0, 0, -1)), screen_size=1536):
+    """Compute monochrome illumination of triangles using radiosity method.
 
     Args:
         triangles: (list of list of tuples) a list of triangles, each being defined
@@ -158,16 +156,6 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
                 By default a normalised zenital light is used. 
                 Energy is ligth flux passing throuh a unit area horizontal plane.
-        domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
-                 (xmin, ymin, xmax, ymax) scene is not bounded along z axis
-                 if None (default), scene is not repeated
-        mixed_radiosity: (None or tuple) Control of mixed
-                         radiosity algorithm.
-                         None means do not use mixed radiosity (default)
-                         (diameter, nb_layers, height):
-                          - diameter: diameter of the spheric neighbourhood of triangles for which pure radiosity is used.
-                          - nb_layers: vertical subdivisions of scene used for approximation of far contrbution
-                          - height: maximum height of scene layers
         screen_size: (int) buffer size for projection images
 
     Returns:
@@ -190,29 +178,13 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
 
-    if domain is None:
-        infinitise = False
-        pattern_str = None
-    else:
-        infinitise = True
-        pattern_str = pattern_string(domain)
-        
-    if mixed_radiosity is None:
-        diameter = -1
-        nb_layers = None
-        can_height = None
-    else:
-        diameter, nb_layers, can_height = mixed_radiosity
-
     caribu = Caribu(canfile=can_string,
                     skyfile=sky_string,
                     optfiles=opt_string,
-                    patternfile=pattern_str,
+                    patternfile=None,
                     direct=False,
-                    infinitise=infinitise,
-                    nb_layers=nb_layers,
-                    can_height=can_height,
-                    sphere_diameter=diameter,
+                    infinitise=False,
+                    sphere_diameter=-1,
                     projection_image_size=screen_size
                     )
     caribu.run()
@@ -220,3 +192,61 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
 
     return out
 
+def mixed_radiosity(triangles, materials, lights, domain,
+              diameter, layers, height, screen_size=1536):
+    """Compute monochrome illumination of triangles using radiosity model.
+
+    Args:
+        triangles: (list of list of tuples) a list of triangles, each being defined
+                    by an ordered triplet of 3-tuple points coordinates.
+        materials: (list of tuple) a list of materials defining optical properties of triangles
+                    A material is a 1-, 2- or 4-tuple depending on its optical behavior.
+                    A 1-tuple encode the reflectance of an opaque material
+                    A 2-tuple encode the reflectance and transmittance of a symetric translucent material
+                    A 4-tuple encode the reflectance and transmittance                     
+                    of the upper and lower side of an asymetric translucent material
+        lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
+                Energy is ligth flux passing throuh a unit area horizontal plane.
+        domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
+                 (xmin, ymin, xmax, ymax) scene is not bounded along z axis
+        diameter: diameter of the sphere defining the close neighbourhood for local radiosity.
+        nb_layers: vertical subdivisions of scene used for approximation of far contrbution
+        height: upper limit of canopy layers
+        screen_size: (int) buffer size for projection images
+
+    Returns:
+        (dict of str:property) properties computed:
+          - index(int) : the indices of the input triangles present in outputs ?
+          - label(str) : the internal barcode (canlabel) used by caribu (for debuging) 
+          - area (float): the indiviual areas of triangles
+          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area) 
+          - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
+          - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
+    """
+    
+    if len(triangles) <= 1:
+        raise ValueError('Radiosity method needs at least two primitives')
+    
+    if len(triangles) != len(materials):
+        raise ValueError('The number of triangles and materials should match')
+    
+    opt_string, labels = opt_string_and_labels(materials)
+    can_string = triangles_string(triangles, labels)
+    sky_string = light_string(lights)
+    pattern_str = pattern_string(domain)
+
+    caribu = Caribu(canfile=can_string,
+                    skyfile=sky_string,
+                    optfiles=opt_string,
+                    patternfile=pattern_str,
+                    direct=False,
+                    infinitise=True,
+                    nb_layers=layers,
+                    can_height=height,
+                    sphere_diameter=diameter,
+                    projection_image_size=screen_size
+                    )
+    caribu.run()
+    out = caribu.nrj['band0']['data']
+
+    return out
