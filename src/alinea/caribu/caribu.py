@@ -128,7 +128,7 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
                     debug=True
                     )
     caribu.run()
-    out = caribu.nrj
+    out = caribu.nrj['band0']['data']
 
     return out
 
@@ -197,7 +197,7 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
                     projection_image_size=screen_size
                     )
     caribu.run()
-    out = caribu.nrj
+    out = caribu.nrj['band0']['data']
 
     return out
 
