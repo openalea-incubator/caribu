@@ -44,7 +44,7 @@ def opt_string_and_labels(materials):
     opts_sorted_keys = sorted(opts.keys())
     for key in opts_sorted_keys:
         po = opts[key]
-        if len(po) > 1:
+        if hasattr(po,'__iter__'):
             opt_string += 'e d -1   d %s %s  d %s %s\n' % po
         else:
             opt_string += 'e d %s   d 0.5 0.5  d 0.5 0.5\n' % po
@@ -55,7 +55,7 @@ def opt_string_and_labels(materials):
         lab = Label()
         lab.plant_id = 1
         lab.optical_id = mapping[material]
-        if len(material) > 1:
+        if hasattr(material,'__iter__'):
             lab.leaf_id = 1
         return str(lab)
 
@@ -166,6 +166,9 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), domain=None,
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
+    
+    if len(triangles) <= 1:
+        raise ValueError('Radiosity method needs at least two primitives')
     
     opt_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
