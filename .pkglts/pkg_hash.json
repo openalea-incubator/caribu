@@ -1,6 +1,7 @@
 {
+    "./.coveragerc": [], 
     "./.gitignore": [
-        "qjNCPJeHxa13D5OULnvej7cascQn4lPV1hgdEL4HN1wgdtAG+bsTV66h0bJDczAH6PAvQCg2HM7f8c6H0suEgQ=="
+        "+K/4XGP2Peb5jWR7nzmpli9QQT/NXtwbXHyE3BnTHOEAdwTiRpmD0k++rjO/416VXZCr7l+3j3X8YUhN+Ku0MA=="
     ], 
     "./AUTHORS.rst": [], 
     "./CONTRIBUTING.rst": [], 
@@ -23,13 +24,13 @@
     "./doc/readme.rst": [], 
     "./doc/usage.rst": [], 
     "./dvlpt_requirements.txt": [
-        "U2EahhtPTGYpFfJ1ngM+LACMPL/HLCfaES8YlkVslJRGRyoGCaFvH8A9Ih4W2Kzhl7cBhPDsAHkw/WtM94Fv0g=="
+        "7qCwtiSkTCCwUiBVSlCKEg4ALocoRmCb6MhuUhYiBnOh9kgt/8hxRo98NW6+HjxQOlV8XpRarjAQri/t912eXQ=="
     ], 
     "./requirements.txt": [
         "AWuoxM/eZa+Zy1+ouKN+Lrc/SBs640mRZm3y4E/rbAOGZuvR7CtvYjlndWAzxwLd5fQj99R6tu0YJ/9TeDcx9w=="
     ], 
     "./setup.cfg": [
-        "QYCnUVMayyDRu7c/wBEMVaGu9NHjEMOS/UhuN7hNdyAPOqPIZjW7dRKEMuIhm8twpcIXxHhMNmGsxWodD3fqgg=="
+        "/G8zTPxtVmLITXgjxgzRUIMwnHRSGG2Nb52r/C9l3gt0qqb5FN7TfyEhGx1XfNUUz3/HBhFS17jWhXypuZFPjA=="
     ], 
     "./setup.py": [
         "KJXQXgGF//e/3o3+tu+qL76FbKbEDNby7dJ6IDpGvdELt0ALNotHkzT0DBRp49IquCVWpqvbT+TjhkRDtCsD2g==", 
@@ -44,6 +45,7 @@
         "fIn+GWAvhWfY/9NV/Sw6VXI4UIvx1OTgGxXQ1U5+9JFQ4vhuETzkaQvz8W4M9rMDYlL0vAeRmP2p2DyMgcvb9A=="
     ], 
     "./src/alinea/caribu/caribu.py": [], 
+    "./src/alinea/caribu/caribu_shell.py": [], 
     "./src/alinea/caribu/caribu_star.py": [], 
     "./src/alinea/caribu/data/__init__.py": [], 
     "./src/alinea/caribu/data_access.py": [
@@ -111,5 +113,10 @@
     "./src/cpp/meschach/mesch12a_v0/tests/Makelinux": [], 
     "./src/cpp/s2v/src/SConscript": [], 
     "./test/__init__.py": [], 
-    "./test/test_simple_triangle.py": []
+    "./test/test_domain.py": [], 
+    "./test/test_light.py": [], 
+    "./test/test_null_triangle.py": [], 
+    "./test/test_simple_triangle (copy).py": [], 
+    "./test/test_simple_triangle.py": [], 
+    "./test_domain.py": []
 }

@@ -33,11 +33,11 @@ def light_string(lights):
 
     return ''.join(lines)
 
-    
+
 def opt_string(species):
     """ format species as caribu opt file string content
     """
-   
+
     n = len(species)
     o_string = 'n %s\n' % n
     o_string += "s d -1\n"
@@ -51,10 +51,10 @@ def opt_string(species):
                 o_string += 'e d -1   d %s %s  d %s %s\n' % po
         else:
             o_string += 'e d %s   d -1 -1  d -1 -1\n' % po
-    
+
     return o_string
 
-    
+
 def encode_labels(materials, species):
     def _label(material):
         lab = Label()
@@ -63,37 +63,38 @@ def encode_labels(materials, species):
         if hasattr(material,'__iter__'):
             lab.leaf_id = 1
         return str(lab)
-    mapping = {v: k for k, v in species.iteritems()} 
-    return [_label(m) for m in materials]    
+    mapping = {v: k for k, v in species.iteritems()}
+    return [_label(m) for m in materials]
 
-    
+
 def opt_string_and_labels(materials):
     """ format materials as caribu opt file string content and encde label
-    """  
+    """
 
-    species = {i+1: po for i, po in enumerate(list(set(materials)))}    
+    species = {i+1: po for i, po in enumerate(list(set(materials)))}
     o_string = opt_string(species)
     labels = encode_labels(materials, species)
-    
+
     return o_string, labels
-    
+
+
 def x_opt_strings_and_labels(x_materials):
     """ format multispectral materials as caribu opt file strings content
     """
-     
+
     x_opts = zip(*x_materials.values())
     x_species = {i+1: po for i, po in enumerate(list(set(x_opts)))}
 
     labels = encode_labels(x_opts, x_species)
-    
+
     opt_strings = {}
-    for i, k in enumerate(x_materials.keys()):      
+    for i, k in enumerate(x_materials.keys()):
         species = {k:v[i] for k,v in x_species.iteritems()}
         opt_strings[k] = opt_string(species)
-    
-    return opt_strings, labels    
 
-    
+    return opt_strings, labels
+
+
 def triangles_string(triangles, labels):
     """ format triangles and associated labels as caribu canopy string content
     """
@@ -119,11 +120,11 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
         materials: (list of tuple) a list of materials defining optical properties of triangles
                     A material is a 1-, 2- or 4-tuple depending on its optical behavior.
                     A 1-tuple encode the reflectance of an opaque material
-                    A 2-tuple encode the reflectance and transmittance of a symetric translucent material
-                    A 4-tuple encode the reflectance and transmittance                     
-                    of the upper and lower side of an asymetric translucent material
+                    A 2-tuple encode the reflectance and transmittance of a symmetric translucent material
+                    A 4-tuple encode the reflectance and transmittance
+                    of the upper and lower side of an asymmetric translucent material
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
-                By default a normalised zenital light is used. 
+                By default a normalised zenital light is used.
                 Energy is ligth flux passing throuh a unit area horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
@@ -133,37 +134,37 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
     Returns:
         (dict of str:property) properties computed:
           - index(int) : the indices of the input triangles present in outputs ?
-          - label(str) : the internal barcode (canlabel) used by caribu (for debuging) 
+          - label(str) : the internal barcode (canlabel) used by caribu (for debuging)
           - area (float): the indiviual areas of triangles
-          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area) 
+          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area)
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
 
     if len(triangles) != len(materials):
         raise ValueError('The number of triangles and materials should match')
-    
+
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
 
     if domain is None:
-        infinitise = False
+        infinite = False
         pattern_str = None
     else:
-        infinitise = True
+        infinite = True
         pattern_str = pattern_string(domain)
 
-    caribu = Caribu(canfile=can_string,
-                    skyfile=sky_string,
-                    optfiles=o_string,
-                    patternfile=pattern_str,
-                    direct=True,
-                    infinitise=infinitise,
-                    projection_image_size=screen_size,
-                    )
-    caribu.run()
-    out = caribu.nrj['band0']['data']
+    algo = Caribu(canfile=can_string,
+                  skyfile=sky_string,
+                  optfiles=o_string,
+                  patternfile=pattern_str,
+                  direct=True,
+                  infinitise=infinite,
+                  projection_image_size=screen_size,
+                  )
+    algo.run()
+    out = algo.nrj['band0']['data']
 
     return out
 
@@ -177,105 +178,104 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), screen_size=1536):
         materials: (list of tuple) a list of materials defining optical properties of triangles
                     A material is a 1-, 2- or 4-tuple depending on its optical behavior.
                     A 1-tuple encode an opaque material characterised by its reflectance
-                    A 2-tuple encode a symetric translucent material defined by a reflectance and a transmittance 
-                    A 4-tuple encode an asymetric translucent material defined the reflectance and transmittance                     
+                    A 2-tuple encode a symmetric translucent material defined by a reflectance and a transmittance
+                    A 4-tuple encode an asymmetric translucent material defined the reflectance and transmittance
                     of the upper and lower side respectively
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
-                By default a normalised zenital light is used. 
+                By default a normalised zenital light is used.
                 Energy is ligth flux passing throuh a unit area horizontal plane.
         screen_size: (int) buffer size for projection images
 
     Returns:
         (dict of str:property) properties computed:
           - index(int) : the indices of the input triangles present in outputs ?
-          - label(str) : the internal barcode (canlabel) used by caribu (for debuging) 
-          - area (float): the indiviual areas of triangles
-          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area) 
+          - label(str) : the internal barcode (canlabel) used by caribu (for debuging)
+          - area (float): the individual areas of triangles
+          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area)
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
-    
+
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
-    
+
     if len(triangles) != len(materials):
         raise ValueError('The number of triangles and materials should match')
-    
+
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
 
-    caribu = Caribu(canfile=can_string,
-                    skyfile=sky_string,
-                    optfiles=o_string,
-                    patternfile=None,
-                    direct=False,
-                    infinitise=False,
-                    sphere_diameter=-1,
-                    projection_image_size=screen_size
-                    )
-    caribu.run()
-    out = caribu.nrj['band0']['data']
+    algo = Caribu(canfile=can_string,
+                  skyfile=sky_string,
+                  optfiles=o_string,
+                  patternfile=None,
+                  direct=False,
+                  infinitise=False,
+                  sphere_diameter=-1,
+                  projection_image_size=screen_size
+                  )
+    algo.run()
+    out = algo.nrj['band0']['data']
 
     return out
 
-    
+
 def x_radiosity(triangles, x_materials, lights=(1, (0, 0, -1)), screen_size=1536):
     """Compute multi-chromatic illumination of triangles using radiosity method.
 
     Args:
         triangles: (list of list of tuples) a list of triangles, each being defined
                     by an ordered triplet of 3-tuple points coordinates.
-        x_materials: (dict of list of tuple) a {band_name: [materials]} dict defining optical properties of triangles 
+        x_materials: (dict of list of tuple) a {band_name: [materials]} dict defining optical properties of triangles
                     for different band/wavelength
                     A material is a 1-, 2- or 4-tuple depending on its optical behavior.
                     A 1-tuple encode an opaque material characterised by its reflectance
-                    A 2-tuple encode a symetric translucent material defined by a reflectance and a transmittance 
-                    A 4-tuple encode an asymetric translucent material defined the reflectance and transmittance                     
+                    A 2-tuple encode a symmetric translucent material defined by a reflectance and a transmittance
+                    A 4-tuple encode an asymmetric translucent material defined the reflectance and transmittance
                     of the upper and lower side respectively
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
-                By default a normalised zenital light is used. 
+                By default a normalised zenital light is used.
                 Energy is ligth flux passing throuh a unit area horizontal plane.
         screen_size: (int) buffer size for projection images
 
     Returns:
-        (a {band_name: {property_name:property_values}} dict of dict) with  properties:
+        (a {band_name: {property_name:property_values} } dict of dict) with  properties:
           - index(int) : the indices of the input triangles present in outputs ?
-          - label(str) : the internal barcode (canlabel) used by caribu (for debuging) 
+          - label(str) : the internal barcode (canlabel) used by caribu (for debuging)
           - area (float): the indiviual areas of triangles
-          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area) 
+          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area)
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
-    
+
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
-    
+
     if len(triangles) != len(materials):
         raise ValueError('The number of triangles and materials should match')
-    
-    
+
     opt_strings, labels = x_opt_strings_and_labels(x_materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
 
-    caribu = Caribu(canfile=can_string,
-                    skyfile=sky_string,
-                    optfiles=opt_strings,
-                    patternfile=None,
-                    direct=False,
-                    infinitise=False,
-                    sphere_diameter=-1,
-                    projection_image_size=screen_size
-                    )
-    caribu.run()
-    out = {k:v['data'] for k,v in caribu.nrj.iteritems()}
+    algo = Caribu(canfile=can_string,
+                  skyfile=sky_string,
+                  optfiles=opt_strings,
+                  patternfile=None,
+                  direct=False,
+                  infinitise=False,
+                  sphere_diameter=-1,
+                  projection_image_size=screen_size
+                  )
+    algo.run()
+    out = {k: v['data'] for k, v in algo.nrj.iteritems()}
 
     return out
 
-    
+
 def mixed_radiosity(triangles, materials, lights, domain,
-              diameter, layers, height, screen_size=1536):
+                    diameter, layers, height, screen_size=1536):
     """Compute monochrome illumination of triangles using radiosity model.
 
     Args:
@@ -284,51 +284,51 @@ def mixed_radiosity(triangles, materials, lights, domain,
         materials: (list of tuple) a list of materials defining optical properties of triangles
                     A material is a 1-, 2- or 4-tuple depending on its optical behavior.
                     A 1-tuple encode an opaque material characterised by its reflectance
-                    A 2-tuple encode a symetric translucent material defined by a reflectance and a transmittance 
-                    A 4-tuple encode an asymetric translucent material defined the reflectance and transmittance                     
+                    A 2-tuple encode a symmetric translucent material defined by a reflectance and a transmittance
+                    A 4-tuple encode an asymmetric translucent material defined the reflectance and transmittance
                     of the upper and lower side respectively
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
                 Energy is ligth flux passing throuh a unit area horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
         diameter: diameter of the sphere defining the close neighbourhood for local radiosity.
-        nb_layers: vertical subdivisions of scene used for approximation of far contrbution
+        layers: vertical subdivisions of scene used for approximation of far contrbution
         height: upper limit of canopy layers
         screen_size: (int) buffer size for projection images
 
     Returns:
         (dict of str:property) properties computed:
           - index(int) : the indices of the input triangles present in outputs ?
-          - label(str) : the internal barcode (canlabel) used by caribu (for debuging) 
+          - label(str) : the internal barcode (canlabel) used by caribu (for debuging)
           - area (float): the indiviual areas of triangles
-          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area) 
+          - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area)
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
-    
+
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
-    
+
     if len(triangles) != len(materials):
         raise ValueError('The number of triangles and materials should match')
-    
+
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
     pattern_str = pattern_string(domain)
 
-    caribu = Caribu(canfile=can_string,
-                    skyfile=sky_string,
-                    optfiles=o_string,
-                    patternfile=pattern_str,
-                    direct=False,
-                    infinitise=True,
-                    nb_layers=layers,
-                    can_height=height,
-                    sphere_diameter=diameter,
-                    projection_image_size=screen_size
-                    )
-    caribu.run()
-    out = caribu.nrj['band0']['data']
+    algo = Caribu(canfile=can_string,
+                  skyfile=sky_string,
+                  optfiles=o_string,
+                  patternfile=pattern_str,
+                  direct=False,
+                  infinitise=True,
+                  nb_layers=layers,
+                  can_height=height,
+                  sphere_diameter=diameter,
+                  projection_image_size=screen_size
+                  )
+    algo.run()
+    out = algo.nrj['band0']['data']
 
     return out
