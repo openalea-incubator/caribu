@@ -90,7 +90,7 @@ def test_radiosity_exception_single_triangle():
     # vertical light
     lights = [(100, (0, 0, -1))]
     # this test should return Value Error
-    assert_raises(ValueError, lambda: radiosity(triangles, mats, lights))
+    assert_raises(ValueError, lambda: radiosity(triangles, materials, lights))
 
 
 def test_radiosity_two_triangles_full_occlusion():
@@ -115,8 +115,8 @@ def test_radiosity_two_triangles_full_occlusion():
     assert_almost_equal(res['Ei_sup'][upper], 100, 0)
     assert_almost_equal(res['Ei_inf'][upper], -1, 3)
     assert_almost_equal(res['Eabs'][upper], 90, 0)
-    
-    #vertical light, translucent material of upper triangle
+
+    # vertical light, translucent material of upper triangle
     lights = [(100, (0, 0, -1))]
     materials = [(0.1), (0.1, 0.2)]
     res = radiosity(triangles, materials, lights)
@@ -130,7 +130,8 @@ def test_radiosity_two_triangles_full_occlusion():
     assert_almost_equal(res['area'][upper], 1, 3)
     assert_almost_equal(res['Ei_sup'][upper], 100, 0)
     assert_almost_equal(res['Ei_inf'][upper], 1.8, 0)
-    assert_almost_equal(res['Eabs'][upper], 71, 0)    
+    assert_almost_equal(res['Eabs'][upper], 71, 0)
+
 
 def test_mixed_radiosity_three_triangles_full_occlusion():
     # mixed radiosity needs at least two triangle
@@ -153,4 +154,3 @@ def test_mixed_radiosity_three_triangles_full_occlusion():
     assert_almost_equal(res['area'][2], 1, 3)
     assert_almost_equal(res['Ei_sup'][2], 100, 0)
     assert_almost_equal(res['Ei_inf'][2], -1, 3)
-

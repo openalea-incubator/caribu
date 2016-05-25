@@ -44,7 +44,7 @@ def opt_string(species):
     species_sorted_keys = sorted(species.keys())
     for key in species_sorted_keys:
         po = species[key]
-        if hasattr(po,'__iter__'):
+        if hasattr(po, '__iter__'):
             if len(po) == 2:
                 o_string += 'e d -1   d %s %s' % po + ' d %s %s\n' % po
             else:
@@ -60,9 +60,10 @@ def encode_labels(materials, species):
         lab = Label()
         lab.plant_id = 1
         lab.optical_id = mapping[material]
-        if hasattr(material,'__iter__'):
+        if hasattr(material, '__iter__'):
             lab.leaf_id = 1
         return str(lab)
+
     mapping = {v: k for k, v in species.iteritems()}
     return [_label(m) for m in materials]
 
@@ -71,7 +72,7 @@ def opt_string_and_labels(materials):
     """ format materials as caribu opt file string content and encde label
     """
 
-    species = {i+1: po for i, po in enumerate(list(set(materials)))}
+    species = {i + 1: po for i, po in enumerate(list(set(materials)))}
     o_string = opt_string(species)
     labels = encode_labels(materials, species)
 
@@ -83,13 +84,13 @@ def x_opt_strings_and_labels(x_materials):
     """
 
     x_opts = zip(*x_materials.values())
-    x_species = {i+1: po for i, po in enumerate(list(set(x_opts)))}
+    x_species = {i + 1: po for i, po in enumerate(list(set(x_opts)))}
 
     labels = encode_labels(x_opts, x_species)
 
     opt_strings = {}
     for i, k in enumerate(x_materials.keys()):
-        species = {k:v[i] for k,v in x_species.iteritems()}
+        species = {k: v[i] for k, v in x_species.iteritems()}
         opt_strings[k] = opt_string(species)
 
     return opt_strings, labels
@@ -252,7 +253,7 @@ def x_radiosity(triangles, x_materials, lights=(1, (0, 0, -1)), screen_size=1536
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
 
-    if len(triangles) != len(materials):
+    if len(triangles) != len(x_materials):
         raise ValueError('The number of triangles and materials should match')
 
     opt_strings, labels = x_opt_strings_and_labels(x_materials)
@@ -270,7 +271,7 @@ def x_radiosity(triangles, x_materials, lights=(1, (0, 0, -1)), screen_size=1536
                     projection_image_size=screen_size
                     )
     caribu.run()
-    out = {k:v['data'] for k,v in caribu.nrj.iteritems()}
+    out = {k: v['data'] for k, v in caribu.nrj.iteritems()}
 
     return out
 

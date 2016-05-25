@@ -24,4 +24,3 @@ def test_incident_energy_when_horizontal_direction_light():
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 0, 0)
     assert_almost_equal(res['Ei_inf'][0], 0, 3)
-
