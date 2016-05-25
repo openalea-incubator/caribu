@@ -261,7 +261,8 @@ def x_radiosity(triangles, x_materials, lights=(1, (0, 0, -1)), screen_size=1536
 
     caribu = Caribu(canfile=can_string,
                     skyfile=sky_string,
-                    optfiles=opt_strings,
+                    optfiles=opt_strings.values(),
+                    optnames=opt_strings.keys(),
                     patternfile=None,
                     direct=False,
                     infinitise=False,
