@@ -1,7 +1,8 @@
 from math import sqrt
-from nose.tools import assert_almost_equal
+from nose.tools import assert_almost_equal, assert_raises
 
-from alinea.caribu.caribu import green_leaf_PAR, radiosity, raycasting, mixed_radiosity
+from alinea.caribu.caribu import (green_leaf_PAR, mixed_radiosity, radiosity,
+                                  raycasting)
 
 
 def test_raycasting_single_triangle():
@@ -89,12 +90,9 @@ def test_radiosity_exception_single_triangle():
     # vertical light
     lights = [(100, (0, 0, -1))]
     # this test should return Value Error
-    try:
-        res = radiosity(triangles, materials, lights)
-        assert False
-    except ValueError:
-        assert True
-        
+    assert_raises(ValueError, lambda: radiosity(triangles, mats, lights))
+
+
 def test_radiosity_two_triangles_full_occlusion():
     # radiosity needs at least two triangle
     # as material are lambertian, the two triangle
@@ -142,7 +140,7 @@ def test_mixed_radiosity_three_triangles_full_occlusion():
     triangles = [pts1, pts2, pts3]
     materials = [(0.1)] * 3
     domain = (-2, -2, 2, 2)
-    
+
     # vertical light
     lights = [(100, (0, 0, -1))]
     diameter, layers, height = 0.6, 3, 1.2
