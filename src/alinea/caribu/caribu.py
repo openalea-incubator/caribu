@@ -59,7 +59,7 @@ def encode_labels(materials, species):
         lab = Label()
         lab.plant_id = 1
         lab.optical_id = mapping[material]
-        if hasattr(material, '__iter__'):
+        if len(material) > 1:
             lab.leaf_id = 1
         return str(lab)
 
