@@ -82,17 +82,6 @@ def test_raycasting_two_triangles_full_occlusion():
     assert_almost_equal(res['Ei_inf'][1], 0, 3)
 
 
-def test_radiosity_exception_single_triangle():
-    points = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
-    triangles = [points]
-    materials = [green_leaf_PAR]
-
-    # vertical light
-    lights = [(100, (0, 0, -1))]
-    # this test should return Value Error
-    assert_raises(ValueError, lambda: radiosity(triangles, materials, lights))
-
-
 def test_radiosity_two_triangles_full_occlusion():
     # radiosity needs at least two triangle
     # as material are lambertian, the two triangle

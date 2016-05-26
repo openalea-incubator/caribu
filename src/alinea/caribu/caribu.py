@@ -8,6 +8,8 @@ green_leaf_PAR = (0.06, 0.07)
 green_stem_PAR = (0.13,)
 soil_reflectance_PAR = (0.2,)
 
+default_light = (1, (0, 0, -1))
+
 
 def pattern_string(pattern_tuple):
     """ format pattern as caribu file string content
@@ -27,8 +29,6 @@ def light_string(lights):
         e, p = light
         return ' '.join(map(str, [e] + list(p))) + '\n'
 
-    if not isinstance(lights, list):
-        lights = [lights]
     lines = map(_as_string, lights)
 
     return ''.join(lines)
@@ -55,6 +55,9 @@ def opt_string(species):
 
 
 def encode_labels(materials, species):
+    print "enc labels", materials, species
+    mapping = {v: k for k, v in species.iteritems()}
+
     def _label(material):
         lab = Label()
         lab.plant_id = 1
@@ -63,17 +66,17 @@ def encode_labels(materials, species):
             lab.leaf_id = 1
         return str(lab)
 
-    mapping = {v: k for k, v in species.iteritems()}
     return [_label(m) for m in materials]
 
 
 def opt_string_and_labels(materials):
-    """ format materials as caribu opt file string content and encde label
+    """ format materials as caribu opt file string content and encode label
     """
 
     species = {i + 1: po for i, po in enumerate(list(set(materials)))}
     o_string = opt_string(species)
     labels = encode_labels(materials, species)
+    print "sband", o_string, "\n", labels, "toto\n"
 
     return o_string, labels
 
@@ -83,14 +86,18 @@ def x_opt_strings_and_labels(x_materials):
     """
 
     x_opts = zip(*x_materials.values())
+    print "x_opts", x_opts
     x_species = {i + 1: po for i, po in enumerate(list(set(x_opts)))}
+    print "x_species", x_species
 
     labels = encode_labels(x_opts, x_species)
+    print "labels", labels
 
     opt_strings = {}
     for i, k in enumerate(x_materials.keys()):
         species = {k: v[i] for k, v in x_species.iteritems()}
         opt_strings[k] = opt_string(species)
+        print "opt k", k, opt_string(species)
 
     return opt_strings, labels
 
@@ -110,7 +117,7 @@ def triangles_string(triangles, labels):
     return ''.join(lines)
 
 
-def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
+def raycasting(triangles, materials, lights=(default_light, ), domain=None,
                screen_size=1536):
     """Compute monochrome illumination of triangles using caribu raycasting mode.
 
@@ -169,7 +176,7 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
     return out
 
 
-def radiosity(triangles, materials, lights=(1, (0, 0, -1)), screen_size=1536):
+def radiosity(triangles, materials, lights=(default_light, ), screen_size=1536):
     """Compute monochromatic illumination of triangles using radiosity method.
 
     Args:
@@ -221,7 +228,7 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), screen_size=1536):
     return out
 
 
-def x_radiosity(triangles, x_materials, lights=(1, (0, 0, -1)), screen_size=1536):
+def x_radiosity(triangles, x_materials, lights=(default_light, ), screen_size=1536):
     """Compute multi-chromatic illumination of triangles using radiosity method.
 
     Args:
