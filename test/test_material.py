@@ -9,14 +9,6 @@ def test_raycasting_translucent():
     triangles = [points]
     lights = [(100, (0, 0, -1))]
 
-    # no reflectance, black body
-    materials = [(0., 0.)]
-    res = raycasting(triangles, materials, lights)
-    assert_almost_equal(res['area'][0], 1, 3)
-    assert_almost_equal(res['Ei_sup'][0], -1, 3)
-    assert_almost_equal(res['Ei_inf'][0], -1, 3)
-    assert isnan(res['Eabs'][0])
-
     # full reflectance, mirror
     materials = [(1., 0.)]
     res = raycasting(triangles, materials, lights)
@@ -38,14 +30,6 @@ def test_raycasting_opaque():
     points = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
     triangles = [points]
     lights = [(100, (0, 0, -1))]
-
-    # no reflectance, black body
-    materials = [(0., )]
-    res = raycasting(triangles, materials, lights)
-    assert_almost_equal(res['area'][0], 1, 3)
-    assert_almost_equal(res['Ei_sup'][0], -1, 3)
-    assert_almost_equal(res['Ei_inf'][0], -1, 3)
-    assert_almost_equal(res['Eabs'][0], -1, 3)
 
     # top
     materials = [(0.1,)]
@@ -106,7 +90,6 @@ def test_raycasting_opaque_box():
     triangles = [pts1, pts2, pts3, pts4]
     lights = [(100, (0, 0, -1))]
 
-    # no reflectance, black body
     materials = [(0.1, )] * len(triangles)
     res = raycasting(triangles, materials, lights)
     assert_almost_equal(res['area'][0], 0.5, 3)

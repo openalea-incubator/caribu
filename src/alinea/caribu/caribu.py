@@ -150,6 +150,9 @@ def raycasting(triangles, materials, lights=(default_light, ), domain=None,
 
     if len(triangles) != len(materials):
         raise ValueError('The number of triangles and materials should match')
+        
+    if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
+        raise ValueError('Caribu do not accept black body material (absorptance=1)')
 
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
@@ -208,7 +211,10 @@ def radiosity(triangles, materials, lights=(default_light, ), screen_size=1536):
 
     if len(triangles) != len(materials):
         raise ValueError('The number of triangles and materials should match')
-
+        
+    if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
+        raise ValueError('Caribu do not accept black body material (absorptance=1)')
+        
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -261,6 +267,9 @@ def x_radiosity(triangles, x_materials, lights=(default_light, ), screen_size=15
 
     if len(triangles) != len(x_materials):
         raise ValueError('The number of triangles and materials should match')
+        
+    if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
+        raise ValueError('Caribu do not accept black body material (absorptance=1)')
 
     opt_strings, labels = x_opt_strings_and_labels(x_materials)
     can_string = triangles_string(triangles, labels)
@@ -319,6 +328,9 @@ def mixed_radiosity(triangles, materials, lights, domain,
 
     if len(triangles) != len(materials):
         raise ValueError('The number of triangles and materials should match')
+                    
+    if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
+        raise ValueError('Caribu do not accept black body material (absorptance=1)')
 
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
