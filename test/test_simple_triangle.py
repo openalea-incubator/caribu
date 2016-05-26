@@ -98,7 +98,7 @@ def test_radiosity_two_triangles_full_occlusion():
     # as material are lambertian, the two triangle
     # are almost sticked to avoid loss of energy between the two surfaces
     lower = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
-    upper = [(0, 0, 1e-3), (sqrt(2), 0, 1e-3), (0, sqrt(2), 1e-3)]
+    upper = [(0, 0, 1e-5), (sqrt(2), 0, 1e-5), (0, sqrt(2), 1e-5)]
     triangles = [lower, upper]
     lower, upper = 0, 1
 
