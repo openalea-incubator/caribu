@@ -125,11 +125,11 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
                     of the upper and lower side of an asymmetric translucent material
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
                 By default a normalised zenital light is used.
-                Energy is ligth flux passing throuh a unit area horizontal plane.
+                Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
                  if None (default), scene is not repeated
-        screen_size: (int) buffer size for projection images
+        screen_size: (int) buffer size for projection images (pixels)
 
     Returns:
         (dict of str:property) properties computed:
@@ -162,7 +162,7 @@ def raycasting(triangles, materials, lights=[(1, (0, 0, -1))], domain=None,
                   direct=True,
                   infinitise=infinite,
                   projection_image_size=screen_size,
-                  )
+                  resdir=None, resfile=None)
     algo.run()
     out = algo.nrj['band0']['data']
 
@@ -183,8 +183,8 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), screen_size=1536):
                     of the upper and lower side respectively
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
                 By default a normalised zenital light is used.
-                Energy is ligth flux passing throuh a unit area horizontal plane.
-        screen_size: (int) buffer size for projection images
+                Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
+        screen_size: (int) buffer size for projection images (pixels)
 
     Returns:
         (dict of str:property) properties computed:
@@ -213,8 +213,8 @@ def radiosity(triangles, materials, lights=(1, (0, 0, -1)), screen_size=1536):
                   direct=False,
                   infinitise=False,
                   sphere_diameter=-1,
-                  projection_image_size=screen_size
-                  )
+                  projection_image_size=screen_size,
+                  resdir=None, resfile=None)
     algo.run()
     out = algo.nrj['band0']['data']
 
@@ -236,8 +236,8 @@ def x_radiosity(triangles, x_materials, lights=(1, (0, 0, -1)), screen_size=1536
                     of the upper and lower side respectively
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
                 By default a normalised zenital light is used.
-                Energy is ligth flux passing throuh a unit area horizontal plane.
-        screen_size: (int) buffer size for projection images
+                Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
+        screen_size: (int) buffer size for projection images (pixels)
 
     Returns:
         (a {band_name: {property_name:property_values} } dict of dict) with  properties:
@@ -267,8 +267,8 @@ def x_radiosity(triangles, x_materials, lights=(1, (0, 0, -1)), screen_size=1536
                     direct=False,
                     infinitise=False,
                     sphere_diameter=-1,
-                    projection_image_size=screen_size
-                    )
+                    projection_image_size=screen_size,
+                    resdir=None, resfile=None)
     caribu.run()
     out = {k: v['data'] for k, v in caribu.nrj.iteritems()}
 
@@ -289,13 +289,13 @@ def mixed_radiosity(triangles, materials, lights, domain,
                     A 4-tuple encode an asymmetric translucent material defined the reflectance and transmittance
                     of the upper and lower side respectively
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
-                Energy is ligth flux passing throuh a unit area horizontal plane.
+                Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
-        diameter: diameter of the sphere defining the close neighbourhood for local radiosity.
+        diameter: diameter (scene unit) of the sphere defining the close neighbourhood for local radiosity.
         layers: vertical subdivisions of scene used for approximation of far contrbution
-        height: upper limit of canopy layers
-        screen_size: (int) buffer size for projection images
+        height: upper limit of canopy layers (scene unit)
+        screen_size: (int) buffer size for projection images (pixels)
 
     Returns:
         (dict of str:property) properties computed:
@@ -327,8 +327,8 @@ def mixed_radiosity(triangles, materials, lights, domain,
                   nb_layers=layers,
                   can_height=height,
                   sphere_diameter=diameter,
-                  projection_image_size=screen_size
-                  )
+                  projection_image_size=screen_size,
+                  resdir=None, resfile=None)
     algo.run()
     out = algo.nrj['band0']['data']
 
