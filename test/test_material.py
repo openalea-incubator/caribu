@@ -1,7 +1,7 @@
 from math import isnan, sqrt
 from nose.tools import assert_almost_equal
 
-from alinea.caribu.caribu import raycasting
+from alinea.caribu.caribu import radiosity, raycasting
 
 
 def test_raycasting_translucent():
@@ -144,11 +144,10 @@ def test_raycasting_asymmetric_material():
     assert_almost_equal(res['Eabs'][0], 90, 0)
 
     # bottom
-    triangles = [[points[0], points[2], points[1]]]
+    triangles = [reversed(points)]
     res = raycasting(triangles, materials, lights)
     assert_almost_equal(res['area'][0], 1, 3)
     assert_almost_equal(res['Ei_sup'][0], 0, 0)
     assert_almost_equal(res['Ei_inf'][0], 100, 0)
     assert_almost_equal(res['Eabs'][0], 80, 0)
-
 
