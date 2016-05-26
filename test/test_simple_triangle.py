@@ -104,27 +104,27 @@ def test_radiosity_two_triangles_full_occlusion():
 
     # vertical light, opaque material
     lights = [(100, (0, 0, -1))]
-    materials = [(0.1, )] * 2
+    materials = [(0.1, 0.)] * 2
     res = radiosity(triangles, materials, lights)
 
     assert_almost_equal(res['area'][lower], 1, 3)
     assert_almost_equal(res['Ei_sup'][lower], 0, 0)
-    assert_almost_equal(res['Ei_inf'][lower], -1, 3)
+    assert_almost_equal(res['Ei_inf'][lower], 0, 3)
 
     assert_almost_equal(res['area'][upper], 1, 3)
     assert_almost_equal(res['Ei_sup'][upper], 100, 0)
-    assert_almost_equal(res['Ei_inf'][upper], -1, 3)
+    assert_almost_equal(res['Ei_inf'][upper], 0, 3)
     assert_almost_equal(res['Eabs'][upper], 90, 0)
 
     # vertical light, translucent material of upper triangle
     lights = [(100, (0, 0, -1))]
-    materials = [(0.1, ), (0.1, 0.2)]
+    materials = [(0.1, 0.), (0.1, 0.2)]
     res = radiosity(triangles, materials, lights)
 
     print res
     assert_almost_equal(res['area'][lower], 1, 3)
     assert_almost_equal(res['Ei_sup'][lower], 20, 0)
-    assert_almost_equal(res['Ei_inf'][lower], -1, 3)
+    assert_almost_equal(res['Ei_inf'][lower], 0, 3)
     assert_almost_equal(res['Eabs'][lower], 18, 0)
 
     assert_almost_equal(res['area'][upper], 1, 3)
@@ -148,9 +148,9 @@ def test_mixed_radiosity_three_triangles_full_occlusion():
     res = mixed_radiosity(triangles, materials, lights, domain, diameter, layers, height)
 
     assert_almost_equal(res['area'][0], 1, 3)
-    assert_almost_equal(res['Ei_sup'][0], 0, 0)
+    assert_almost_equal(res['Ei_sup'][0], -1, 0)
     assert_almost_equal(res['Ei_inf'][0], -1, 3)
 
     assert_almost_equal(res['area'][2], 1, 3)
-    assert_almost_equal(res['Ei_sup'][2], 100, 0)
+    assert_almost_equal(res['Ei_sup'][2], -1, 0)
     assert_almost_equal(res['Ei_inf'][2], -1, 3)
