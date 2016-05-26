@@ -25,7 +25,10 @@ def test_radiosity_two_triangles_full_occlusion():
         assert_almost_equal(res['area'][upper], 1, 3)
         assert_almost_equal(res['Ei_sup'][upper], 100, 0)
         assert_almost_equal(res['Ei_inf'][upper], -1, 3)
-        assert_almost_equal(res['Eabs'][upper], 90, 0)
+        if band == "band1":
+            assert_almost_equal(res['Eabs'][upper], 90, 0)
+        else:
+            assert_almost_equal(res['Eabs'][upper], 80, 0)
     #
     # # vertical light, translucent material of upper triangle
     # lights = [(100, (0, 0, -1))]

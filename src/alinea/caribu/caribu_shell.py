@@ -285,7 +285,7 @@ class Caribu(object):
             fn = path(self.scene)
             fn.copy(d / fn.basename())
         else:
-            fn = d / 'scene.can'
+            fn = d / 'cscene.can'
             fn.write_text(self.scene)
         self.scene = path(fn.basename())
 

@@ -54,15 +54,18 @@ def opt_string(species):
     return o_string
 
 
-def encode_labels(materials, species):
-    print "enc labels", materials, species
+def encode_labels(materials, species, x_mat=False):
     mapping = {v: k for k, v in species.iteritems()}
 
     def _label(material):
         lab = Label()
         lab.plant_id = 1
         lab.optical_id = mapping[material]
-        if len(material) > 1:
+        if x_mat:
+            transparent = len(material[0]) > 1
+        else:
+            transparent = len(material) > 1
+        if transparent:
             lab.leaf_id = 1
         return str(lab)
 
@@ -76,7 +79,6 @@ def opt_string_and_labels(materials):
     species = {i + 1: po for i, po in enumerate(list(set(materials)))}
     o_string = opt_string(species)
     labels = encode_labels(materials, species)
-    print "sband", o_string, "\n", labels, "toto\n"
 
     return o_string, labels
 
@@ -86,18 +88,14 @@ def x_opt_strings_and_labels(x_materials):
     """
 
     x_opts = zip(*x_materials.values())
-    print "x_opts", x_opts
     x_species = {i + 1: po for i, po in enumerate(list(set(x_opts)))}
-    print "x_species", x_species
 
-    labels = encode_labels(x_opts, x_species)
-    print "labels", labels
+    labels = encode_labels(x_opts, x_species, x_mat=True)
 
     opt_strings = {}
     for i, k in enumerate(x_materials.keys()):
         species = {k: v[i] for k, v in x_species.iteritems()}
         opt_strings[k] = opt_string(species)
-        print "opt k", k, opt_string(species)
 
     return opt_strings, labels
 
@@ -267,9 +265,10 @@ def x_radiosity(triangles, x_materials, lights=(default_light, ), screen_size=15
 
     if len(triangles) != len(x_materials):
         raise ValueError('The number of triangles and materials should match')
-        
-    if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
-        raise ValueError('Caribu do not accept black body material (absorptance=1)')
+    
+    for materials in x_materials.values():
+        if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
+            raise ValueError('Caribu do not accept black body material (absorptance=1)')
 
     opt_strings, labels = x_opt_strings_and_labels(x_materials)
     can_string = triangles_string(triangles, labels)
