@@ -5,8 +5,8 @@ from alinea.caribu.label import Label
 from alinea.caribu.caribu_shell import Caribu
 
 green_leaf_PAR = (0.06, 0.07)
-green_stem_PAR = 0.13
-soil_reflectance_PAR = 0.2
+green_stem_PAR = (0.13,)
+soil_reflectance_PAR = (0.2,)
 
 
 def pattern_string(pattern_tuple):
@@ -44,13 +44,12 @@ def opt_string(species):
     species_sorted_keys = sorted(species.keys())
     for key in species_sorted_keys:
         po = species[key]
-        if hasattr(po, '__iter__'):
-            if len(po) == 2:
-                o_string += 'e d -1   d %s %s' % po + ' d %s %s\n' % po
-            else:
-                o_string += 'e d -1   d %s %s  d %s %s\n' % po
-        else:
+        if len(po) == 1:
             o_string += 'e d %s   d -1 -1  d -1 -1\n' % po
+        elif len(po) == 2:
+            o_string += 'e d -1   d %s %s' % po + ' d %s %s\n' % po
+        else:
+            o_string += 'e d -1   d %s %s  d %s %s\n' % po
 
     return o_string
 

@@ -98,13 +98,13 @@ def test_radiosity_two_triangles_full_occlusion():
     # as material are lambertian, the two triangle
     # are almost sticked to avoid loss of energy between the two surfaces
     lower = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
-    upper = [(0, 0, 1e-5), (sqrt(2), 0, 1e-5), (0, sqrt(2), 1e-5)]
+    upper = [(0, 0, 1e-3), (sqrt(2), 0, 1e-3), (0, sqrt(2), 1e-3)]
     triangles = [lower, upper]
     lower, upper = 0, 1
 
     # vertical light, opaque material
     lights = [(100, (0, 0, -1))]
-    materials = [(0.1)] * 2
+    materials = [(0.1, )] * 2
     res = radiosity(triangles, materials, lights)
 
     assert_almost_equal(res['area'][lower], 1, 3)
@@ -118,7 +118,7 @@ def test_radiosity_two_triangles_full_occlusion():
 
     # vertical light, translucent material of upper triangle
     lights = [(100, (0, 0, -1))]
-    materials = [(0.1), (0.1, 0.2)]
+    materials = [(0.1, ), (0.1, 0.2)]
     res = radiosity(triangles, materials, lights)
 
     print res
@@ -139,7 +139,7 @@ def test_mixed_radiosity_three_triangles_full_occlusion():
     pts2 = [(0, 0, 0.5), (sqrt(2), 0, 0.5), (0, sqrt(2), 0.5)]
     pts3 = [(0, 0, 1), (sqrt(2), 0, 1), (0, sqrt(2), 1)]
     triangles = [pts1, pts2, pts3]
-    materials = [(0.1)] * 3
+    materials = [(0.1, )] * 3
     domain = (-2, -2, 2, 2)
 
     # vertical light
