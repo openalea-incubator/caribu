@@ -38,11 +38,12 @@ def test_raycasting_exception():
     assert_raises(ValueError, lambda: raycasting(triangles, materials))
     materials = [(0., 0, 0, 0.)]
     assert_raises(ValueError, lambda: raycasting(triangles, materials))
-    
-    #match
+
+    # unmatch
     materials = [(0.1,)] * 2
     assert_raises(ValueError, lambda: raycasting(triangles, materials))
-    
+
+
 def test_radiosity_exception():
     points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
     triangles = [points]
