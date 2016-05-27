@@ -25,7 +25,7 @@ def test_default_light_in_radiosity():
 
     assert 'area' in res
 
-def test_raycasting_exception_single_triangle():
+def test_raycasting_exception():
     points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
     triangles = [points]
 
@@ -39,11 +39,11 @@ def test_raycasting_exception_single_triangle():
     materials = [(0., 0, 0, 0.)]
     assert_raises(ValueError, lambda: raycasting(triangles, materials))
     
-    #unmatch
+    #match
     materials = [(0.1,)] * 2
     assert_raises(ValueError, lambda: raycasting(triangles, materials))
     
-def test_radiosity_exception_single_triangle():
+def test_radiosity_exception():
     points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
     triangles = [points]
     materials = [green_leaf_PAR]
@@ -51,5 +51,14 @@ def test_radiosity_exception_single_triangle():
     # this test should return Value Error
     assert_raises(ValueError, lambda: radiosity(triangles, materials))
 
+    pts1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+    pts2 = [(0, 0, 1), (1, 0, 1), (0, 1, 1)]
+    triangles = [pts1, pts2]
     
+    # black body
+    materials = [(0,)] * 2
+    assert_raises(ValueError, lambda: radiosity(triangles, materials))
 
+    # unmatch triangles <-> materials
+    materials = [green_leaf_PAR]
+    assert_raises(ValueError, lambda: radiosity(triangles, materials))
