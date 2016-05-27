@@ -44,6 +44,8 @@ def opt_string(species):
     species_sorted_keys = sorted(species.keys())
     for key in species_sorted_keys:
         po = species[key]
+        if sum(po) <= 0:
+            raise ValueError('Caribu do not accept black body material (absorptance=1)')
         if len(po) == 1:
             o_string += 'e d %s   d -1 -1  d -1 -1\n' % po
         elif len(po) == 2:
@@ -103,6 +105,8 @@ def x_opt_strings_and_labels(x_materials):
 def triangles_string(triangles, labels):
     """ format triangles and associated labels as caribu canopy string content
     """
+    if len(triangles) != len(labels):
+        raise ValueError('The number of triangles and materials should match')
 
     def _can_string(triangle, label):
         s = "p 1 %s 3" % str(label)
@@ -162,12 +166,7 @@ def raycasting(triangles, materials, lights=(default_light, ), domain=None,
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
 
-    if len(triangles) != len(materials):
-        raise ValueError('The number of triangles and materials should match')
         
-    if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
-        raise ValueError('Caribu do not accept black body material (absorptance=1)')
-
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -224,13 +223,7 @@ def radiosity(triangles, materials, lights=(default_light, ), screen_size=1536):
 
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
-
-    if len(triangles) != len(materials):
-        raise ValueError('The number of triangles and materials should match')
-        
-    if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
-        raise ValueError('Caribu do not accept black body material (absorptance=1)')
-        
+             
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -283,12 +276,6 @@ def x_radiosity(triangles, x_materials, lights=(default_light, ), screen_size=15
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
     
-    for materials in x_materials.values():
-        if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
-            raise ValueError('Caribu do not accept black body material (absorptance=1)')
-        if len(triangles) != len(materials):
-            raise ValueError('The number of triangles and materials should match')
-
     opt_strings, labels = x_opt_strings_and_labels(x_materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -347,12 +334,7 @@ def mixed_radiosity(triangles, materials, lights, domain,
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
 
-    if len(triangles) != len(materials):
-        raise ValueError('The number of triangles and materials should match')
-                    
-    if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
-        raise ValueError('Caribu do not accept black body material (absorptance=1)')
-
+                  
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -413,12 +395,6 @@ def x_mixed_radiosity(triangles, x_materials, lights, domain,
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
           
-    for materials in x_materials.values():
-        if len(filter(lambda x: x > 0, map(sum, materials))) < len(materials):
-            raise ValueError('Caribu do not accept black body material (absorptance=1)')
-        if len(triangles) != len(materials):
-            raise ValueError('The number of triangles and materials should match')
-
     opt_strings, labels = x_opt_strings_and_labels(x_materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)

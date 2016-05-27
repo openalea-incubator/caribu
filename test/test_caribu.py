@@ -49,7 +49,7 @@ def test_radiosity_exception():
     triangles = [points]
     materials = [green_leaf_PAR]
 
-    # this test should return Value Error
+    # one triangle
     assert_raises(ValueError, lambda: radiosity(triangles, materials))
 
     pts1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
