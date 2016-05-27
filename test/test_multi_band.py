@@ -1,7 +1,7 @@
 from math import sqrt
 from nose.tools import assert_almost_equal
 
-from alinea.caribu.caribu import x_radiosity
+from alinea.caribu.caribu import x_radiosity, x_mixed_radiosity
 
 
 def test_radiosity_two_triangles_full_occlusion():
@@ -29,3 +29,30 @@ def test_radiosity_two_triangles_full_occlusion():
             assert_almost_equal(res['Eabs'][upper], 90, 0)
         else:
             assert_almost_equal(res['Eabs'][upper], 80, 0)
+
+            
+def test_mixed_radiosity_three_triangles_full_occlusion():
+    # mixed radiosity needs at least two triangle
+    pts1 = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
+    pts2 = [(0, 0, 0.5), (sqrt(2), 0, 0.5), (0, sqrt(2), 0.5)]
+    pts3 = [(0, 0, 1), (sqrt(2), 0, 1), (0, sqrt(2), 1)]
+    triangles = [pts1, pts2, pts3]
+    materials = dict(band1=[(0.1, )] * 3,
+                     band2=[(0.2, )] * 3)
+    domain = (-2, -2, 2, 2)
+
+    # vertical light
+    lights = [(100, (0, 0, -1))]
+    diameter, layers, height = 0.6, 3, 1.2
+    x_res = x_mixed_radiosity(triangles, materials, lights, domain, diameter, layers, height)
+
+    for band in ("band1", "band2"):
+        res = x_res[band]
+        assert_almost_equal(res['area'][0], 1, 3)
+        # assert_almost_equal(res['Ei_sup'][0], -1, 0)
+        # assert_almost_equal(res['Ei_inf'][0], -1, 3)
+
+        assert_almost_equal(res['area'][2], 1, 3)
+        # assert_almost_equal(res['Ei_sup'][2], -1, 0)
+        # assert_almost_equal(res['Ei_inf'][2], -1, 3)
+        # TODO radiosity result
