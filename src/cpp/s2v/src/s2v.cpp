@@ -329,7 +329,7 @@ int s2v(int argc, char **argv){
       sprintf(optname,"%s.opt",argv[MIN_OPT+po]);
       lect_po(Tpo,po,optname);
     }//for po
-    xpo.alloue(nje,njx,njy,njz,npo,2); xpo.maj(0);
+    xpo.alloue(nje,njz,npo,2); xpo.maj(0); //CF 2016: xpo a 4 dim now
    
   }
   else{// by file si argc == 1 
