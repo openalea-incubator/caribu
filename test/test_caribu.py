@@ -25,6 +25,7 @@ def test_default_light_in_radiosity():
 
     assert 'area' in res
 
+
 def test_raycasting_exception():
     points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
     triangles = [points]
@@ -55,7 +56,7 @@ def test_radiosity_exception():
     pts1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
     pts2 = [(0, 0, 1), (1, 0, 1), (0, 1, 1)]
     triangles = [pts1, pts2]
-    
+
     # black body
     materials = [(0,)] * 2
     assert_raises(ValueError, lambda: radiosity(triangles, materials))

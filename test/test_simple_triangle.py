@@ -1,7 +1,7 @@
 from math import sqrt
-from nose.tools import assert_almost_equal, assert_greater, assert_raises
+from nose.tools import assert_almost_equal
 
-from alinea.caribu.caribu import (green_leaf_PAR, mixed_radiosity, radiosity,
+from alinea.caribu.caribu import (mixed_radiosity, radiosity,
                                   raycasting)
 
 
@@ -101,7 +101,7 @@ def test_radiosity_two_triangles_full_occlusion():
     assert_almost_equal(res['area'][upper], 1, 3)
     assert_almost_equal(res['Eabs'][upper], 90, 0)
     assert_almost_equal(res['Ei'][upper], 100, 0)
-    
+
 
 def test_mixed_radiosity_four_triangles_full_occlusion():
     # a two time two stack of sticked triangles
@@ -114,19 +114,19 @@ def test_mixed_radiosity_four_triangles_full_occlusion():
     upper_pts_layer2 = [(0, 0, z2 + dz), (sqrt(2), 0, z2 + dz), (0, sqrt(2), z2 + dz)]
     triangles = [lower_pts_layer1, upper_pts_layer1, lower_pts_layer2, upper_pts_layer2]
     lower1, upper1, lower2, upper2 = range(4)
-    
+
     lights = [(100, (0, 0, -1))]
     materials = [(0.06, 0.04)] * 4
     layers, height = 2, 1
     soil_reflectance = 0.2
 
     # pure radiosity
-    res = radiosity(triangles, materials, lights)   
+    res = radiosity(triangles, materials, lights)
     assert_almost_equal(res['Ei'][upper2], 100, 0)
     assert_almost_equal(res['Ei'][lower2], 4, 0)
     assert_almost_equal(res['Ei'][upper1], 0.1, 1)
     assert_almost_equal(res['Ei'][lower1], 0, 0)
-    
+
     # direct + pure layer, dense canopy
     domain = (0, 0, sqrt(2), sqrt(2))
     diameter = 0
@@ -135,7 +135,7 @@ def test_mixed_radiosity_four_triangles_full_occlusion():
     assert_almost_equal(res['Ei'][lower2], 4, 0)
     assert_almost_equal(res['Ei'][upper1], 4, 0)
     assert_almost_equal(res['Ei'][lower1], 4, 0)
-    
+
     # direct + mixed radiosity, dense canopy (20% soil reflectance)
     domain = (0, 0, sqrt(2), sqrt(2))
     diameter = 0.1
@@ -153,7 +153,7 @@ def test_mixed_radiosity_four_triangles_full_occlusion():
     assert_almost_equal(res['Ei'][lower2], 20, 0)
     assert_almost_equal(res['Ei'][upper1], 20, 0)
     assert_almost_equal(res['Ei'][lower1], 20, 0)
-    
+
     # direct + mixed radiosity, sparse canopy
     domain = (-10, -10, 10, 10)
     diameter = 0.1

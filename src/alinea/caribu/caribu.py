@@ -120,21 +120,23 @@ def triangles_string(triangles, labels):
 
 
 def get_incident(eabs, materials):
-    """ estimate incident light using aborbed light and materials
+    """ estimate incident light using absorbed light and materials
     
         For asymetric materials, return a mean estimate
     """
+
     def _absorptance(material):
         if len(material) <= 2:
             return 1 - sum(material)
         else:
             return 1 - sum(material) / 2.
 
-    alpha = (_absorptance(m) for m in materials)  
-            
+    alpha = (_absorptance(m) for m in materials)
+
     return [float(e) / a if a != 0 else e for e, a in zip(eabs, alpha)]
-    
-def raycasting(triangles, materials, lights=(default_light, ), domain=None,
+
+
+def raycasting(triangles, materials, lights=(default_light,), domain=None,
                screen_size=1536):
     """Compute monochrome illumination of triangles using caribu raycasting mode.
 
@@ -148,8 +150,8 @@ def raycasting(triangles, materials, lights=(default_light, ), domain=None,
                     A 4-tuple encode the reflectance and transmittance
                     of the upper and lower side of an asymmetric translucent material
         lights: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining ligh sources
-                By default a normalised zenital light is used.
-                Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
+                By default a normalised zenithal light is used.
+                Energy is light flux passing through a unit area (scene unit) horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
                  if None (default), scene is not repeated
@@ -158,7 +160,7 @@ def raycasting(triangles, materials, lights=(default_light, ), domain=None,
     Returns:
         (dict of str:property) properties computed:
           - index(int) : the indices of the input triangles present in outputs ?
-          - label(str) : the internal barcode (canlabel) used by caribu (for debuging)
+          - label(str) : the internal barcode (canlabel) used by caribu (for debugging)
           - area (float): the indiviual areas of triangles
           - Eabs (float): the surfacic density of energy absorbed by the triangles (absorbed_energy / area)
           - Ei (float): the surfacic density of energy incoming on the triangles
@@ -166,7 +168,6 @@ def raycasting(triangles, materials, lights=(default_light, ), domain=None,
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
     """
 
-        
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -189,11 +190,11 @@ def raycasting(triangles, materials, lights=(default_light, ), domain=None,
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)
-    
+
     return out
 
 
-def radiosity(triangles, materials, lights=(default_light, ), screen_size=1536):
+def radiosity(triangles, materials, lights=(default_light,), screen_size=1536):
     """Compute monochromatic illumination of triangles using radiosity method.
 
     Args:
@@ -223,7 +224,7 @@ def radiosity(triangles, materials, lights=(default_light, ), screen_size=1536):
 
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
-             
+
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -240,11 +241,11 @@ def radiosity(triangles, materials, lights=(default_light, ), screen_size=1536):
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)
-    
+
     return out
 
 
-def x_radiosity(triangles, x_materials, lights=(default_light, ), screen_size=1536):
+def x_radiosity(triangles, x_materials, lights=(default_light,), screen_size=1536):
     """Compute multi-chromatic illumination of triangles using radiosity method.
 
     Args:
@@ -275,7 +276,7 @@ def x_radiosity(triangles, x_materials, lights=(default_light, ), screen_size=15
 
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
-    
+
     opt_strings, labels = x_opt_strings_and_labels(x_materials)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -335,7 +336,6 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
 
-                  
     o_string, labels = opt_string_and_labels(materials, soil_reflectance)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
@@ -355,12 +355,12 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)
-    
+
     return out
 
-    
+
 def x_mixed_radiosity(triangles, x_materials, lights, domain, soil_reflectance,
-                    diameter, layers, height, screen_size=1536):
+                      diameter, layers, height, screen_size=1536):
     """Compute multi-chromatic illumination of triangles using mixed-radiosity model.
 
     Args:
@@ -396,28 +396,27 @@ def x_mixed_radiosity(triangles, x_materials, lights, domain, soil_reflectance,
 
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
-          
+
     opt_strings, labels = x_opt_strings_and_labels(x_materials, soil_reflectance)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
     pattern_str = pattern_string(domain)
 
     caribu = Caribu(canfile=can_string,
-                  skyfile=sky_string,
-                  optfiles=opt_strings.values(),
-                  optnames=opt_strings.keys(),
-                  patternfile=pattern_str,
-                  direct=False,
-                  infinitise=True,
-                  nb_layers=layers,
-                  can_height=height,
-                  sphere_diameter=diameter,
-                  projection_image_size=screen_size,
-                  resdir=None, resfile=None)
+                    skyfile=sky_string,
+                    optfiles=opt_strings.values(),
+                    optnames=opt_strings.keys(),
+                    patternfile=pattern_str,
+                    direct=False,
+                    infinitise=True,
+                    nb_layers=layers,
+                    can_height=height,
+                    sphere_diameter=diameter,
+                    projection_image_size=screen_size,
+                    resdir=None, resfile=None)
     caribu.run()
     out = {k: v['data'] for k, v in caribu.nrj.iteritems()}
     for band in out:
         out[band]['Ei'] = get_incident(out[band]['Eabs'], x_materials[band])
 
     return out
-    

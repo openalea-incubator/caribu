@@ -1,4 +1,4 @@
-from math import isnan, sqrt
+from math import sqrt
 from nose.tools import assert_almost_equal
 
 from alinea.caribu.caribu import radiosity, raycasting
@@ -48,6 +48,7 @@ def test_raycasting_opaque():
     # assert_almost_equal(res['Ei_inf'][0], 100, 0)
     # assert_almost_equal(res['Eabs'][0], 90, 0)
 
+
 def test_radiosity_two_triangles_full_occlusion():
     lower_pts = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
     upper_pts = [(0, 0, 1e-5), (sqrt(2), 0, 1e-5), (0, sqrt(2), 1e-5)]
@@ -56,7 +57,7 @@ def test_radiosity_two_triangles_full_occlusion():
 
     # vertical light, opaque material
     lights = [(100, (0, 0, -1))]
-    materials = [(0.1, )] * 2
+    materials = [(0.1,)] * 2
     res = radiosity(triangles, materials, lights)
 
     assert_almost_equal(res['area'][lower], 1, 3)
@@ -67,7 +68,7 @@ def test_radiosity_two_triangles_full_occlusion():
 
     # vertical light, translucent material of upper triangle
     lights = [(100, (0, 0, -1))]
-    materials = [(0.1, ), (0.1, 0.2)]
+    materials = [(0.1,), (0.1, 0.2)]
     res = radiosity(triangles, materials, lights)
 
     assert_almost_equal(res['area'][lower], 1, 3)
@@ -76,7 +77,7 @@ def test_radiosity_two_triangles_full_occlusion():
     assert_almost_equal(res['area'][upper], 1, 3)
     assert_almost_equal(res['Ei'][upper], 102, 0)
 
-    
+
 def test_raycasting_closed_box():
     pts1 = [(0, 0, 0), (1, 0, 0), (0, 0, 1)]
     pts2 = [(0, 0, 0), (0, 0, 1), (0, 1, 0)]
@@ -118,7 +119,7 @@ def test_raycasting_opaque_box():
     triangles = [pts1, pts2, pts3, pts4]
     lights = [(100, (0, 0, -1))]
 
-    materials = [(0.1, )] * len(triangles)
+    materials = [(0.1,)] * len(triangles)
     res = raycasting(triangles, materials, lights)
     assert_almost_equal(res['area'][0], 0.5, 3)
     # assert_almost_equal(res['Ei_sup'][0], 0, 3)
@@ -161,4 +162,3 @@ def test_raycasting_asymmetric_material():
     assert_almost_equal(res['Ei_sup'][0], 0, 0)
     assert_almost_equal(res['Ei_inf'][0], 100, 0)
     assert_almost_equal(res['Eabs'][0], 80, 0)
-
