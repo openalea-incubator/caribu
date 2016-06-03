@@ -26,11 +26,11 @@ void mprofil(Limit& limit,Profout* Tprof,Mlayout* Tlay){
   T=NULL;
   T=new Coeff[N+1];
   //sources
-  REEL *ETu,*ETd;
-/*  Mlayout l; redéclaration AH 21/02/2001 */
-  ETu=new REEL[N+1];
-  ETd=new REEL[N+1];
-  ETu[0]=ETu[0]=0;
+  // CF 2016 : seems not to be used anymore. Skip allocation
+  // REEL *ETu,*ETd;
+  // ETu=new REEL[N+1];
+  // ETd=new REEL[N+1];
+  // ETu[0]=ETu[0]=0;
 
   printf("profil.C::mprofil() : ~debut\n");   fflush(stdout);fflush(stderr);
   if(T==NULL){
