@@ -48,7 +48,35 @@ def test_raycasting_opaque():
     # assert_almost_equal(res['Ei_inf'][0], 100, 0)
     # assert_almost_equal(res['Eabs'][0], 90, 0)
 
+def test_radiosity_two_triangles_full_occlusion():
+    lower_pts = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
+    upper_pts = [(0, 0, 1e-5), (sqrt(2), 0, 1e-5), (0, sqrt(2), 1e-5)]
+    triangles = [lower_pts, upper_pts]
+    lower, upper = 0, 1
 
+    # vertical light, opaque material
+    lights = [(100, (0, 0, -1))]
+    materials = [(0.1, )] * 2
+    res = radiosity(triangles, materials, lights)
+
+    assert_almost_equal(res['area'][lower], 1, 3)
+    assert_almost_equal(res['Ei'][lower], 0, 0)
+
+    assert_almost_equal(res['area'][upper], 1, 3)
+    assert_almost_equal(res['Ei'][upper], 100, 0)
+
+    # vertical light, translucent material of upper triangle
+    lights = [(100, (0, 0, -1))]
+    materials = [(0.1, ), (0.1, 0.2)]
+    res = radiosity(triangles, materials, lights)
+
+    assert_almost_equal(res['area'][lower], 1, 3)
+    assert_almost_equal(res['Ei'][lower], 20, 0)
+
+    assert_almost_equal(res['area'][upper], 1, 3)
+    assert_almost_equal(res['Ei'][upper], 102, 0)
+
+    
 def test_raycasting_closed_box():
     pts1 = [(0, 0, 0), (1, 0, 0), (0, 0, 1)]
     pts2 = [(0, 0, 0), (0, 0, 1), (0, 1, 0)]
