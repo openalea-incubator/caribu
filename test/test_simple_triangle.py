@@ -1,5 +1,5 @@
 from math import sqrt
-from nose.tools import assert_almost_equal, assert_raises
+from nose.tools import assert_almost_equal, assert_greater, assert_raises
 
 from alinea.caribu.caribu import (green_leaf_PAR, mixed_radiosity, radiosity,
                                   raycasting)
@@ -103,25 +103,62 @@ def test_radiosity_two_triangles_full_occlusion():
     assert_almost_equal(res['Ei'][upper], 100, 0)
     
 
-def test_mixed_radiosity_three_triangles_full_occlusion():
-    # mixed radiosity needs at least two triangle
-    pts1 = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
-    pts2 = [(0, 0, 0.5), (sqrt(2), 0, 0.5), (0, sqrt(2), 0.5)]
-    pts3 = [(0, 0, 1), (sqrt(2), 0, 1), (0, sqrt(2), 1)]
-    triangles = [pts1, pts2, pts3]
-    materials = [(0.1, )] * 3
-    domain = (-2, -2, 2, 2)
-
-    # vertical light
+def test_mixed_radiosity_four_triangles_full_occlusion():
+    # a two time two stack of sticked triangles
+    dz = 1e-5
+    z1 = 0.25
+    z2 = 0.75
+    lower_pts_layer1 = [(0, 0, z1), (sqrt(2), 0, z1), (0, sqrt(2), z1)]
+    upper_pts_layer1 = [(0, 0, z1 + dz), (sqrt(2), 0, z1 + dz), (0, sqrt(2), z1 + dz)]
+    lower_pts_layer2 = [(0, 0, z2), (sqrt(2), 0, z2), (0, sqrt(2), z2)]
+    upper_pts_layer2 = [(0, 0, z2 + dz), (sqrt(2), 0, z2 + dz), (0, sqrt(2), z2 + dz)]
+    triangles = [lower_pts_layer1, upper_pts_layer1, lower_pts_layer2, upper_pts_layer2]
+    lower1, upper1, lower2, upper2 = range(4)
+    
     lights = [(100, (0, 0, -1))]
-    diameter, layers, height = 0.6, 3, 1.2
-    res = mixed_radiosity(triangles, materials, lights, domain, diameter, layers, height)
+    materials = [(0.06, 0.04)] * 4
+    layers, height = 2, 1
+    soil_reflectance = 0.2
 
-    assert_almost_equal(res['area'][0], 1, 3)
-    # assert_almost_equal(res['Ei_sup'][0], -1, 0)
-    # assert_almost_equal(res['Ei_inf'][0], -1, 3)
+    # pure radiosity
+    res = radiosity(triangles, materials, lights)   
+    assert_almost_equal(res['Ei'][upper2], 100, 0)
+    assert_almost_equal(res['Ei'][lower2], 4, 0)
+    assert_almost_equal(res['Ei'][upper1], 0.1, 1)
+    assert_almost_equal(res['Ei'][lower1], 0, 0)
+    
+    # direct + pure layer, dense canopy
+    domain = (0, 0, sqrt(2), sqrt(2))
+    diameter = 0
+    res = mixed_radiosity(triangles, materials, lights, domain, soil_reflectance, diameter, layers, height)
+    assert_almost_equal(res['Ei'][upper2], 103, 0)
+    assert_almost_equal(res['Ei'][lower2], 4, 0)
+    assert_almost_equal(res['Ei'][upper1], 4, 0)
+    assert_almost_equal(res['Ei'][lower1], 4, 0)
+    
+    # direct + mixed radiosity, dense canopy (20% soil reflectance)
+    domain = (0, 0, sqrt(2), sqrt(2))
+    diameter = 0.1
+    res = mixed_radiosity(triangles, materials, lights, domain, soil_reflectance, diameter, layers, height)
+    assert_almost_equal(res['Ei'][upper2], 101, 0)
+    assert_almost_equal(res['Ei'][lower2], 7, 0)
+    assert_almost_equal(res['Ei'][upper1], 2, 0)
+    assert_almost_equal(res['Ei'][lower1], 3, 0)
 
-    assert_almost_equal(res['area'][2], 1, 3)
-    # assert_almost_equal(res['Ei_sup'][2], -1, 0)
-    # assert_almost_equal(res['Ei_inf'][2], -1, 3)
-    # TODO radiosity result
+    # direct + pure layer, sparse canopy (20% soil reflectance)
+    domain = (-10, -10, 10, 10)
+    diameter = 0
+    res = mixed_radiosity(triangles, materials, lights, domain, soil_reflectance, diameter, layers, height)
+    assert_almost_equal(res['Ei'][upper2], 120, 0)
+    assert_almost_equal(res['Ei'][lower2], 20, 0)
+    assert_almost_equal(res['Ei'][upper1], 20, 0)
+    assert_almost_equal(res['Ei'][lower1], 20, 0)
+    
+    # direct + mixed radiosity, sparse canopy
+    domain = (-10, -10, 10, 10)
+    diameter = 0.1
+    res = mixed_radiosity(triangles, materials, lights, domain, soil_reflectance, diameter, layers, height)
+    assert_almost_equal(res['Ei'][upper2], 101, 0)
+    assert_almost_equal(res['Ei'][lower2], 24, 0)
+    assert_almost_equal(res['Ei'][upper1], 1, 0)
+    assert_almost_equal(res['Ei'][lower1], 20, 0)

@@ -6,7 +6,7 @@ from alinea.caribu.caribu_shell import Caribu
 
 green_leaf_PAR = (0.06, 0.07)
 green_stem_PAR = (0.13,)
-soil_reflectance_PAR = (0.2,)
+soil_reflectance_PAR = 0.2
 
 default_light = (1, (0, 0, -1))
 
@@ -34,13 +34,13 @@ def light_string(lights):
     return ''.join(lines)
 
 
-def opt_string(species):
+def opt_string(species, soil_reflectance=-1):
     """ format species as caribu opt file string content
     """
 
     n = len(species)
     o_string = 'n %s\n' % n
-    o_string += "s d -1\n"
+    o_string += "s d %s\n" % soil_reflectance
     species_sorted_keys = sorted(species.keys())
     for key in species_sorted_keys:
         po = species[key]
@@ -74,18 +74,18 @@ def encode_labels(materials, species, x_mat=False):
     return [_label(m) for m in materials]
 
 
-def opt_string_and_labels(materials):
+def opt_string_and_labels(materials, soil_reflectance=-1):
     """ format materials as caribu opt file string content and encode label
     """
 
     species = {i + 1: po for i, po in enumerate(list(set(materials)))}
-    o_string = opt_string(species)
+    o_string = opt_string(species, soil_reflectance)
     labels = encode_labels(materials, species)
 
     return o_string, labels
 
 
-def x_opt_strings_and_labels(x_materials):
+def x_opt_strings_and_labels(x_materials, soil_reflectance=-1):
     """ format multispectral materials as caribu opt file strings content
     """
 
@@ -97,7 +97,7 @@ def x_opt_strings_and_labels(x_materials):
     opt_strings = {}
     for i, k in enumerate(x_materials.keys()):
         species = {k: v[i] for k, v in x_species.iteritems()}
-        opt_strings[k] = opt_string(species)
+        opt_strings[k] = opt_string(species, soil_reflectance)
 
     return opt_strings, labels
 
@@ -298,7 +298,7 @@ def x_radiosity(triangles, x_materials, lights=(default_light, ), screen_size=15
     return out
 
 
-def mixed_radiosity(triangles, materials, lights, domain,
+def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
                     diameter, layers, height, screen_size=1536):
     """Compute monochrome illumination of triangles using mixed-radiosity model.
 
@@ -315,6 +315,7 @@ def mixed_radiosity(triangles, materials, lights, domain,
                 Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
+        soil_reflectance: (float) the reflectance of the soil
         diameter: diameter (scene unit) of the sphere defining the close neighbourhood for local radiosity.
         layers: vertical subdivisions of scene used for approximation of far contrbution
         height: upper limit of canopy layers (scene unit)
@@ -335,7 +336,7 @@ def mixed_radiosity(triangles, materials, lights, domain,
         raise ValueError('Radiosity method needs at least two primitives')
 
                   
-    o_string, labels = opt_string_and_labels(materials)
+    o_string, labels = opt_string_and_labels(materials, soil_reflectance)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
     pattern_str = pattern_string(domain)
@@ -358,7 +359,7 @@ def mixed_radiosity(triangles, materials, lights, domain,
     return out
 
     
-def x_mixed_radiosity(triangles, x_materials, lights, domain,
+def x_mixed_radiosity(triangles, x_materials, lights, domain, soil_reflectance,
                     diameter, layers, height, screen_size=1536):
     """Compute multi-chromatic illumination of triangles using mixed-radiosity model.
 
@@ -376,6 +377,7 @@ def x_mixed_radiosity(triangles, x_materials, lights, domain,
                 Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
         domain: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
+        soil_reflectance: (float) the reflectance of the soil
         diameter: diameter (scene unit) of the sphere defining the close neighbourhood for local radiosity.
         layers: vertical subdivisions of scene used for approximation of far contrbution
         height: upper limit of canopy layers (scene unit)
@@ -395,7 +397,7 @@ def x_mixed_radiosity(triangles, x_materials, lights, domain,
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
           
-    opt_strings, labels = x_opt_strings_and_labels(x_materials)
+    opt_strings, labels = x_opt_strings_and_labels(x_materials, soil_reflectance)
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
     pattern_str = pattern_string(domain)

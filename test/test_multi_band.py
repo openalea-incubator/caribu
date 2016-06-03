@@ -40,11 +40,12 @@ def test_mixed_radiosity_three_triangles_full_occlusion():
     materials = dict(band1=[(0.1, )] * 3,
                      band2=[(0.2, )] * 3)
     domain = (-2, -2, 2, 2)
+    soil_reflectance = 0.2
 
     # vertical light
     lights = [(100, (0, 0, -1))]
     diameter, layers, height = 0.6, 3, 1.2
-    x_res = x_mixed_radiosity(triangles, materials, lights, domain, diameter, layers, height)
+    x_res = x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance, diameter, layers, height)
 
     for band in ("band1", "band2"):
         res = x_res[band]
