@@ -136,7 +136,8 @@ using namespace std ;
 
 #define NattMax 10
 #define LevelMax 6 //4:3,6
-#define NBOPT 10
+// CF 2016 : directly read nje in opt files
+//#define NBOPT 10
 
 #define max(a,b) ((a>b)?a:b)
 #define min(a,b) ((a<b)?a:b)
@@ -156,6 +157,8 @@ void provec(double*, double*, double*);
 void norme(double*, double*);
 void normal(Patch&, double&, double&);
 double area(Patch &T);
+// CF 2016 read number of optical species in opt file
+void lect_nopt(int *nopt,char *optname);
 void lect_po( Tabdyn<double,3> &Tpo,int po,char *optname);
 int isid(char *name);
 
@@ -202,7 +205,7 @@ ferrlog Ferr((char*)"s2v.log") ;
 
 int s2v(int argc, char **argv){
   //int main(int argc, char **argv){
-  int nja,nji,nje, nje_reel=-1, cptr=0;;
+  int nja,nji,nje, nje_reel=-1, cptr=0;
   char ntype,optname[200];
   signed  char test;
   int natt,nsom;
@@ -301,7 +304,7 @@ int s2v(int argc, char **argv){
     }
     //Horizontal pattern
     njx = njy = 1;
-    nje =  NBOPT;
+
     // file.8
     fpar=fopen(argv[4],"r");
     if (fpar==NULL){
@@ -323,7 +326,11 @@ int s2v(int argc, char **argv){
     // Optical properties
     genopt=true;
     npo=argc- MIN_OPT;
-    Tpo.alloue(npo,NBOPT,3);
+	// CF 2016: get number of species from first opt file
+	sprintf(optname,"%s.opt",argv[MIN_OPT]);
+    lect_nopt(&nje,optname);
+    // nje =  NBOPT;
+    Tpo.alloue(npo,nje,3);
     Tpo.maj(0);
     for(po=0;po<npo;po++){
       sprintf(optname,"%s.opt",argv[MIN_OPT+po]);
@@ -1093,6 +1100,42 @@ void synterr(char * fname,int l){
   Ferr<< "<!> Syntax error in the file "<<fname;
   Ferr<<" describing the optical properties at the line "<<l<<"\n\tMC98"<<'\n';
 }
+
+// CF 2016 : add nbopt reader
+void lect_nopt(int *nopt,char *optname) {
+  ifstream fopti(optname,ios::in);
+  char c, line[256];
+  int l=0;
+  if (!fopti){
+    Ferr << "<!> Error(lect_po)  unable to open "<<optname<<"\n";
+    cerr.flush();
+    exit (-3);
+  }
+  // scan fichier '.opt'
+  do{
+    fopti>>c; l++; 
+    if(!fopti) break;
+    switch(c) {
+    case '#':
+    case 's':
+	case 'e':
+      fopti.getline(line,256);		        
+      break;
+	case 'n':
+      fopti >> *nopt;
+      fopti.getline(line,256);	        
+      break;
+	default  :
+      synterr(optname,l);
+	      }//switch c
+	if (c == 'n')
+		break;
+  } while(fopti);
+  fopti.close();
+}//lect_nopt()
+
+
+
 void lect_po( Tabdyn<double,3> &Tpo,int po,char *optname){
   ifstream fopti(optname,ios::in);
   char c, line[256];
