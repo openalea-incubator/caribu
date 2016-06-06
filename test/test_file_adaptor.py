@@ -2,7 +2,7 @@
 Unit test for reader module
 """
 
-from alinea.caribu.reader import read_light, read_pattern, read_opt, read_can, get_materials
+from alinea.caribu.file_adaptor import read_light, read_pattern, read_opt, read_can, get_materials
 from alinea.caribu.data_samples import data_path
 
 

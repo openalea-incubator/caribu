@@ -1,4 +1,4 @@
-""" Readers for caribu input files
+""" Adaptors for historical caribu input files
 """
 
 from alinea.caribu.label import Label
