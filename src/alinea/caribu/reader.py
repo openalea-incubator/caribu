@@ -1,6 +1,7 @@
-""" Readers for czribu input files
+""" Readers for caribu input files
 """
 
+from alinea.caribu.label import Label
 
 def read_light(file_path):
     """Reader for *.light file format used by canestra
@@ -108,3 +109,39 @@ def read_can(file_path):
             labels.append(label)
 
     return labels, triangles
+    
+    
+def get_materials(labels, opticals, soil_reflectance):
+    """build a list of material from a list of labels and a dict of optical properties
+
+    Args:
+        labels (list of str): the barcodes associated to each triangle of a can file
+        opticals (dict of tuple of floats) : a {specie_id: (rho, rsup, tsup, rinf, tinf)}
+         dict of optical properties for the different species
+        soil_reflectance (float) : the reflectance of the soil
+
+    Returns:
+        (list of tuple) a list of materials defining optical properties of triangles
+                A material is a 1-, 2- or 4-tuple depending on its optical behavior.
+                A 1-tuple encode an opaque material characterised by its reflectance
+                A 2-tuple encode a symmetric translucent material defined by a reflectance and a transmittance
+                A 4-tuple encode an asymmetric translucent material defined the reflectance and transmittance
+                of the upper and lower side respectively
+
+    """
+
+    labs = [Label(lab) for lab in labels]
+    materials = []
+    for lab in labs:
+        opt_id = lab.optical_id
+        if lab.is_stem():
+            materials.append((opticals[opt_id][0],))
+        elif lab.is_soil():
+            materials.append((soil_reflectance,))
+        else:
+            rinf, tinf, rsup, tsup = opticals[opt_id][1:]
+            if rinf == rsup and tinf == tsup:
+                materials.append((rinf, tinf))
+            else:
+                materials.append((rinf, tinf, rsup, tsup))
+    return materials
