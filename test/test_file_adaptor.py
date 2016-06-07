@@ -1,8 +1,4 @@
-"""
-Unit test for reader module
-"""
-
-from alinea.caribu.file_adaptor import read_light, read_pattern, read_opt, read_can, get_materials
+from alinea.caribu.file_adaptor import read_light, read_pattern, read_opt, read_can, build_materials
 from alinea.caribu.data_samples import data_path
 
 
@@ -40,20 +36,21 @@ def test_opt():
 
 def test_can():
     can = data_path('filterT.can')
-    labels, triangles = read_can(can)
-    assert len(labels) == 192
+    cscene = read_can(can)
+    assert len(cscene) == 1
+    triangles = cscene[cscene.keys()[0]]
     assert len(triangles[0]) == 3
     assert len(triangles[0][0]) == 3
 
-    return labels, triangles
+    return cscene
 
 
 def test_materials():
     can = data_path('filterT.can')
-    labels, triangles = read_can(can)
+    cscene = read_can(can)
     path = data_path('par.opt')
     n, s, opts = read_opt(path)
-    materials = get_materials(labels, opts, s)
-    assert len(materials) == len(triangles)
-    assert materials[0] == (0.1, 0.05)
+    materials = build_materials(cscene.keys(), opts, s)
+    assert len(materials) == len(cscene)
+    assert materials[materials.keys()[0]] == (0.1, 0.05)
     return materials

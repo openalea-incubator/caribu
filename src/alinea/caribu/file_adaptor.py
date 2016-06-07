@@ -3,6 +3,7 @@
 
 from alinea.caribu.label import Label
 
+
 def read_light(file_path):
     """Reader for *.light file format used by canestra
 
@@ -87,13 +88,12 @@ def read_can(file_path):
         file_path: (str) a path to the file
 
     Returns:
-        - labels (list of str): the barcodes associated to each triangle
-        - triangles (list of list of tuples) a list of triangles, each being defined
-                    by an ordered triplet of 3-tuple points coordinates.
+        a {label: [triangles,]} dict of list of list of tuple.
+            - label (str): the barcode associated to a primitive
+            - triangles (list of tuple) an ordered triplet of 3-tuple points coordinates.
     """
 
-    labels = []
-    triangles = []
+    cscene = {}
 
     with open(file_path, 'r') as infile:
         for line in infile:
@@ -104,24 +104,25 @@ def read_can(file_path):
                 continue
             fields = line.split()
             label = fields[2]
+            if label not in cscene:
+                cscene[label] = []
             coords = map(float, fields[-9:])
-            triangles.append(map(tuple, [coords[:3], coords[3:6], coords[6:]]))
-            labels.append(label)
+            cscene[label].append(map(tuple, [coords[:3], coords[3:6], coords[6:]]))
 
-    return labels, triangles
-    
-    
-def get_materials(labels, opticals, soil_reflectance):
+    return cscene
+
+
+def build_materials(labels, opticals, soil_reflectance):
     """build a list of material from a list of labels and a dict of optical properties
 
     Args:
-        labels (list of str): the barcodes associated to each triangle of a can file
+        labels (list of str): a list of barcodes
         opticals (dict of tuple of floats) : a {specie_id: (rho, rsup, tsup, rinf, tinf)}
          dict of optical properties for the different species
         soil_reflectance (float) : the reflectance of the soil
 
     Returns:
-        (list of tuple) a list of materials defining optical properties of triangles
+        (dict of tuple) a {label: material} dict of materials defining optical properties for all label in labels
                 A material is a 1-, 2- or 4-tuple depending on its optical behavior.
                 A 1-tuple encode an opaque material characterised by its reflectance
                 A 2-tuple encode a symmetric translucent material defined by a reflectance and a transmittance
@@ -130,18 +131,19 @@ def get_materials(labels, opticals, soil_reflectance):
 
     """
 
-    labs = [Label(lab) for lab in labels]
-    materials = []
-    for lab in labs:
-        opt_id = lab.optical_id
-        if lab.is_stem():
-            materials.append((opticals[opt_id][0],))
-        elif lab.is_soil():
-            materials.append((soil_reflectance,))
-        else:
-            rinf, tinf, rsup, tsup = opticals[opt_id][1:]
-            if rinf == rsup and tinf == tsup:
-                materials.append((rinf, tinf))
+    materials = {}
+    for label in labels:
+        if label not in materials:
+            lab = Label(label)
+            opt_id = lab.optical_id
+            if lab.is_stem():
+                materials[label] = (opticals[opt_id][0],)
+            elif lab.is_soil():
+                materials[label] = (soil_reflectance,)
             else:
-                materials.append((rinf, tinf, rsup, tsup))
+                rinf, tinf, rsup, tsup = opticals[opt_id][1:]
+                if rinf == rsup and tinf == tsup:
+                    materials[label] = (rinf, tinf)
+                else:
+                    materials[label] = (rinf, tinf, rsup, tsup)
     return materials
