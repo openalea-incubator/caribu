@@ -17,20 +17,6 @@ def test_raycasting_single_triangle():
     assert_almost_equal(res['Eabs'][0], 90, 0)
     assert_almost_equal(res['Ei'][0], 100, 0)
 
-    # vertical light, no intensity
-    lights = [(0, (0, 0, -1))]
-    res = raycasting(triangles, materials, lights)
-    assert_almost_equal(res['area'][0], 1, 3)
-    assert_almost_equal(res['Eabs'][0], 0, 0)
-    assert_almost_equal(res['Ei'][0], 0, 0)
-
-    # diagonal light
-    lights = [(100, (-1, 0, -1))]
-    res = raycasting(triangles, materials, lights)
-    assert_almost_equal(res['area'][0], 1, 3)
-    assert_almost_equal(res['Eabs'][0], 90, 0)
-    assert_almost_equal(res['Ei'][0], 100, 0)
-
 
 def test_raycasting_two_triangles_no_occlusion():
     pts1 = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
@@ -46,21 +32,6 @@ def test_raycasting_two_triangles_no_occlusion():
         assert_almost_equal(res['Eabs'][i], 90, 0)
         assert_almost_equal(res['Ei'][i], 100, 0)
 
-    # vertical light, no intensity
-    lights = [(0, (0, 0, -1))]
-    res = raycasting(triangles, materials, lights)
-    for i in (0, 1):
-        assert_almost_equal(res['area'][i], 1, 3)
-        assert_almost_equal(res['Eabs'][i], 0, 0)
-        assert_almost_equal(res['Ei'][i], 0, 0)
-
-    # diagonal light
-    lights = [(100, (-1, 0, -1))]
-    res = raycasting(triangles, materials, lights)
-    for i in (0, 1):
-        assert_almost_equal(res['area'][i], 1, 3)
-        assert_almost_equal(res['Eabs'][i], 90, 0)
-        assert_almost_equal(res['Ei'][i], 100, 0)
 
 
 def test_raycasting_two_triangles_full_occlusion():
