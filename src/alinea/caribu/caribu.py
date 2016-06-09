@@ -300,7 +300,7 @@ def x_radiosity(triangles, x_materials, lights=(default_light,), screen_size=153
 
 
 def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
-                    diameter, layers, height, screen_size=1536):
+                    diameter, layers, height, screen_size=1536, debug=False):
     """Compute monochrome illumination of triangles using mixed-radiosity model.
 
     Args:
@@ -321,6 +321,7 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
         layers: vertical subdivisions of scene used for approximation of far contrbution
         height: upper limit of canopy layers (scene unit)
         screen_size: (int) buffer size for projection images (pixels)
+        debug: (bool) Whether Caribu should be called in debug mode
 
     Returns:
         (dict of str:property) properties computed:
@@ -351,7 +352,7 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
                   can_height=height,
                   sphere_diameter=diameter,
                   projection_image_size=screen_size,
-                  resdir=None, resfile=None)
+                  resdir=None, resfile=None, debug=debug)
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)

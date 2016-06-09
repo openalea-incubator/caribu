@@ -33,6 +33,22 @@ def test_raycasting_two_triangles_no_occlusion():
         assert_almost_equal(res['Ei'][i], 100, 0)
 
 
+def test_two_triangle_confounded():
+    pts1 = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
+    triangles = [pts1, pts1]
+    materials = [(0.06, 0.04)] * 2
+    lights = [(100, (0, 0, -1))]
+
+    # raycasting
+    res = raycasting(triangles, materials, lights)
+    assert_almost_equal(res['Ei'][0], 100, 0)
+    assert_almost_equal(res['Ei'][1], 0, 0)
+
+    #radiosity
+    res = radiosity(triangles, materials, lights)
+    assert_almost_equal(res['Ei'][0], 100, 0)
+    assert_almost_equal(res['Ei'][1], 0, 0)
+
 
 def test_raycasting_two_triangles_full_occlusion():
     lower_pts = [(0, 0, 0), (sqrt(2), 0, 0), (0, sqrt(2), 0)]
