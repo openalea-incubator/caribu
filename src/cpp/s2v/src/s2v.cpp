@@ -1004,7 +1004,9 @@ void affect(Patch T,int *jp, int je){
   // printf("affect() je=%d, T.t=%d, [%.2lf,%.2lf,%.2lf]\n",je,T.t,Tpo(1,fabs(T.t),0),Tpo(1,fabs(T.t),1),Tpo(1,fabs(T.t),2));
    xladia(je, jz, ji, ja) +=  surftri;
    //printf(">>> affect(): avnt call norme()\n"); 
-   norme(c,c);
+   //CF 2016: do not compute norme if triangle area is zero
+   if (surftri > 0)
+	norme(c,c);
    //printf(">>> affect(): je = %d\n",je);
    if(genopt){
     for(po=0;po<npo;po++){
