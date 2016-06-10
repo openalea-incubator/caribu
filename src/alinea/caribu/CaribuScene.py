@@ -8,7 +8,7 @@ from openalea.plantgl.all import Scene as pglScene
 
 from alinea.caribu.file_adaptor import read_can, read_light, read_pattern, read_opt, build_materials
 from alinea.caribu.plantgl_adaptor import scene_to_cscene, mtg_to_cscene
-from alinea.caribu.caribu import raycasting, radiosity, mixed_radiosity
+from alinea.caribu.caribu import raycasting, radiosity, mixed_radiosity, x_raycasting, x_radiosity, x_mixed_radiosity
 
 
 def _agregate(values, indices, fun=sum):
@@ -42,7 +42,7 @@ class CaribuScene(object):
             light: (list of tuples) a list of (Energy, (vx, vy, vz)) tuples defining light sources
                     Alternatively,  a *.light file
                     If None (default), a unit energy vertical light is used.
-                    Energy unit is per square-meter
+                    Energy unit should be given per square-meter (m-2)
             pattern: (tuple of floats) 2D Coordinates of the domain bounding the scene for its replication.
                      (xmin, ymin, xmax, ymax) scene is not bounded along z axis.
                      Alternatively a *.8 file.
@@ -431,8 +431,8 @@ class CaribuScene(object):
                       - Eabs (float): the surfacic density of energy absorbed (m-2)
                       - Ei (float): the surfacic density of energy incoming  (m-2)
                       additionally, if split_face is True:
-                      - Ei_inf (float): the surfacic density of energy incoming on the inferior face
-                      - Ei_sup (float): the surfacic density of energy incoming on the superior face
+                      - Ei_inf (float): the surfacic density of energy incoming on the inferior face (m-2)
+                      - Ei_sup (float): the surfacic density of energy incoming on the superior face (m-2)
         """
 
         raw, aggregated = {}, {}
@@ -444,16 +444,19 @@ class CaribuScene(object):
             triangles = reduce(lambda x, y: x + y, self.scene.values())
             groups = [[pid] * len(self.scene[pid]) for pid in self.scene]
             groups = reduce(lambda x, y: x + y, groups)
-            if len(self.material) == 1:
-                bands = self.material.keys()[0]
-                materials = [[self.material[bands][pid]] * len(self.scene[pid]) for pid in self.scene]
+            bands = self.material.keys()
+            if len(bands) == 1:
+                materials = [[self.material[bands[0]][pid]] * len(self.scene[pid]) for pid in self.scene]
                 materials = reduce(lambda x, y: x + y, materials)
-                albedo = self.soil_reflectance[bands]
+                albedo = self.soil_reflectance[bands[0]]
+                algos = {'raycasting': raycasting, 'radiosity': radiosity, 'mixed_radiosity': mixed_radiosity}
             else:
                 materials = {}
+                for band in bands:
+                    mat = [[self.material[band][pid]] * len(self.scene[pid]) for pid in self.scene]
+                    materials[band] = reduce(lambda x, y: x + y, mat)
                 albedo = self.soil_reflectance
-                bands = None
-                pass
+                algos = {'raycasting': x_raycasting, 'radiosity': x_radiosity, 'mixed_radiosity': x_mixed_radiosity}
 
             if not direct and infinite:  # mixed radiosity will be used
                 if d_sphere < 0:
@@ -468,22 +471,24 @@ class CaribuScene(object):
             if infinite and self.pattern is None:
                 raise ValueError('infinite canopy illumination needs a pattern to be defined')
 
-            if len(self.material) == 1:
-                if not direct and infinite:  # mixed radiosity
-                    out = mixed_radiosity(triangles, materials, lights=self.light, domain=self.pattern,
-                                          soil_reflectance=albedo,
-                                          diameter=d_sphere, layers=layers, height=height, screen_size=screen_size)
-                elif not direct:  # pure radiosity
-                    out = radiosity(triangles, materials, lights=self.light, screen_size=screen_size)
-                else:  # ray_casting
-                    if infinite:
-                        out = raycasting(triangles, materials, lights=self.light, domain=self.pattern,
-                                         screen_size=screen_size)
-                    else:
-                        out = raycasting(triangles, materials, lights=self.light, domain=None, screen_size=screen_size)
-                raw[bands] = {k: _agregate(out[k], groups, list) for k in results}
-            else:
-                pass
+            if not direct and infinite:  # mixed radiosity
+                out = algos['mixed_radiosity'](triangles, materials, lights=self.light, domain=self.pattern,
+                                               soil_reflectance=albedo,
+                                               diameter=d_sphere, layers=layers, height=height, screen_size=screen_size)
+            elif not direct:  # pure radiosity
+                out = algos['radiosity'](triangles, materials, lights=self.light, screen_size=screen_size)
+            else:  # ray_casting
+                if infinite:
+                    out = algos['raycasting'](triangles, materials, lights=self.light, domain=self.pattern,
+                                              screen_size=screen_size)
+                else:
+                    out = algos['raycasting'](triangles, materials, lights=self.light, domain=None, screen_size=screen_size)
+
+            if len(bands) == 1:
+                out = {bands[0]: out}
+            for band in bands:
+                # TO DO : convert unit
+                raw[band] = {k: _agregate(out[band][k], groups, list) for k in results}
 
         return raw
 
