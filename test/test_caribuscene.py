@@ -90,7 +90,7 @@ if run_test:
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain)
-        out = cscene.run(direct=True, infinite=False)
+        out, agg = cscene.run(direct=True, infinite=False)
         out = out[cscene.default_band]
         assert_almost_equal(sum(out['area']['lower']), 1, 0)
         assert_almost_equal(sum(out['Ei']['upper']), 1, 0)
@@ -102,7 +102,7 @@ if run_test:
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 100, 100)
         cscene = CaribuScene(pyscene, pattern=domain, scene_unit='cm')
-        out = cscene.run(direct=True, infinite=False)
+        out, agg = cscene.run(direct=True, infinite=False)
         out = out[cscene.default_band]
         assert_almost_equal(sum(out['area']['lower']), 1, 0)
         assert_almost_equal(sum(out['Ei']['upper']), 1, 0)
@@ -117,27 +117,27 @@ if run_test:
         cscene = CaribuScene(pyscene, pattern=domain)
 
         # raycasting
-        out = cscene.run(direct=True, infinite=False)
+        out, agg = cscene.run(direct=True, infinite=False)
         assert len(out) == 1
         assert len(out[cscene.default_band]['Eabs']) == 2
         assert len(out[cscene.default_band]['Eabs']['lower']) == 2
         assert len(out[cscene.default_band]['Eabs']['upper']) == 1
 
         # radiosity
-        out = cscene.run(direct=False, infinite=False)
+        out, agg = cscene.run(direct=False, infinite=False)
         assert len(out) == 1
         assert len(out[cscene.default_band]['Eabs']) == 2
         assert len(out[cscene.default_band]['Eabs']['lower']) == 2
         assert len(out[cscene.default_band]['Eabs']['upper']) == 1
 
         # mixed radiosity
-        out = cscene.run(direct=False, infinite=True)
+        out, agg = cscene.run(direct=False, infinite=True)
         assert len(out) == 1
         assert len(out[cscene.default_band]['Eabs']) == 2
         assert len(out[cscene.default_band]['Eabs']['lower']) == 2
         assert len(out[cscene.default_band]['Eabs']['upper']) == 1
 
-        return out
+        return out, agg
 
 
     def test_run_polychrome():
@@ -150,7 +150,7 @@ if run_test:
         cscene = CaribuScene(pyscene, pattern=domain, opt=opt)
 
         # raycasting
-        out = cscene.run(direct=True, infinite=False)
+        out, agg = cscene.run(direct=True, infinite=False)
         assert 'par' in out.keys()
         assert 'nir' in out.keys()
         assert len(out['par']['Eabs']) == 2
@@ -159,7 +159,7 @@ if run_test:
         assert out['par']['Eabs']['upper'][0] != out['nir']['Eabs']['upper'][0]
 
         # radiosity
-        out = cscene.run(direct=False, infinite=False)
+        out, agg = cscene.run(direct=False, infinite=False)
         assert 'par' in out.keys()
         assert 'nir' in out.keys()
         assert len(out['par']['Eabs']) == 2
@@ -168,7 +168,7 @@ if run_test:
         assert out['par']['Eabs']['upper'][0] != out['nir']['Eabs']['upper'][0]
 
         # mixed radiosity
-        out = cscene.run(direct=False, infinite=True)
+        out, agg = cscene.run(direct=False, infinite=True)
         assert 'par' in out.keys()
         assert 'nir' in out.keys()
         assert len(out['par']['Eabs']) == 2
@@ -176,4 +176,4 @@ if run_test:
         assert len(out['nir']['Eabs']) == 2
         assert out['par']['Eabs']['upper'][0] != out['nir']['Eabs']['upper'][0]
 
-        return out
+        return out, agg

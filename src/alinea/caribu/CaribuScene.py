@@ -26,6 +26,7 @@ def _agregate(values, indices, fun=sum):
 def _convert(output, conv_unit):
     """ convert caribu output to meter/meter_square
     """
+    # To DO ? filtering eabs_max / zero + occultations ?
     if conv_unit == 1:
         return output
     else:
@@ -34,6 +35,15 @@ def _convert(output, conv_unit):
         for k in ['Eabs', 'Ei', 'Ei_sup', 'Ei_inf']:
             output[k] = [nrj / meter_square for nrj in output[k]]
         return output
+
+
+def _wsum(nrj_area):
+    nrj, area = zip(*nrj_area)
+    area_tot = sum(area)
+    if area_tot == 0:
+        return 0
+    else:
+        return sum([e * a for e, a in nrj_area]) / area_tot
 
 
 class CaribuScene(object):
@@ -506,9 +516,16 @@ class CaribuScene(object):
                 out = {bands[0]: out}
             for band in bands:
                 output = _convert(out[band], self.conv_unit)
-                raw[band] = {k: _agregate(output[k], groups, list) for k in results}
+                raw[band] = {}
+                aggregated[band] = {}
+                for k in results:
+                    raw[band][k] = _agregate(output[k], groups, list)
+                    if k is 'area':
+                        aggregated[band][k] = _agregate(output[k], groups, sum)
+                    else:
+                        aggregated[band][k] = _agregate(izip(output[k], output['area']), groups, _wsum)
 
-        return raw
+        return raw, aggregated
 
         # def runPeriodise(self):
         #     """ Call periodise and modify position of triangle in the scene to fit inside pattern"""
