@@ -23,6 +23,19 @@ def _agregate(values, indices, fun=sum):
     return ag
 
 
+def _convert(output, conv_unit):
+    """ convert caribu output to meter/meter_square
+    """
+    if conv_unit == 1:
+        return output
+    else:
+        meter_square = conv_unit ** 2
+        output['area'] = [area * meter_square for area in output['area']]
+        for k in ['Eabs', 'Ei', 'Ei_sup', 'Ei_inf']:
+            output[k] = [nrj / meter_square for nrj in output[k]]
+        return output
+
+
 class CaribuScene(object):
     """A class interface to Caribu algorithms"""
 
@@ -427,7 +440,7 @@ class CaribuScene(object):
             - aggregated (dict of dict) : a {band_name: {result_name: property}}
             Each property is a {primitive_id: value} dict containing aggregated results for each primitive
             result_name are :
-                      - area (float): the indiviual areas (m2)
+                      - area (float): the individual areas (m2)
                       - Eabs (float): the surfacic density of energy absorbed (m-2)
                       - Ei (float): the surfacic density of energy incoming  (m-2)
                       additionally, if split_face is True:
@@ -439,6 +452,11 @@ class CaribuScene(object):
         results = ['Eabs', 'Ei', 'area']
         if split_face:
             results.extend(['Ei_inf', 'Ei_sup'])
+
+        # convert lights to scene_unit
+        lights = self.light
+        if self.conv_unit != 1:
+            lights = [(e * self.conv_unit ** 2, vect) for e, vect in self.light]
 
         if self.scene is not None:
             triangles = reduce(lambda x, y: x + y, self.scene.values())
@@ -472,23 +490,23 @@ class CaribuScene(object):
                 raise ValueError('infinite canopy illumination needs a pattern to be defined')
 
             if not direct and infinite:  # mixed radiosity
-                out = algos['mixed_radiosity'](triangles, materials, lights=self.light, domain=self.pattern,
+                out = algos['mixed_radiosity'](triangles, materials, lights=lights, domain=self.pattern,
                                                soil_reflectance=albedo,
                                                diameter=d_sphere, layers=layers, height=height, screen_size=screen_size)
             elif not direct:  # pure radiosity
-                out = algos['radiosity'](triangles, materials, lights=self.light, screen_size=screen_size)
+                out = algos['radiosity'](triangles, materials, lights=lights, screen_size=screen_size)
             else:  # ray_casting
                 if infinite:
-                    out = algos['raycasting'](triangles, materials, lights=self.light, domain=self.pattern,
+                    out = algos['raycasting'](triangles, materials, lights=lights, domain=self.pattern,
                                               screen_size=screen_size)
                 else:
-                    out = algos['raycasting'](triangles, materials, lights=self.light, domain=None, screen_size=screen_size)
+                    out = algos['raycasting'](triangles, materials, lights=lights, domain=None, screen_size=screen_size)
 
             if len(bands) == 1:
                 out = {bands[0]: out}
             for band in bands:
-                # TO DO : convert unit
-                raw[band] = {k: _agregate(out[band][k], groups, list) for k in results}
+                output = _convert(out[band], self.conv_unit)
+                raw[band] = {k: _agregate(output[k], groups, list) for k in results}
 
         return raw
 

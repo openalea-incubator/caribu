@@ -5,6 +5,8 @@ except ImportError:
     run_test = False
 
 if run_test:
+    from nose.tools import assert_almost_equal
+
     import openalea.plantgl.all as pgl
     from alinea.caribu.CaribuScene import CaribuScene
     from alinea.caribu.data_samples import data_path
@@ -78,6 +80,32 @@ if run_test:
         assert cs.soil_reflectance == soil_reflectance
 
         return cs
+
+
+    def test_unit():
+        # scene in meter
+        pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
+        pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
+        pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
+        domain = (0, 0, 1, 1)
+        cscene = CaribuScene(pyscene, pattern=domain)
+        out = cscene.run(direct=True, infinite=False)
+        out = out[cscene.default_band]
+        assert_almost_equal(sum(out['area']['lower']), 1, 0)
+        assert_almost_equal(sum(out['Ei']['upper']), 1, 0)
+
+        # same scene but now in centimeter
+        pts_1 = [(0, 0, 0), (100, 0, 0), (0, 100, 0)]
+        pts_2 = [(0, 0, 1e-3), (1, 0, 1e-3), (0, 1, 1e-3)]
+        pts_3 = [(100, 0, 0), (100, 100, 0), (0, 100, 0)]
+        pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
+        domain = (0, 0, 100, 100)
+        cscene = CaribuScene(pyscene, pattern=domain, scene_unit='cm')
+        out = cscene.run(direct=True, infinite=False)
+        out = out[cscene.default_band]
+        assert_almost_equal(sum(out['area']['lower']), 1, 0)
+        assert_almost_equal(sum(out['Ei']['upper']), 1, 0)
 
 
     def test_run_monochrome():
