@@ -92,11 +92,6 @@ class CaribuScene(object):
             File format specifications (*.can, *.light, *.8, *.opt) can be found in data/CanestraDoc.pdf
         """
 
-        # self.scene_labels = []  # list of external identifier/canlabel of each triangle present in the scene
-        # self.scene_ids = []  # list of internal ids, as long as scene, used to aggegate outputs by primitive
-        # self.colors = {}  # dict of id->(r,g,b) tuples of ambient colors of primitives
-        # self.pid = 1  # internal pending id to be given to the next primitive
-
         if scene_unit not in self.units:
             raise ValueError('unrecognised scene unit: ' + scene_unit)
         self.conv_unit = self.units[scene_unit]
@@ -303,105 +298,11 @@ class CaribuScene(object):
     #
     #     return Qi, Qem, Einc
     #
-    # def getOptical(self):
-    #     """ return a list of tuple (reflectance, transmitance) for all triangles in the scene
-    #     """
-    #     from label import Label
-    #     def _reftrans(label, po):
-    #         if label.is_soil():
-    #             res = (po['albedo'], 0, 0, 0)
-    #         else:
-    #             esp = label.optical_id
-    #             opts = po['species'][esp]
-    #             if label.is_stem():
-    #                 res = (opts[0], 0, 0, 0)
-    #             else:
-    #                 res = (opts[1:])
-    #         return res
-    #
-    #     labels = map(Label, self.scene_labels)
-    #     # pase opt (in getPO)
-    #     # self.PO.splitlines()
-    #     po = {'albedo': 0.2, 'species': {1: (10, 1, 1, 1, 1), 2: (20, 2, 2, 2, 2)}}
-    #     return [_reftrans(lab, po) for lab in labels]
-    #
-    # def getTriangles(self):
-    #     """ return a list of  triangles in the scene
-    #     """
-    #     canstring = self.scene
-    #     return [res for res in (_get_triangle(x) for x in canstring.splitlines()) if res]
-    #
-    # def getAreas(self):
-    #     """ return a list of areas for all triangles in the scene
-    #     """
-    #
-    #     def _surf(triangle):
-    #         A, B, C = triangle
-    #         return pgl.norm(pgl.cross(B - A, C - A)) / 2.0
-    #
-    #     triangles = self.getTriangles()
-    #     return [_surf(tri) for tri in triangles]
-    #
-    # def getNormals(self):
-    #     """ return a list of normals (as pgl.vector3) for all triangles in the scene
-    #     """
-    #     from openalea.plantgl.all import cross
-    #     def _normal(triangle):
-    #         A, B, C = triangle
-    #         n = cross(B - A, C - A)
-    #         return n.normed()
-    #
-    #     triangles = self.getTriangles()
-    #     return [_normal(tri) for tri in triangles]
-    #
-    # def getCenters(self):
-    #     """ return a list of center coordinates for all triangles in the scene
-    #     """
-    #
-    #     def _center(triangle):
-    #         A, B, C = triangle
-    #         return (A + B + C) / 3.
-    #
-    #     triangles = self.getTriangles()
-    #     return [_center(tri) for tri in triangles]
 
 
-
-    # def get_caribu_output(self, vcdict):
-    #     """ Get, filter and arrange output of caribu for use in CaribuScene. """
-    #
-    #     from itertools import izip
-    #
-    #     def _nan_to_zero(x):
-    #         try:
-    #             from math import isnan
-    #         except:
-    #             # to be back compatile with python 2.5
-    #             def isnan(num):
-    #                 return num != num
-    #         return (0 if isnan(x) else x)
-    #
-    #     d = vcdict[vcdict.keys()[0]]['data']
-    #     # compute max value = sum of emmission of sources
-    #     # _,eimax,_ = self.getIncidentEnergy()
-    #     for k in ('Ei_inf', 'Ei_sup', 'Eabs'):
-    #         d[k] = map(_nan_to_zero, d[k])
-    #         # filter negative values occuring in EiInf/EiSup
-    #         d[k] = map(lambda (x): max(0, x), d[k])
-    #     eabs = [e * a for e, a in izip(d['Eabs'], d['area'])]
-    #     einc = [(esup + einf) * a for esup, einf, a in izip(d['Ei_sup'], d['Ei_inf'], d['area'])]
-    #     ei = [esup + einf for esup, einf in izip(d['Ei_sup'], d['Ei_inf'])]
-    #     eincsup = [esup * a for esup, a in izip(d['Ei_sup'], d['area'])]
-    #     eincinf = [einf * a for einf, a in izip(d['Ei_inf'], d['area'])]
-    #
-    #     csdict = {'Eabs': eabs, 'Einc': einc, 'Ei': ei, 'EincSup': eincsup, 'EincInf': eincinf,
-    #               'Area': d['area'],
-    #               'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
-    #               'label': d['label']}
-    #     return csdict
 
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10, height=None, screen_size=1536,
-            split_face=False):
+            split_face=False, simplify=False):
         """ Compute illumination using the appropriate caribu algorithm
 
         Args:
@@ -418,6 +319,8 @@ class CaribuScene(object):
             screen_size: (int) buffer size for projection images (pixels)
             split_face: (bool) Whether results of incidence on individual faces of triangle should be outputed
                     Default is False
+            simplify: (bool)  Whether results per band should be simplified to a {result_name: property} dict
+                    in the case of a monochromatic simulation
 
         Returns:
             - raw (dict of dict) a {band_name: {result_name: property}} dict of dict.
@@ -500,6 +403,10 @@ class CaribuScene(object):
                     else:
                         aggregated[band][k] = _agregate(izip(output[k], output['area']), groups, _wsum)
 
+            if simplify and len(bands) == 1:
+                raw = raw[bands[0]]
+                aggregated = aggregated[bands[0]]
+
         return raw, aggregated
 
         # def runPeriodise(self):
@@ -515,84 +422,3 @@ class CaribuScene(object):
         #         newscene = vperiodise(scene, pattern)
         #         self.scene = newscene
 
-        # def output_by_id(self, output, mapid=None, groups=None, aggregate=True):
-        #     """ Return caribu outputs grouped or aggregated by ids
-        #     mapid: a dict of external_id -> caribu internal id. If given, the results are given for external _ids
-        #     groups : a dict of id (internal of external) -> group_id. If given, results are computed for each group_id. Keys in groups are expected to be internal id if mapid is none, or external ids if mapid is given.
-        #     if aggregate is True, one scalar is return by id (sum or weighted mean), otherwise it returns the list of values of all triangles of the id.
-        #
-        #
-        #     """
-        #     import numpy
-        #     #
-        #     # + une fonction input_by_id qui renverrai hmin, hmax, h, normale, azimuth, area et lai pour differents aggregateurs
-        #     res = {}
-        #     if len(output) > 0:
-        #         indices = self.scene_ids
-        #
-        #         if len(indices) != len(next(output.itervalues())):
-        #             # caribu/periodise have filtered 0 areas triangle
-        #             areas = self.getAreas()
-        #             indices = numpy.array(indices)[numpy.array(areas) > 0]
-        #             if len(indices) != len(next(output.itervalues())):
-        #                 # tries (exprerimental and limited to 10 mismatchs) to match input/output values based on area comparison
-        #                 print "caribu: Warning : there is a mismatch between input and output, try to repair..."
-        #                 in_areas = numpy.array(areas)[numpy.array(areas) > 0]
-        #                 out_areas = numpy.array(output['Area'])
-        #                 tried = 0
-        #                 while ((len(in_areas) != len(out_areas)) and tried < 10):
-        #                     tried += 1
-        #                     isel = numpy.arange(len(out_areas))
-        #                     r = in_areas[isel] / out_areas[isel]
-        #                     notclose = numpy.invert(numpy.isclose(r, numpy.ones(len(out_areas)), 1e-2))
-        #                     if not any(notclose):  # mismatch is for triangle at the end of in_areas
-        #                         delindex = max(isel) + 1
-        #                     else:
-        #                         delindex = min(isel[notclose])
-        #                     indices = numpy.delete(indices, delindex)
-        #                     in_areas = numpy.delete(in_areas, delindex)
-        #             if len(indices) != len(next(output.itervalues())):
-        #                 raise CaribuSceneError(
-        #                     "Caribu outputs can't be aggregated due to a mismatch between the number of input triangles (%d) and the number of output values(%d)" % (
-        #                         len(indices), len(next(output.itervalues()))))
-        #
-        #         if groups:
-        #             new_map = {}  # dict of group_id -> reference internal id (reference id is the first one found belonging to a group)
-        #             aliases = {}  # dict of internal_id -> reference id of a group
-        #             for id in groups:
-        #                 gid = groups[id]
-        #                 if mapid:
-        #                     id = mapid[id]
-        #                 if gid in new_map:
-        #                     aliases[id] = new_map[gid]
-        #                 else:
-        #                     new_map[gid] = id
-        #             mapid = new_map
-        #             indices = [aliases[id] if id in aliases else id for id in indices]
-        #
-        #         # aggregation uses internal ids as unicity of scene_labels is not guarantee (eg if several scenes have been mixed)
-        #         if aggregate:
-        #             # compute sums for area integrated variables
-        #             res = dict([(k, _agregate(output[k], indices)) for k in
-        #                         ['Eabs', 'Einc', 'EincSup', 'EincInf', 'Area', 'label']])
-        #             # compute mean fluxes
-        #             res['Eabsm2'] = dict([(k, res['Eabs'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k, 0) for k in
-        #                                   res['Eabs'].iterkeys()])
-        #             res['Ei'] = dict(
-        #                 [(k, (res['EincInf'][k] + res['EincSup'][k]) / res['Area'][k]) if res['Area'][k] > 0 else (k, 0) for
-        #                  k in res['EincInf'].iterkeys()])
-        #             res['EiInf'] = dict([(k, res['EincInf'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k, 0) for k in
-        #                                  res['EincInf'].iterkeys()])
-        #             res['EiSup'] = dict([(k, res['EincSup'][k] / res['Area'][k]) if res['Area'][k] > 0 else (k, 0) for k in
-        #                                  res['EincSup'].iterkeys()])
-        #         else:
-        #             res = dict([(k, _agregate(output[k], indices, list)) for k in output.keys()])
-        #
-        #         # re-index results if mapid is given
-        #         if mapid is not None:  # empty mapid (corrresponding to absence of a list of shapes in the scene) should pass this test. Only none default options should skip and return all res
-        #             for var in res.keys():
-        #                 res[var] = dict([(k, (res[var]).get(v, numpy.nan)) for k, v in mapid.items()])
-        #             if len(res[res.keys()[0]]) <= 0:  # pas de res trouve pour les mapid en entree
-        #                 res = {}
-        #
-        #     return (res)

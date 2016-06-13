@@ -90,8 +90,7 @@ if run_test:
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain)
-        out, agg = cscene.run(direct=True, infinite=False)
-        agg = agg[cscene.default_band]
+        out, agg = cscene.run(direct=True, infinite=False, simplify=True)
         assert_almost_equal(agg['area']['lower'], 1, 0)
         assert_almost_equal(agg['Ei']['lower'], 0.5, 1)
         assert_almost_equal(agg['Ei']['upper'], 1, 0)
@@ -103,8 +102,7 @@ if run_test:
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain)
-        out, agg = cscene.run(direct=True, infinite=False)
-        agg = agg[cscene.default_band]
+        out, agg = cscene.run(direct=True, infinite=False, simplify=True)
         assert_almost_equal(agg['area']['lower'], 0.5, 0)
         assert_almost_equal(agg['Ei']['lower'], 0, 1)
         assert_almost_equal(agg['Ei']['upper'], 1, 0)
@@ -119,10 +117,8 @@ if run_test:
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain)
         cscene.plot(display=False)
-        out, agg = cscene.run(direct=True, infinite=False)
-        agg = agg[cscene.default_band]
+        out, agg = cscene.run(direct=True, infinite=False, simplify=True)
         cscene.plot(agg['Ei'], display=False)
-        out = out[cscene.default_band]
         cscene.plot(out['Ei'], display=False)
 
         # include null triangle
@@ -132,8 +128,7 @@ if run_test:
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain)
-        out, agg = cscene.run(direct=True, infinite=False)
-        out = out[cscene.default_band]
+        out, agg = cscene.run(direct=True, infinite=False, simplify=True)
         cscene.plot(out['Ei'], display=False)
 
     def test_unit():
@@ -144,8 +139,7 @@ if run_test:
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain)
-        out, agg = cscene.run(direct=True, infinite=False)
-        out = out[cscene.default_band]
+        out, agg = cscene.run(direct=True, infinite=False, simplify=True)
         assert_almost_equal(sum(out['area']['lower']), 1, 0)
         assert_almost_equal(sum(out['Ei']['upper']), 1, 0)
 
@@ -156,8 +150,7 @@ if run_test:
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 100, 100)
         cscene = CaribuScene(pyscene, pattern=domain, scene_unit='cm')
-        out, agg = cscene.run(direct=True, infinite=False)
-        out = out[cscene.default_band]
+        out, agg = cscene.run(direct=True, infinite=False, simplify=True)
         assert_almost_equal(sum(out['area']['lower']), 1, 0)
         assert_almost_equal(sum(out['Ei']['upper']), 1, 0)
 
