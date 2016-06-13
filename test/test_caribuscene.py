@@ -110,6 +110,21 @@ if run_test:
         assert_almost_equal(agg['Ei']['upper'], 1, 0)
 
 
+    def test_display():
+        pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
+        pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
+        pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
+        domain = (0, 0, 1, 1)
+        cscene = CaribuScene(pyscene, pattern=domain)
+        cscene.plot()
+        out, agg = cscene.run(direct=True, infinite=False)
+        agg = agg[cscene.default_band]
+        cscene.plot(agg['Ei'])
+        out = out[cscene.default_band]
+        cscene.plot(out['Ei'])
+
+
     def test_unit():
         # scene in meter
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]

@@ -1,14 +1,15 @@
 """ This module defines CaribuScene and CaribuSceneError classes."""
 
 import os
-from itertools import groupby, izip
+from itertools import groupby, izip, chain
 
 from openalea.mtg.mtg import MTG
-from openalea.plantgl.all import Scene as pglScene
+from openalea.plantgl.all import Scene as pglScene, Viewer
 
 from alinea.caribu.file_adaptor import read_can, read_light, read_pattern, read_opt, build_materials
 from alinea.caribu.plantgl_adaptor import scene_to_cscene, mtg_to_cscene
 from alinea.caribu.caribu import raycasting, radiosity, mixed_radiosity, x_raycasting, x_radiosity, x_mixed_radiosity
+from alinea.caribu.display import jet_colors, generate_scene
 
 
 def _agregate(values, indices, fun=sum):
@@ -241,64 +242,37 @@ class CaribuScene(object):
     #
     #     return dict(zip(label, ids))
 
+    def plot(self, a_property=None, minval=None, maxval=None, display=True):
+        """
 
-    # def generate_scene(self, colors=None):
-    #     """
-    #     Generate PlantGL scene from Caribu scene
-    #
-    #     Colors is an (optional) list of (rgb) tuples specifiying colors of individual triangles in the scene
-    #
-    #     """
-    #     scene = pgl.Scene()
-    #
-    #     if len(self.scene_ids) > 0:  # scene is not empty
-    #
-    #         triangles = self.getTriangles()
-    #
-    #         geoms = {}
-    #
-    #         for i, triangle in enumerate(triangles):
-    #             id = self.scene_ids[i]
-    #             if id not in geoms:
-    #                 geoms[id] = pgl.TriangleSet([], [])
-    #                 if colors:
-    #                     geoms[id].colorList = []
-    #                     geoms[id].colorPerVertex = False
-    #             shape = geoms[id]
-    #             count = len(shape.pointList)
-    #             shape.pointList.append(triangle[0])
-    #             shape.pointList.append(triangle[1])
-    #             shape.pointList.append(triangle[2])
-    #             shape.indexList.append(pgl.Index3(count, count + 1, count + 2))
-    #             if colors:
-    #                 r, g, b = colors[i]
-    #                 shape.colorList.append(pgl.Color4(r, g, b, 0))
-    #
-    #         for id, geom in geoms.iteritems():
-    #             if colors:
-    #                 shape = geom
-    #                 shape.id = id
-    #             else:
-    #                 material = pgl.Material(pgl.Color3(*self.colors[id]))
-    #                 shape = pgl.Shape(geom, material)
-    #                 shape.id = id
-    #
-    #             scene += shape
-    #
-    #     return (scene)
-    #
-    # def plot(self, output, what='Eabsm2', minval=None, maxval=None):
-    #     eabs = output[what]
-    #     if minval is None:
-    #         minval = min(eabs)
-    #     if maxval is None:
-    #         maxval = max(eabs)
-    #     cmap = ColorMap()
-    #     colors = map(lambda x: cmap(x, minval, maxval, 250., 20.), eabs)
-    #     scene = self.generate_scene(colors)
-    #     pgl.Viewer.display(scene)
-    #     return scene
-    #
+        Args:
+            a_property: {dict of float or dict of list of float} : a dict of values,
+                each key being a scene primitive index.
+            minval: (float) minimal value at lower bound of color range
+                    if None (default), minimal value of property is used
+            maxval: (float) maximal value at upper bound of color range
+                    if None (default), maximal value of property is used
+            display: (bool) : should the scene be displayed ? (default True)
+
+        Returns:
+            A plantGL scene
+        """
+        if a_property is None:
+            colors = None
+        else:
+            values = a_property.values()
+            if isinstance(values[0], list):
+                values = list(chain.from_iterable(values))
+            if minval is None:
+                minval = min(values)
+            if maxval is None:
+                maxval = max(values)
+            colors = {k: jet_colors(values, minval, maxval) for k in a_property}
+        scene = generate_scene(self.scene, colors)
+        if display:
+            Viewer.display(scene)
+        return scene
+
     #
     #
     # def getIncidentEnergy(self):
@@ -393,38 +367,38 @@ class CaribuScene(object):
 
 
 
-    def get_caribu_output(self, vcdict):
-        """ Get, filter and arrange output of caribu for use in CaribuScene. """
-
-        from itertools import izip
-
-        def _nan_to_zero(x):
-            try:
-                from math import isnan
-            except:
-                # to be back compatile with python 2.5
-                def isnan(num):
-                    return num != num
-            return (0 if isnan(x) else x)
-
-        d = vcdict[vcdict.keys()[0]]['data']
-        # compute max value = sum of emmission of sources
-        # _,eimax,_ = self.getIncidentEnergy()
-        for k in ('Ei_inf', 'Ei_sup', 'Eabs'):
-            d[k] = map(_nan_to_zero, d[k])
-            # filter negative values occuring in EiInf/EiSup
-            d[k] = map(lambda (x): max(0, x), d[k])
-        eabs = [e * a for e, a in izip(d['Eabs'], d['area'])]
-        einc = [(esup + einf) * a for esup, einf, a in izip(d['Ei_sup'], d['Ei_inf'], d['area'])]
-        ei = [esup + einf for esup, einf in izip(d['Ei_sup'], d['Ei_inf'])]
-        eincsup = [esup * a for esup, a in izip(d['Ei_sup'], d['area'])]
-        eincinf = [einf * a for einf, a in izip(d['Ei_inf'], d['area'])]
-
-        csdict = {'Eabs': eabs, 'Einc': einc, 'Ei': ei, 'EincSup': eincsup, 'EincInf': eincinf,
-                  'Area': d['area'],
-                  'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
-                  'label': d['label']}
-        return csdict
+    # def get_caribu_output(self, vcdict):
+    #     """ Get, filter and arrange output of caribu for use in CaribuScene. """
+    #
+    #     from itertools import izip
+    #
+    #     def _nan_to_zero(x):
+    #         try:
+    #             from math import isnan
+    #         except:
+    #             # to be back compatile with python 2.5
+    #             def isnan(num):
+    #                 return num != num
+    #         return (0 if isnan(x) else x)
+    #
+    #     d = vcdict[vcdict.keys()[0]]['data']
+    #     # compute max value = sum of emmission of sources
+    #     # _,eimax,_ = self.getIncidentEnergy()
+    #     for k in ('Ei_inf', 'Ei_sup', 'Eabs'):
+    #         d[k] = map(_nan_to_zero, d[k])
+    #         # filter negative values occuring in EiInf/EiSup
+    #         d[k] = map(lambda (x): max(0, x), d[k])
+    #     eabs = [e * a for e, a in izip(d['Eabs'], d['area'])]
+    #     einc = [(esup + einf) * a for esup, einf, a in izip(d['Ei_sup'], d['Ei_inf'], d['area'])]
+    #     ei = [esup + einf for esup, einf in izip(d['Ei_sup'], d['Ei_inf'])]
+    #     eincsup = [esup * a for esup, a in izip(d['Ei_sup'], d['area'])]
+    #     eincinf = [einf * a for einf, a in izip(d['Ei_inf'], d['area'])]
+    #
+    #     csdict = {'Eabs': eabs, 'Einc': einc, 'Ei': ei, 'EincSup': eincsup, 'EincInf': eincinf,
+    #               'Area': d['area'],
+    #               'Eabsm2': d['Eabs'], 'EiInf': d['Ei_inf'], 'EiSup': d['Ei_sup'],
+    #               'label': d['label']}
+    #     return csdict
 
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10, height=None, screen_size=1536,
             split_face=False):
@@ -444,6 +418,7 @@ class CaribuScene(object):
             screen_size: (int) buffer size for projection images (pixels)
             split_face: (bool) Whether results of incidence on individual faces of triangle should be outputed
                     Default is False
+
         Returns:
             - raw (dict of dict) a {band_name: {result_name: property}} dict of dict.
             Each property is a {primitive_id: [values,]} dict containing results for individual triangles of the primitive

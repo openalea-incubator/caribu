@@ -47,60 +47,39 @@ def jet_colors(values, minval=None, maxval=None):
     return map(lambda x: cmap(x, minval, maxval, 250., 20.), values)
 
 
-def generate_scene(triangles, groups=None, colors=None):
-    """ Build a PlantGL scene object structured by groups with colors
+def generate_scene(triangle_scene, colors=None):
+    """ Build a colored PlantGL scene
 
     Args:
-        triangles: (list of list of tuples) a list of triangles, each being defined
-                    by an ordered triplet of 3-tuple points coordinates.
-        groups: (list of int) a list indicating the group the triangles belongs to.
-                if None (default) one shape  per triangle is created, otherwise one shape per group.
-        colors: (list of list of tuples) : a list of (r, g, b) color tuples.
-                if groups is None (default), each tuple indicate the color a triangle
-                If groups is not None, each tuple indicates  the color of a group
+        triangle_scene: (dict of list of list of tuples) a {primitive_id: [triangles, ]} dict,
+                each triangle being defined by an ordered triplet of 3-tuple points coordinates.
+        colors: (dict of list of tuples) : a {primitive_id: [colors,]} dict
+                defining colors of primitives in the scene. A color is a (r, g, b) tuple.
 
     Returns:
         A plantGL scene of colored shapes
     """
     scene = pgl.Scene()
 
-    if groups is None:
-        if colors is None:
-            colors = [(0, 180, 0)] * len(triangles)
-        else:
-            if len(triangles) != len(colors):
-                raise ValueError('length of triangle list and of color list should match when groups is None')
-
-        for i, triangle in enumerate(triangles):
-            points = [pgl.Vector3(triangle[i]) for i in range(2)]
-            indices = [pgl.Index3(0, 1, 2)]
-            geometry = pgl.TriangleSet(points, indices)
-            material = pgl.Material(pgl.Color3(*colors[i]))
-            shape = pgl.Shape(geometry, material)
-            shape.id = i
-            scene += shape
+    if colors is None:
+        colors = {k: [(0, 180, 0)] * len(triangle_scene[k]) for k in triangle_scene}
     else:
-        if colors is None:
-            colors = [(0, 180, 0)] * len(set(groups))
-        else:
-            if len(set(groups)) != len(colors):
-                raise ValueError('length of color list and the number of dictinct groups should match')
+        if len(triangle_scene) != len(colors):
+            raise ValueError('length of triangle_scene and of color should match')
 
-        geometries = {}
+    for k, triangles in triangle_scene.iteritems():
+        shape = pgl.TriangleSet([], [])
+        shape.colorList = []
+        shape.colorPerVertex = False
+        shape.id = k
         for i, triangle in enumerate(triangles):
-            group = groups[i]
-            if group not in geometries:
-                geometries[group] = pgl.TriangleSet([], [])
-            geometry = geometries[group]
-            count = len(geometry.pointList)
-            geometry.pointList.append(pgl.Vector3(triangle[0]))
-            geometry.pointList.append(pgl.Vector3(triangle[1]))
-            geometry.pointList.append(pgl.Vector3(triangle[2]))
-            geometry.indexList.append(pgl.Index3(count, count + 1, count + 2))
-        for group, geometry in geometries.iteritems():
-            material = pgl.Material(pgl.Color3(*colors[group]))
-            shape = pgl.Shape(geometry, material)
-            shape.id = group
-            scene += shape
+            shape.pointList.append(pgl.Vector3(triangle[0]))
+            shape.pointList.append(pgl.Vector3(triangle[1]))
+            shape.pointList.append(pgl.Vector3(triangle[2]))
+            shape.indexList.append(pgl.Index3(3 * i, 3 * i + 1, 3 * i + 2))
+            r, g, b = colors[k][i]
+            shape.colorList.append(pgl.Color4(r, g, b, 0))
+
+        scene += shape
 
     return scene

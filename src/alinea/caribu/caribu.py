@@ -131,6 +131,9 @@ def get_incident(eabs, materials):
     
         For asymetric materials, return a mean estimate
     """
+    # check for integrity of caribu output
+    if len(eabs) != len(materials):
+        raise ValueError("The number of caribu outputs doesn't match the number of inputs")
     alpha = (_absorptance(m) for m in materials)
 
     return [float(e) / a if a != 0 else e for e, a in zip(eabs, alpha)]
