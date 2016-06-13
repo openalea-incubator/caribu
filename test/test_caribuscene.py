@@ -111,19 +111,30 @@ if run_test:
 
 
     def test_display():
+        # standard scene
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
         pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
         pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain)
-        cscene.plot()
+        cscene.plot(display=False)
         out, agg = cscene.run(direct=True, infinite=False)
         agg = agg[cscene.default_band]
-        cscene.plot(agg['Ei'])
+        cscene.plot(agg['Ei'], display=False)
         out = out[cscene.default_band]
-        cscene.plot(out['Ei'])
+        cscene.plot(out['Ei'], display=False)
 
+        # include null triangle
+        pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
+        pts_3 = [(1, 0, 0), (1, 0, 0), (0, 1, 0)]
+        pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
+        domain = (0, 0, 1, 1)
+        cscene = CaribuScene(pyscene, pattern=domain)
+        out, agg = cscene.run(direct=True, infinite=False)
+        out = out[cscene.default_band]
+        cscene.plot(out['Ei'], display=False)
 
     def test_unit():
         # scene in meter

@@ -2,8 +2,21 @@
 """
 from matplotlib import pyplot, mpl
 
+
+try:
+    from math import isnan
+except ImportError:
+    # to be back compatile with python 2.5
+    def isnan(num):
+        return num != num
+
+
 import openalea.plantgl.all as pgl
 from alinea.caribu.colormap import ColorMap
+
+
+def _nan_to_zero(values):
+    return [0 if isnan(x) else x for x in values]
 
 
 def plot_color_scale(values, minval=None, maxval=None, label=None):
@@ -39,6 +52,7 @@ def jet_colors(values, minval=None, maxval=None):
         a list of (r, g, b) tuples
     """
 
+    values = _nan_to_zero(values)
     if minval is None:
         minval = min(values)
     if maxval is None:
