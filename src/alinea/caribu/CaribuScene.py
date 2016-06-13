@@ -43,7 +43,7 @@ def _wsum(nrj_area):
     if area_tot == 0:
         return 0
     else:
-        return sum([e * a for e, a in nrj_area]) / area_tot
+        return sum([e * a if a > 0 else 0 for e, a in nrj_area]) / area_tot
 
 
 class CaribuScene(object):

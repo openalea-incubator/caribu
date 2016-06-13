@@ -82,6 +82,34 @@ if run_test:
         return cs
 
 
+    def test_aggregation():
+        # simple case
+        pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
+        pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
+        pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
+        domain = (0, 0, 1, 1)
+        cscene = CaribuScene(pyscene, pattern=domain)
+        out, agg = cscene.run(direct=True, infinite=False)
+        agg = agg[cscene.default_band]
+        assert_almost_equal(agg['area']['lower'], 1, 0)
+        assert_almost_equal(agg['Ei']['lower'], 0.5, 1)
+        assert_almost_equal(agg['Ei']['upper'], 1, 0)
+
+        # pts3 now define a null triangle
+        pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
+        pts_3 = [(1, 0, 0), (1, 0, 0), (0, 1, 0)]
+        pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
+        domain = (0, 0, 1, 1)
+        cscene = CaribuScene(pyscene, pattern=domain)
+        out, agg = cscene.run(direct=True, infinite=False)
+        agg = agg[cscene.default_band]
+        assert_almost_equal(agg['area']['lower'], 0.5, 0)
+        assert_almost_equal(agg['Ei']['lower'], 0, 1)
+        assert_almost_equal(agg['Ei']['upper'], 1, 0)
+
+
     def test_unit():
         # scene in meter
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
