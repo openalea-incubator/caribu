@@ -1,45 +1,55 @@
 {
-    "_pkglts": {
-        "auto_install": true, 
-        "install_front_end": "stdout", 
-        "use_prompts": false,
-        "version": 2
-    }, 
-    "base": {
-        "authors": [
-            ["openalea-incubator", "openalea@inra.fr"],
-            ["Christian Fournier", "Christian.Fournier@supagro.inra.fr"]
-        ],
-        "namespace": "alinea",
-        "pkgname": "caribu",
-        "url": null
-    }, 
-    "coverage": {}, 
-    "data": {}, 
-    "doc": {
-        "description": "Python/Visualea interface to Caribu Light model", 
-        "keywords": []
-    }, 
-    "github": {
-        "owner": "{{ base.authors[0][0] }}",
-        "project": "{{ base.pkgname }}",
-        "url": "https://github.com/{{ github.owner }}/{{ github.project }}"
-    }, 
-    "license": {
-        "name": "INRA_License_agreement", 
-        "organization": "OpenAlea",
-        "project": "{{ base.pkgname }}",
-        "year": 2016
-    }, 
-    "pysetup": {
-        "intended_versions": [
-            "27"
-        ]
-    }, 
-    "test": {}, 
-    "version": {
-        "major": 7, 
-        "minor": 0, 
-        "post": 0
-    }
+  "_pkglts": {
+    "auto_install": true, 
+    "install_front_end": "stdout", 
+    "use_prompts": false, 
+    "version": 2
+  }, 
+  "base": {
+    "authors": [
+      [
+        "openalea-incubator", 
+        "openalea@inra.fr"
+      ], 
+      [
+        "Christian Fournier", 
+        "Christian.Fournier@supagro.inra.fr"
+      ]
+    ], 
+    "namespace": "alinea", 
+    "pkgname": "caribu", 
+    "url": null
+  }, 
+  "coverage": {}, 
+  "data": {}, 
+  "doc": {
+    "description": "Python/Visualea interface to Caribu Light model", 
+    "keywords": []
+  }, 
+  "github": {
+    "owner": "{{ base.authors[0][0] }}", 
+    "project": "{{ base.pkgname }}", 
+    "url": "https://github.com/{{ github.owner }}/{{ github.project }}"
+  }, 
+  "license": {
+    "name": "INRA_License_agreement", 
+    "organization": "OpenAlea", 
+    "project": "{{ base.pkgname }}", 
+    "year": 2016
+  }, 
+  "pysetup": {
+    "intended_versions": [
+      "27"
+    ]
+  }, 
+  "sphinx": {
+    "autodoc_dvlpt": true, 
+    "theme": "default"
+  }, 
+  "test": {}, 
+  "version": {
+    "major": 7, 
+    "minor": 0, 
+    "post": 0
+  }
 }

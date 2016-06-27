@@ -3,7 +3,7 @@
     "coverage": "hHdxCGHgKSQ6XVf5r+nLuAMtK9yNIRd4tWqwcKh6SIOyZj41V9loMVmKKfzOTEZHcv9TSjzdxJikd+fmcicSfg=="
   }, 
   ".gitignore": {
-    "github": "m0MMjTlrYiQT7WYj9LcpSqy+KPFrXeBMPfP51didABteAhbybxPRtUuFL+CSF8YxQb4Hb/4XUgvd4LqUduMDEg=="
+    "github": "JBFVvS/5R+7jHXhwLTspKaBcopxdpZ0nEwRy78CJnankSdhc5QpA4n4IIxxjNW9fMHc1ZM5Up2ihTC/3TjsT8g=="
   }, 
   "AUTHORS.rst": {}, 
   "CONTRIBUTING.rst": {}, 
@@ -12,20 +12,29 @@
     "license": "410Vv0XO77FeDf6NUOm3bHov98+wmG6Pmy42ipXc7UjgP3hQuuFHE2l6iXZVBXj3cS8EwWy+PYgvukpP0adC4g=="
   }, 
   "MANIFEST.in": {
-    "pysetup": "reBRc/Uw7n6OE+crs6dFQEOJXOSV4iTLNPsleZBCH1+Wt/I4Yi9cdnk27noNa8WSgTXAjfkVeD6lzx5kSdJkrA=="
+    "pysetup": "itmRrdzzZKF3uMKyU570XAFNkh0T7lcsjsstIL7/J3r20so4iVoCGYXRQh3J7L6Xq0TylgyPDGnNw1IEJL+qWg=="
   }, 
   "README.rst": {
     "doc": "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="
   }, 
+  "doc/Makefile": {
+    "sphinx": "C58jxdu8XJNOoaWOw7VWy4LwFmS8lTQt/JeZLt5JozMSJ503plOZchucx+vAEzELbx/Czs/h9pshe9s+9HeOeQ=="
+  }, 
   "doc/authors.rst": {}, 
+  "doc/conf.py": {
+    "sphinx": "/cb1DNIkiemFzog7a356vsTCkcx0n3ex7cB0BjLkDeJzZLPCIycgs+bFXvb+LiSOJfjf41bbXwfhb2isUxTFrA=="
+  }, 
   "doc/contributing.rst": {}, 
   "doc/history.rst": {}, 
   "doc/index.rst": {}, 
   "doc/installation.rst": {}, 
+  "doc/make.bat": {
+    "sphinx": "oA67PK7JSR3w9u1V0gOXFZAb8qgfgUJ0wQ46cVXu7M3iJyAbLf76WkEqw6Y1r5Q6EvHAogcjmImdGsOpiYZ22g=="
+  }, 
   "doc/readme.rst": {}, 
   "doc/usage.rst": {}, 
   "dvlpt_requirements.txt": {
-    "pysetup": "KS5AzI9HvD8r9f4dwLQZtq8OXmn5Ba1HTNAydPwK9uP/b0MNhyTJfTxVDzJTSfplczei2x9/1adtri7PUOhkjQ=="
+    "pysetup": "3+3ypRIiSRJu4qfh2VRoDgFw8mgXrR5XArs2YhJ3pidji2TRU8cDtUExYqZUx6c3RNzLGGXkOTgnL+TtAfpObg=="
   }, 
   "requirements.txt": {
     "pysetup": "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="

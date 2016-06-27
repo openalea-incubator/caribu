@@ -67,7 +67,6 @@ setup_kwds = dict(
     
     include_package_data=True,
     package_data={'caribu_data': data_files},
-    package_data={'caribu_data': data_files},
     install_requires=parse_requirements("requirements.txt"),
     tests_require=parse_requirements("dvlpt_requirements.txt"),
     entry_points={},
