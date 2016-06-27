@@ -1,4 +1,4 @@
-# {{pkglts data,
+# {# pkglts, data
 """ Set of function to work with resources that are located inside
 this package data
 """
@@ -54,4 +54,4 @@ def ls(dir_name):
     pth = pj(pkg_data_dir, dir_name)
     return [(n, isdir(pj(pth, n))) for n in listdir(pth)]
 
-# }}
+# #}

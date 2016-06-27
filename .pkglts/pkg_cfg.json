@@ -2,12 +2,16 @@
     "_pkglts": {
         "auto_install": true, 
         "install_front_end": "stdout", 
-        "use_prompts": false
+        "use_prompts": false,
+        "version": 2
     }, 
     "base": {
-        "namespace": "alinea", 
-        "owner": "openalea-incubator", 
-        "pkgname": "caribu", 
+        "authors": [
+            ["openalea-incubator", "openalea@inra.fr"],
+            ["Christian Fournier", "Christian.Fournier@supagro.inra.fr"]
+        ],
+        "namespace": "alinea",
+        "pkgname": "caribu",
         "url": null
     }, 
     "coverage": {}, 
@@ -17,17 +21,17 @@
         "keywords": []
     }, 
     "github": {
-        "project": "{{key, base.pkgname}}"
+        "owner": "{{ base.authors[0][0] }}",
+        "project": "{{ base.pkgname }}",
+        "url": "https://github.com/{{ github.owner }}/{{ github.project }}"
     }, 
     "license": {
         "name": "INRA_License_agreement", 
-        "organization": "openalea", 
-        "project": "{{key, base.pkgname}}", 
+        "organization": "OpenAlea",
+        "project": "{{ base.pkgname }}",
         "year": 2016
     }, 
     "pysetup": {
-        "author_email": "Christian.Fournier@supagro.inra.fr", 
-        "author_name": "Christian Fournier", 
         "intended_versions": [
             "27"
         ]

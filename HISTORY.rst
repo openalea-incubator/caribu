@@ -3,8 +3,7 @@
 History
 -------
 
-
-creation (doc.creation_date)
--------------------------------------
+creation (TODAY)
+------------------------
 
 * First release on PyPI.

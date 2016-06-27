@@ -1,7 +1,7 @@
-# {{pkglts pysetup.dvlpt_requirements,
-github3.py
-nose
-coverage
-mock
+# {# pkglts, pysetup
 
-# }}
+coverage
+github3.py
+mock
+nose
+# #}

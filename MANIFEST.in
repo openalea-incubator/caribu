@@ -1,4 +1,4 @@
-# {{pkglts pysetup,
+# {# pkglts, pysetup
 
 include AUTHORS.rst
 include CONTRIBUTING.rst
@@ -10,12 +10,15 @@ include requirements.txt
 include dvlpt_requirements.txt
 
 recursive-include test *
+
 recursive-include src/alinea/caribu *
 recursive-include src/caribu_data *
+
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 
 recursive-include doc *.rst
 
-# }}
+
+# #}

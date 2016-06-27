@@ -2,14 +2,9 @@
 alinea.caribu
 ========================
 
-.. {{pkglts doc,
+.. {# pkglts, doc
 
-
-
-
-
-
-.. }}
+.. #}
 
 Python/Visualea interface to Caribu Light model
 
