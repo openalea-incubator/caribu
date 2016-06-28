@@ -20,7 +20,7 @@
     "pkgname": "caribu", 
     "url": null
   }, 
-  "coverage": {}, 
+  "coverage": {},
   "data": {}, 
   "doc": {
     "description": "Python/Visualea interface to Caribu Light model", 
