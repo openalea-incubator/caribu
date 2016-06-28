@@ -1,0 +1,36 @@
+# {# pkglts, travis
+# Config file for automatic testing at travis-ci.org
+
+language: python
+
+python:
+  - "2.7"
+# #}
+
+addons:
+  apt:
+    packages:
+# {# pkglts, travis.addons
+
+ #}
+
+install:
+# {# pkglts, travis.install
+ - pip install -r requirements.txt
+ - pip install -r dvlpt_requirements.txt
+# #}
+ - pip install --upgrade git+https://github.com/openalea/deploy#egg=OpenAlea.Deploy
+ - pip install --upgrade git+https://github.com/openalea/sconsx#egg=OpenAlea.SConsX
+
+script:
+ - scons
+ - python setup.py install
+ - export PATH=$PWD/build/lib/bin:$PATH
+# {# pkglts, travis.script
+ - nosetests
+# #}
+
+after_success:
+# {# pkglts, travis.after
+
+# #}
