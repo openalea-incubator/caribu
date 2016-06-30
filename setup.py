@@ -76,6 +76,7 @@ setup_kwds = dict(
 build_prefix = "build-scons"
 setup_kwds['scons_scripts'] = ['SConstruct']
 setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
+setup_kwds['entry_points']['wralea'] = ['caribu = alinea.caribu_wralea']
 
 # do not change things below
 # {{pkglts pysetup.call,
