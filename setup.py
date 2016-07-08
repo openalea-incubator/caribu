@@ -16,18 +16,6 @@ readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 
-def parse_requirements(fname):
-    with open(fname, 'r') as f:
-        txt = f.read()
-
-    reqs = []
-    for line in txt.splitlines():
-        line = line.strip()
-        if len(line) > 0 and not line.startswith("#"):
-            reqs.append(line)
-
-    return reqs
-
 # find version number in src/alinea/caribu/version.py
 version = {}
 with open("src/alinea/caribu/version.py") as fp:
@@ -67,8 +55,15 @@ setup_kwds = dict(
     
     include_package_data=True,
     package_data={'caribu_data': data_files},
-    install_requires=parse_requirements("requirements.txt"),
-    tests_require=parse_requirements("dvlpt_requirements.txt"),
+    install_requires=[
+        "path.py",
+        ],
+    tests_require=[
+        "coverage",
+        "mock",
+        "nose",
+        "sphinx",
+        ],
     entry_points={},
     keywords='',
     test_suite='nose.collector',

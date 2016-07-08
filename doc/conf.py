@@ -46,11 +46,12 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.graphviz',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.todo',
     'sphinx.ext.viewcode'
 ]
 
@@ -327,7 +328,7 @@ opts.modulefirst = None
 opts.separatemodules = None
 opts.noheadings = None
 opts.destdir = path.abspath(path.join(project_root, "doc", "_dvlpt"))
-opts.suffix = source_suffix
+opts.suffix = source_suffix[1:]
 opts.dryrun = None
 opts.force = None
 opts.header = 'src'
