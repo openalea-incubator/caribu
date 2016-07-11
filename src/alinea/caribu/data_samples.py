@@ -1,6 +1,6 @@
 """ paths to module data file
 """
-from openalea.core.path import path
+from path import path
 
 
 def data_path(filename):

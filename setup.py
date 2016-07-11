@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# {{pkglts pysetup.kwds,
+# {# pkglts, pysetup.kwds
 # format setup arguments
+
 from os import walk
 from os.path import abspath, normpath
 from os.path import join as pj
+
 from setuptools import setup, find_packages
 
 
@@ -13,18 +15,6 @@ short_descr = "Python/Visualea interface to Caribu Light model"
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
-
-def parse_requirements(fname):
-    with open(fname, 'r') as f:
-        txt = f.read()
-
-    reqs = []
-    for line in txt.splitlines():
-        line = line.strip()
-        if len(line) > 0 and not line.startswith("#"):
-            reqs.append(line)
-
-    return reqs
 
 # find version number in src/alinea/caribu/version.py
 version = {}
@@ -54,23 +44,31 @@ setup_kwds = dict(
     version=version["__version__"],
     description=short_descr,
     long_description=readme + '\n\n' + history,
-    author="Christian Fournier",
-    author_email='Christian.Fournier@supagro.inra.fr',
-    url='',
-    license="INRA_License_agreement",
+    author="openalea-incubator, Christian Fournier, ",
+    author_email="openalea@inra.fr, Christian.Fournier@supagro.inra.fr, ",
+    url='https://github.com/openalea-incubator/caribu',
+    license='INRA_License_agreement',
     zip_safe=False,
 
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    
     include_package_data=True,
     package_data={'caribu_data': data_files},
-    install_requires=parse_requirements("requirements.txt"),
-    tests_require=parse_requirements("dvlpt_requirements.txt"),
+    install_requires=[
+        "path.py",
+        ],
+    tests_require=[
+        "coverage",
+        "mock",
+        "nose",
+        "sphinx",
+        ],
     entry_points={},
     keywords='',
     test_suite='nose.collector',
 )
-# }}
+# #}
 # change setup_kwds below before the next pkglts tag
 
 build_prefix = "build-scons"
@@ -79,6 +77,6 @@ setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
 setup_kwds['entry_points']['wralea'] = ['caribu = alinea.caribu_wralea']
 
 # do not change things below
-# {{pkglts pysetup.call,
+# {# pkglts, pysetup.call
 setup(**setup_kwds)
-# }}
+# #}

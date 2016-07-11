@@ -6,7 +6,9 @@ Development Lead
 ----------------
 
 
-* base.author_name <base.author_email>
+* openalea-incubator, <openalea@inra.fr>
+
+* Christian Fournier, <Christian.Fournier@supagro.inra.fr>
 
 
 Contributors

@@ -14,7 +14,7 @@ import os
 from subprocess import Popen, STDOUT, PIPE
 import tempfile
 import platform
-from openalea.core.path import path
+from path import path
 
 
 def _process(cmd, directory, out):

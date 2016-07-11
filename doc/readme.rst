@@ -18,6 +18,14 @@ Simple usage:
     from alinea.caribu import *
 
 
+Contribute
+==========
+
+Fork this project on github_
+
+.. _github: https://github.com/openalea-incubator/caribu
+
+
 
 Acknowledgments
 ===============

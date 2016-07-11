@@ -1,4 +1,4 @@
-# {{pkglts data,
+# {# pkglts, data
 """ Set of function to work with resources that are located inside
 this package data
 """
@@ -31,7 +31,7 @@ def get(file_name, mode='r'):
      - mode (str): mode to use to read the file either 'r' or 'rb'
 
     return:
-     - (str): content of the file red in 'r' mode
+       (str): content of the file red in 'r' mode
     """
     with open(pj(pkg_data_dir, file_name), mode) as f:
         cnt = f.read()
@@ -47,11 +47,11 @@ def ls(dir_name):
      - dir_name (str): name of the directory to walk
 
     return:
-     - (list of (str, bool)): list the content of dir_name
+       (list of [str, bool]): list the content of dir_name
                        without any specific order, items are
                        (entity_name, is_directory)
     """
     pth = pj(pkg_data_dir, dir_name)
     return [(n, isdir(pj(pth, n))) for n in listdir(pth)]
 
-# }}
+# #}

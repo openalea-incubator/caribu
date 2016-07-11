@@ -1,5 +1,5 @@
-{{pkglts license.generate,
-caribu
+{{# pkglts, license
+(Undefined, u'caribu')
 ======
 
 License agreement for final academic user
@@ -159,4 +159,5 @@ Fax : + 33 1 30 81 55 63
 Email : chelle@grignon.inra.fr
 
 
-}}
+
+#}

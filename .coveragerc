@@ -1,3 +1,4 @@
+# {# pkglts, coverage
 [html]
 title = alinea.caribu's coverage
 directory = build/htmlcov
@@ -11,3 +12,6 @@ exclude_lines =
     raise AssertionError
     raise NotImplemented
     raise NotImplementedError
+show_missing = True
+
+# #}
