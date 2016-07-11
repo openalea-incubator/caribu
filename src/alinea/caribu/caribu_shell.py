@@ -1,3 +1,14 @@
+# -*- python -*-
+#
+#       Copyright 2015 INRIA - CIRAD - INRA
+#
+#       Distributed under the Cecill-C License.
+#       See accompanying file LICENSE.txt or copy at
+#           http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html
+#
+#       WebSite : https://github.com/openalea-incubator/caribu
+#
+# ==============================================================================
 """ Chaine les appel de s2v, mcsail et canestra, comme le fait cpfg via caribu
     Syntaxe: caribu.csh Ds file.light file.can nz h file.8 file1.opt ... fileN.opt
 
