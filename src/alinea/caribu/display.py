@@ -61,7 +61,7 @@ def jet_colors(values, minval=None, maxval=None):
     return map(lambda x: cmap(x, minval, maxval, 250., 20.), values)
 
 
-def generate_scene(triangle_scene, colors=None):
+def generate_scene(triangle_scene, colors=None, soil=None, soil_colors=None):
     """ Build a colored PlantGL scene
 
     Args:
@@ -69,14 +69,18 @@ def generate_scene(triangle_scene, colors=None):
                 each triangle being defined by an ordered triplet of 3-tuple points coordinates.
         colors: (dict of list of tuples) : a {primitive_id: [colors,]} dict
                 defining colors of primitives in the scene. A color is a (r, g, b) tuple.
+        soil: (list of triangles) : a list of triangles of the soil
+        soil_colors : a list of (r, g, b) tuples defining the colors of the soil triangles
 
     Returns:
         A plantGL scene of colored shapes
     """
+    plant_color = (0, 180, 0)
+    soil_color = (170, 85, 0)
     scene = pgl.Scene()
 
     if colors is None:
-        colors = {k: [(0, 180, 0)] * len(triangle_scene[k]) for k in triangle_scene}
+        colors = {k: [plant_color] * len(triangle_scene[k]) for k in triangle_scene}
     else:
         if len(triangle_scene) != len(colors):
             raise ValueError('length of triangle_scene and of color should match')
@@ -95,5 +99,24 @@ def generate_scene(triangle_scene, colors=None):
             shape.colorList.append(pgl.Color4(r, g, b, 0))
 
         scene += shape
+
+    if soil is not None:
+        if soil_colors is None:
+            soil_colors = [soil_color] * len(soil)
+        sid = max([sh.id for sh in scene])
+        shape = pgl.TriangleSet([], [])
+        shape.colorList = []
+        shape.colorPerVertex = False
+        shape.id = sid
+        for i, triangle in enumerate(soil):
+            shape.pointList.append(pgl.Vector3(triangle[0]))
+            shape.pointList.append(pgl.Vector3(triangle[1]))
+            shape.pointList.append(pgl.Vector3(triangle[2]))
+            shape.indexList.append(pgl.Index3(3 * i, 3 * i + 1, 3 * i + 2))
+            r, g, b = soil_colors[i]
+            shape.colorList.append(pgl.Color4(r, g, b, 0))
+
+        scene += shape
+
 
     return scene

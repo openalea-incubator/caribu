@@ -47,6 +47,31 @@ def _wsum(nrj_area):
         return sum([e * a if a > 0 else 0 for e, a in nrj_area]) / area_tot
 
 
+def domain_mesh(domain, z=0., subdiv=1):
+    """ Create a triangle mesh covering a domain at height z
+
+    Args:
+        domain: (tuple of float) : a (xmin, ymin, xmax, ymax) tuple defining the extend of a square domain
+        z: the altitude of the mesh
+        subdiv: the number of subdivision of the mesh (not functional)
+
+    Returns:
+        a list of triangles. A triangle is a list of 3-tuples points coordinates
+    """
+
+    xmin, ymin, xmax, ymax = domain
+
+    if subdiv > 1:
+        raise UserWarning('subdivision of mesh not yet implemented')
+        # TODO: copy code from cpp/canopy_io.cpp, function parse_can
+    a = (xmin, ymin, z)
+    b = (xmax, ymin, z)
+    c = (xmin, ymax, z)
+    d = (xmax, ymax, z)
+
+    return [(a, b, c), (b, d, c)]
+
+
 class CaribuScene(object):
     """A class interface to Caribu algorithms"""
 
@@ -56,7 +81,8 @@ class CaribuScene(object):
     default_band = 'default_band'
     units = {'mm': 0.001, 'cm': 0.01, 'dm': 0.1, 'm': 1, 'dam': 10, 'hm': 100, 'km': 1000}
 
-    def __init__(self, scene=None, light=None, pattern=None, opt=None, soil_reflectance=None, scene_unit='m'):
+    def __init__(self, scene=None, light=None, pattern=None, opt=None, soil_reflectance=None, soil_mesh=None, z_soil=None,
+                 scene_unit='m'):
         """ Initialise a CaribuScene
 
         Args:
@@ -81,8 +107,14 @@ class CaribuScene(object):
                     If None (default), all primitive are associated to the default material of the class.
             soil_reflectance: a {band_name: reflectance} dict.
                     If None (default) class default soil reflectance is used for all bands
-                    If *.opt files are provided, the values in opt files is used in priority
-            scene_unit (str): the unit of length used for scene coordinate and for pattern (should be one of class.units default)
+                    If *.opt files are provided, the values in opt files are used in priority
+            soil_mesh: (int) a flag triggering for the creation of a soil mesh in the scene during computations
+                    If None (default), no soil is added
+                    If an int (n), a soil is added to the scene, with n subdivisions
+            z_soil: (float) the altitude of the soil.
+                    If None (default), the soil is placed at the bottom of the scene bounding box
+            scene_unit (str): the unit of length used for scene coordinate and for pattern
+                    (should be one of class.units default)
                     By default, scene_unit is considered to be 'm' (meter).
 
         Returns:
@@ -188,54 +220,18 @@ class CaribuScene(object):
             else:
                 raise ValueError('Unrecognised opt format')
 
-    # def addSoil(self, zsoil=0., color=(170, 85, 0)):
-    #     """ Add Soil to Caribu scene. Soil dimension is taken from pattern.
-    #     zsoil specifies the heigth of the soil
-    #
-    #     """
-    #     import string
-    #     def _canString(ind, pts, label):
-    #         s = "p 1 %s 3 %s" % (str(label), ' '.join('%.6f' % x for i in ind for x in pts[i]))
-    #         return s + '\n'
-    #
-    #     ids = []
-    #
-    #     if not self.hasPattern:
-    #         print('addSoil needs a pattern to be set')
-    #
-    #     else:
-    #         pat = self.pattern
-    #         xy = map(string.split, pat.splitlines())
-    #         A = map(float, xy[0])
-    #         C = map(float, xy[1])
-    #         if (A[0] > C[0]):
-    #             A = map(float, xy[1])
-    #             C = map(float, xy[0])
-    #         if (C[1] < A[1]):
-    #             D = [A[0], C[1]]
-    #             B = [C[0], A[1]]
-    #         else:
-    #             B = [A[0], C[1]]
-    #             D = [C[0], A[1]]
-    #         A.append(zsoil)
-    #         B.append(zsoil)
-    #         C.append(zsoil)
-    #         D.append(zsoil)
-    #
-    #         label = ["000000000000", "000000000001"]
-    #         canstring = "\n".join(
-    #             [_canString(range(3), (A, B, C), label[0]), _canString(range(3), (C, D, A), label[1])])
-    #         ids = [self.pid, self.pid + 1]
-    #
-    #         self.scene += canstring
-    #         self.scene_ids.extend(ids)
-    #         self.scene_labels.extend(label)
-    #         self.colors[self.pid] = color
-    #         self.colors[self.pid + 1] = color
-    #         self.hasScene = True
-    #         self.pid += 2
-    #
-    #     return dict(zip(label, ids))
+        self.soil = None
+        if soil_mesh is not None:
+            if self.pattern is None:
+                raise ValueError('Adding a soil needs the scene domain to be defined')
+            if z_soil is None:
+                if self.scene is None:
+                    z_soil = 0
+                else:
+                    triangles = reduce(lambda x, y: x + y, self.scene.values())
+                    z = (pt[2] for tri in triangles for pt in tri)
+                    z_soil = min(z)
+            self.soil = domain_mesh(self.pattern, z_soil, soil_mesh)
 
     def plot(self, a_property=None, minval=None, maxval=None, display=True):
         """
@@ -254,6 +250,7 @@ class CaribuScene(object):
         """
         if a_property is None:
             colors = None
+            soil_colors = None
         else:
             values = a_property.values()
             if isinstance(values[0], list):
@@ -337,6 +334,7 @@ class CaribuScene(object):
         """
 
         raw, aggregated = {}, {}
+        self.soil_raw, self.soil_aggregated = {}, {}
         results = ['Eabs', 'Ei', 'area']
         if split_face:
             results.extend(['Ei_inf', 'Ei_sup'])
@@ -350,17 +348,24 @@ class CaribuScene(object):
             triangles = reduce(lambda x, y: x + y, self.scene.values())
             groups = [[pid] * len(self.scene[pid]) for pid in self.scene]
             groups = reduce(lambda x, y: x + y, groups)
+            if self.soil is not None:
+                triangles += self.soil
+                groups = groups + ['soil'] * len(self.soil)
             bands = self.material.keys()
             if len(bands) == 1:
                 materials = [[self.material[bands[0]][pid]] * len(self.scene[pid]) for pid in self.scene]
                 materials = reduce(lambda x, y: x + y, materials)
                 albedo = self.soil_reflectance[bands[0]]
+                if self.soil is not None:
+                    materials = materials + [(albedo,)] * len(self.soil)
                 algos = {'raycasting': raycasting, 'radiosity': radiosity, 'mixed_radiosity': mixed_radiosity}
             else:
                 materials = {}
                 for band in bands:
                     mat = [[self.material[band][pid]] * len(self.scene[pid]) for pid in self.scene]
                     materials[band] = reduce(lambda x, y: x + y, mat)
+                    if self.soil is not None:
+                        materials = materials + [(self.soil_reflectance[band],)] * len(self.soil)
                 albedo = self.soil_reflectance
                 algos = {'raycasting': x_raycasting, 'radiosity': x_radiosity, 'mixed_radiosity': x_mixed_radiosity}
 
@@ -402,6 +407,10 @@ class CaribuScene(object):
                         aggregated[band][k] = _agregate(output[k], groups, sum)
                     else:
                         aggregated[band][k] = _agregate(izip(output[k], output['area']), groups, _wsum)
+                if self.soil is not None:
+                    self.soil_raw[band] = {k: raw[band][k].pop('soil') for k in results}
+                    self.soil_aggregated[band] = {k: aggregated[band][k].pop('soil') for k in results}
+
 
             if simplify and len(bands) == 1:
                 raw = raw[bands[0]]
@@ -421,4 +430,3 @@ class CaribuScene(object):
         #             pattern = self.pattern
         #         newscene = vperiodise(scene, pattern)
         #         self.scene = newscene
-

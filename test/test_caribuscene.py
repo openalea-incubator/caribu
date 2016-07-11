@@ -108,6 +108,24 @@ if run_test:
         assert_almost_equal(agg['Ei']['upper'], 1, 0)
 
 
+    def test_soil():
+        pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
+        pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
+        pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
+        domain = (0, 0, 1, 1)
+        cscene = CaribuScene(pyscene, pattern=domain, soil_mesh=1)
+        out, agg = cscene.run(direct=True, infinite=False, simplify=True)
+        assert_almost_equal(agg['area']['lower'], 1, 0)
+        assert_almost_equal(agg['Ei']['lower'], 0.5, 1)
+        assert_almost_equal(agg['Ei']['upper'], 1, 0)
+        assert len(cscene.soil) == 2
+        assert len(cscene.soil_raw[cscene.default_band]['Ei']) == 2
+        soil = cscene.soil_aggregated[cscene.default_band]
+        assert_almost_equal(soil['Ei'], 0, 1)
+        assert_almost_equal(soil['area'], 1, 1)
+
+
     def test_display():
         # standard scene
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
