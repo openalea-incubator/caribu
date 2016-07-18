@@ -24,7 +24,8 @@ if run_test:
         assert cs.light == [cs.default_light]
         assert cs.pattern is None
         assert cs.material is None
-        assert cs.soil_reflectance[cs.default_band] == cs.default_soil_reflectance
+        assert cs.soil_reflectance[
+                   cs.default_band] == cs.default_soil_reflectance
 
         # complete set of files
         cs = CaribuScene(scene=can, light=sky, opt=opts, pattern=pattern)
@@ -54,6 +55,7 @@ if run_test:
         pattern = (0, 0, 20, 20)
         pattern_old_style = ((0, 0), (20, 20))
         materials = {'par': {'t1': (0.3,)}}
+        simplified_materials = {'par': (0.3,)}
         soil_reflectance = {'par': 0}
 
         cs = CaribuScene(scene=s, light=sky, pattern=pattern)
@@ -62,9 +64,11 @@ if run_test:
         assert len(cs.light) == 2
         assert len(cs.pattern) == 4
         assert cs.material[cs.default_band][0] == cs.default_material
-        assert cs.soil_reflectance[cs.default_band] == cs.default_soil_reflectance
+        assert cs.soil_reflectance[
+                   cs.default_band] == cs.default_soil_reflectance
 
-        cs = CaribuScene(scene=pyscene, opt=materials, pattern=pattern_old_style)
+        cs = CaribuScene(scene=pyscene, opt=materials,
+                         pattern=pattern_old_style)
         assert len(cs.scene) == 1
         assert len(cs.scene['t1']) == 1
         assert cs.material == materials
@@ -75,7 +79,13 @@ if run_test:
         assert 'par' in cs.material
         assert cs.soil_reflectance == soil_reflectance
 
-        cs = CaribuScene(scene=pyscene, opt=materials, soil_reflectance=soil_reflectance)
+        cs = CaribuScene(scene=pyscene, opt=materials,
+                         soil_reflectance=soil_reflectance)
+        assert 'par' in cs.material
+        assert cs.soil_reflectance == soil_reflectance
+
+        cs = CaribuScene(scene=pyscene, opt=simplified_materials,
+                         soil_reflectance=soil_reflectance)
         assert 'par' in cs.material
         assert cs.soil_reflectance == soil_reflectance
 
@@ -149,6 +159,7 @@ if run_test:
         out, agg = cscene.run(direct=True, infinite=False, simplify=True)
         cscene.plot(out['Ei'], display=False)
 
+
     def test_unit():
         # scene in meter
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
@@ -210,7 +221,8 @@ if run_test:
         pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
         pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
-        opt = {'par': {'lower': (0.1,), 'upper': (0.1,)}, 'nir': {'lower': (0.5,), 'upper': (0.5,)}}
+        opt = {'par': {'lower': (0.1,), 'upper': (0.1,)},
+               'nir': {'lower': (0.5,), 'upper': (0.5,)}}
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain, opt=opt)
 
