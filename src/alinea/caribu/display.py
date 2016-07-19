@@ -26,7 +26,7 @@ import openalea.plantgl.all as pgl
 from alinea.caribu.colormap import ColorMap
 
 
-def _nan_to_zero(values):
+def nan_to_zero(values):
     return [0 if isnan(x) else x for x in values]
 
 
@@ -63,7 +63,7 @@ def jet_colors(values, minval=None, maxval=None):
         a list of (r, g, b) tuples
     """
 
-    values = _nan_to_zero(values)
+    values = nan_to_zero(values)
     if minval is None:
         minval = min(values)
     if maxval is None:

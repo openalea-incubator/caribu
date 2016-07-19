@@ -543,6 +543,19 @@ def vcaribu(canopy, lightsource, optics, pattern, options):
     """
     low level interface to Caribu class call
     Caribu allows nested radiosity illumination on a 3D scene.
+
+    Available options are:
+         1st: consider only direct projection if True.
+         Nz: number of layers to be consider for the scene
+         Hc: height of the can scene
+         Ds: diameter of the sphere for nested radiosity
+         debug : print messages and prevent removal of tempdir
+         resdir : store caribu results as files in resdir
+                 if resdir is not None, store nothing otherwise
+         wavelength: list of name to be used as keys
+                 for output dict (if None use the name of the opt files
+                 or the generic names band0,band1 if optfiles are given
+                 as content)
     """
 
     sim = Caribu(resdir=None, resfile=None)  # no output on disk

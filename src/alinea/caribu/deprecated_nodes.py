@@ -36,3 +36,18 @@ def Canestra(caribuscene, sailfluxes, direct, s_sphere, keepFF):
     """ This is a deprecated node, not functional anymore"""
     raise DeprecationWarning(
         'This node is deprecated, canestra wrapper code has been droped in july 2016')
+
+def addSoil(caribuscene, zsoil, copyscene):
+    """ This is a deprecated node, not functional anymore"""
+    raise DeprecationWarning(
+        'This node is deprecated, use soil options in CaribuScene instead')
+
+def addShapes(caribuscene,shapes,tesselator, canlabels, autocan, copyscene):
+    """ This is a deprecated node, not functional anymore"""
+    raise DeprecationWarning(
+        'This node is deprecated, use scene input to CaribuScene instead')
+
+def output_by_id(caribuscene,output,mapid,groups,aggregate):
+    """ This is a deprecated node, not functional anymore"""
+    raise DeprecationWarning(
+        'This node is deprecated, Caribu output are now already aggregated')

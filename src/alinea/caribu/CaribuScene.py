@@ -13,6 +13,7 @@
 
 import os
 from itertools import groupby, izip, chain
+from math import sqrt
 
 from openalea.mtg.mtg import MTG
 from openalea.plantgl.all import Scene as pglScene, Viewer
@@ -22,7 +23,7 @@ from alinea.caribu.file_adaptor import read_can, read_light, read_pattern, \
 from alinea.caribu.plantgl_adaptor import scene_to_cscene, mtg_to_cscene
 from alinea.caribu.caribu import raycasting, radiosity, mixed_radiosity, \
     x_raycasting, x_radiosity, x_mixed_radiosity
-from alinea.caribu.display import jet_colors, generate_scene
+from alinea.caribu.display import jet_colors, generate_scene, nan_to_zero
 
 
 def _agregate(values, indices, fun=sum):
@@ -278,7 +279,7 @@ class CaribuScene(object):
                         z_soil = min(z)
                 self.soil = domain_mesh(self.pattern, z_soil, soil_mesh)
 
-    def plot(self, a_property=None, minval=None, maxval=None, display=True):
+    def plot(self, a_property=None, minval=None, maxval=None, gamma=None, display=True):
         """
 
         Args:
@@ -288,60 +289,92 @@ class CaribuScene(object):
                     if None (default), minimal value of property is used
             maxval: (float) maximal value at upper bound of color range
                     if None (default), maximal value of property is used
+            gamma (float): exponent of the normalised values
+                    if None (default), na gamma transform is applied
             display: (bool) : should the scene be displayed ? (default True)
 
         Returns:
             A plantGL scene
         """
         if a_property is None:
-            colors = None
+            color_property = None
             soil_colors = None
         else:
             values = a_property.values()
             if isinstance(values[0], list):
                 values = list(chain.from_iterable(values))
+            values = nan_to_zero(values)
             if minval is None:
                 minval = min(values)
             if maxval is None:
                 maxval = max(values)
-            colors = {k: jet_colors(values, minval, maxval) for k in a_property}
-        scene = generate_scene(self.scene, colors)
+            if gamma is None:
+                gamma = 1
+            norm = 1
+            if minval != maxval:
+                norm = maxval - minval
+            values = map(lambda x: ((x - minval) / float(norm))**gamma, values)
+            colors = jet_colors(values, 0, 1)
+            color_property = {}
+            for k, v in a_property.iteritems():
+                color_property[k] = []
+                for i in range(len(v)):
+                    color_property[k].append(colors.pop(0))
+        scene = generate_scene(self.scene, color_property)
         if display:
             Viewer.display(scene)
-        return scene
-
-    #
-    #
-    # def getIncidentEnergy(self):
-    #     """ Compute Qi, Qem, Einc on the scene given current light sources.
-    #
-    #     Qi is the incident light flux received on an horizontal surface (per scene unit area)
-    #     Qem is the sum of light fluxes emitted by sources in a plane perpendicular to their direction of emmission (per scene unit area)
-    #     Einc is the total incident energy received on the domain (Einc = Qi * domain_area), or None if pattern is not set
-    #
-    #     """
-    #     import numpy
-    #     Qi, Qem, Einc = None, None, None
-    #
-    #     if self.hasSources:
-    #         sources = self.sources_as_array()
-    #
-    #         Qi = sources.energy.sum()
-    #
-    #         # costheta = k . direction, k etant le vecteur (0,0,1) et theta l'angle avec la verticale = abs(zdirection) / norm(direction)
-    #         norm = numpy.sqrt(sources.vx ** 2 + sources.vy ** 2 + sources.vz ** 2)
-    #         costheta = abs(sources.vz) / norm
-    #         Qem = (sources.energy / costheta).sum()
-    #
-    #         if self.hasPattern:
-    #             domain = self.pattern_as_array()
-    #             d_area = abs(numpy.diff(domain.x) * numpy.diff(domain.y))[0]
-    #             Einc = Qi * d_area
-    #
-    #     return Qi, Qem, Einc
-    #
+        return scene, values
 
 
+
+    def getIncidentEnergy(self):
+        """ Compute energy of emission of light sources.
+
+        Qi is the total horizontal irradiance emitted by sources (m-2)
+        Qem is the sum of the normal-to-the-sources irradiance emitted by sources (m-2)
+        Einc is the total incident energy received on the domain
+
+        """
+
+        Qi, Qem, Einc = None, None, None
+
+        def _costheta(vect):
+            vx, vy, vz = vect
+            norme = sqrt(vx ** 2 + vy ** 2 + vz ** 2)
+            return abs(vz / norme)
+
+        if self.light is not None:
+            nrj, direction = zip(*self.light)
+            Qi = sum(nrj)
+            costheta = map(_costheta, direction)
+            Qem = sum(map(lambda x : x[0] / x[1], zip(nrj, costheta)))
+
+            if self.pattern is not None:
+                xmin, ymin, xmax, ymax = self.pattern
+                d_area = abs((xmax - xmin) * (ymax - ymin)) * self.conv_unit**2
+                Einc = Qi * d_area
+        return Qi, Qem, Einc
+
+    def getSoilEnergy(self):
+        """ Compute energy received on soil.
+        """
+        Qi, Einc = None, None
+
+        if self.soil is None:
+            raise ValueError('A soil should be added to allow SoilEnargy Estimation')
+
+        res = self.soil_aggregated
+        if res is None:
+            raise ValueError('Caribu should have been called  to allow SoilEnargy Estimation')
+
+        # hack, TODO : take care of bands
+        Qi = res.values()[0]['Ei']
+        if self.pattern is not None:
+            xmin, ymin, xmax, ymax = self.pattern
+            d_area = abs((xmax - xmin) * (ymax - ymin)) * self.conv_unit**2
+            Einc = Qi * d_area
+
+        return Qi, Einc
 
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10,
             height=None, screen_size=1536, split_face=False, simplify=False):
