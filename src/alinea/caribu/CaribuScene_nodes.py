@@ -3,13 +3,13 @@ Theses interfaces are mainly tageted for building visualea nodes
 They generally have an additional copyscene argument, that pass caribuscene by copy instead of by reference
 
 """
-from copy import copy
+
 from alinea.caribu.CaribuScene import CaribuScene
 from alinea.caribu.display import generate_scene
 from alinea.caribu.caribu import opt_string_and_labels, triangles_string
 
 
-#caribuscene instance used to access doc strings of class methods
+# caribuscene instance used to access doc strings of class methods
 cdoc = CaribuScene()
 
 
@@ -118,24 +118,21 @@ def ViewMapOnCan(caribuscene, property, gamma=None, minval=None, maxval=None):
  
  
 def WriteCan(caribuscene, filename):
-    o_string, labels = opt_string_and_labels(caribuscene.material)
-    can_string = triangles_string(caribuscene.scene, labels)
-    with open(filename, 'w') as output:
-        output.write(can_string)
+    triangles, groups, materials, bands, albedo = caribuscene.as_primitive()
+    if len(bands) == 1:
+        o_string, labels = opt_string_and_labels(materials)
+        can_string = triangles_string(triangles, labels)
+        with open(filename, 'w') as output:
+            output.write(can_string)
     return filename
 
 
 
 
-def periodise(caribuscene, copyscene):
-    if copyscene:
-        cs = copy(caribuscene)
-    else:
-        cs = caribuscene
-    
+def periodise(cs):
     cs.runPeriodise()
     return cs
-# periodise.__doc__ =''.join([cdoc.runPeriodise.__doc__,copyscenedoc])
+periodise.__doc__ =cdoc.runPeriodise.__doc__
 
    
 def generate_scene_node(caribuscene, colors):

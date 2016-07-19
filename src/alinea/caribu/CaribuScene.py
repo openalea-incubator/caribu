@@ -22,8 +22,10 @@ from alinea.caribu.file_adaptor import read_can, read_light, read_pattern, \
     read_opt, build_materials
 from alinea.caribu.plantgl_adaptor import scene_to_cscene, mtg_to_cscene
 from alinea.caribu.caribu import raycasting, radiosity, mixed_radiosity, \
-    x_raycasting, x_radiosity, x_mixed_radiosity
+    x_raycasting, x_radiosity, x_mixed_radiosity, opt_string_and_labels, \
+    triangles_string, pattern_string
 from alinea.caribu.display import jet_colors, generate_scene, nan_to_zero
+from alinea.caribu.caribu_shell import vperiodise
 
 
 def _agregate(values, indices, fun=sum):
@@ -376,6 +378,45 @@ class CaribuScene(object):
 
         return Qi, Einc
 
+
+    def as_primitive(self):
+        """  Transform scene and materials into simpler python objects
+
+        Returns:
+
+        """
+        triangles, groups, materials, bands, albedo = None, None, None, None, None
+        if self.scene is not None:
+            triangles = reduce(lambda x, y: x + y, self.scene.values())
+            groups = [[pid] * len(self.scene[pid]) for pid in self.scene]
+            groups = reduce(lambda x, y: x + y, groups)
+            if self.soil is not None:
+                triangles += self.soil
+                groups = groups + ['soil'] * len(self.soil)
+            bands = self.material.keys()
+            if len(bands) == 1:
+                materials = [
+                    [self.material[bands[0]][pid]] * len(self.scene[pid]) for
+                    pid in self.scene]
+                materials = reduce(lambda x, y: x + y, materials)
+                albedo = self.soil_reflectance[bands[0]]
+                if self.soil is not None:
+                    materials = materials + [(albedo,)] * len(self.soil)
+            else:
+                materials = {}
+                for band in bands:
+                    mat = [[self.material[band][pid]] * len(self.scene[pid]) for
+                           pid in self.scene]
+                    materials[band] = reduce(lambda x, y: x + y, mat)
+                    if self.soil is not None:
+                        materials = materials + [(self.soil_reflectance[
+                                                      band],)] * len(self.soil)
+                albedo = self.soil_reflectance
+
+        return triangles, groups, materials, bands, albedo
+
+
+
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10,
             height=None, screen_size=1536, split_face=False, simplify=False):
         """ Compute illumination using the appropriate caribu algorithm
@@ -520,15 +561,28 @@ class CaribuScene(object):
 
         return raw, aggregated
 
-        # def runPeriodise(self):
-        #     """ Call periodise and modify position of triangle in the scene to fit inside pattern"""
-        #     if len(self.scene_ids) > 0:  # scene is not empty
-        #         from alinea.caribu.caribu_shell import vperiodise
-        #         scene = None
-        #         pattern = None
-        #         if self.hasScene:
-        #             scene = self.scene
-        #         if self.hasPattern:
-        #             pattern = self.pattern
-        #         newscene = vperiodise(scene, pattern)
-        #         self.scene = newscene
+    def runPeriodise(self):
+        """ Call periodise and modify position of triangle in the scene to fit inside pattern"""
+        triangles, groups, materials, bands, albedo = self.as_primitive()
+        o_string, labels = opt_string_and_labels(materials)
+        can_string = triangles_string(triangles, labels)
+        pat_string = pattern_string(self.pattern)
+        newscene = vperiodise(can_string, pat_string)
+        infile = newscene.split('\n')
+        cscene = {}
+        for line in infile:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith('#'):
+                continue
+            fields = line.split()
+            label = fields[2]
+            if label not in cscene:
+                cscene[label] = []
+            coords = map(float, fields[-9:])
+            cscene[label].append(map(tuple, [coords[:3], coords[3:6], coords[6:]]))
+
+        self.scene = cscene
+
+        return self

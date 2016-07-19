@@ -168,6 +168,23 @@ CaribuScene_nodes_WriteCan = Factory(
 __all__.append('CaribuScene_nodes_WriteCan')
 
 
+
+CaribuScene_nodes_periodise = Factory(
+    name='Periodise',
+    authors='M. Chelle,C. Fournier (wralea authors)',
+    description='Fit the scene within its pattern',
+    category='scene',
+    nodemodule='alinea.caribu.CaribuScene_nodes',
+    nodeclass='periodise',
+    inputs=[
+        {'interface': None, 'name': 'CaribuScene'}],
+    outputs=[
+        {'interface': None, 'name': 'FittedCaribuScene'}],
+    widgetmodule=None,
+    widgetclass=None, )
+
+__all__.append('CaribuScene_nodes_periodise')
+
 label_encode_label = Factory(
     name='encode label',
     authors='C. Fournier',
@@ -301,19 +318,6 @@ mtg_to_canestra = Factory(name='MtgToCan',
 
 
 
-
-CaribuScene_nodes_periodise = Factory(name='Periodise',
-                                      authors='M. Chelle,C. Fournier (wralea authors)',
-                                      description='Fit the scene within its pattern',
-                                      category='scene',
-                                      nodemodule='alinea.caribu.CaribuScene_nodes',
-                                      nodeclass='periodise', inputs=[
-        {'interface': None, 'name': 'CaribuScene'},
-        {'interface': IBool, 'name': 'Copy Caribuscene', 'value': True,
-         'desc': ''}], outputs=[
-        {'interface': None, 'name': 'FittedCaribuScene'}], widgetmodule=None,
-                                      widgetclass=None, )
-# __all__.append('CaribuScene_nodes_periodise')
 
 
 
