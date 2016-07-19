@@ -64,7 +64,19 @@ caribu_vcaribu = Factory(name='vcaribu',
 __all__.append('caribu_vcaribu')
 
 
-
+CaribuScene_nodes_generate_scene = Factory(name='generate scene',
+                authors='C. Fournier, C Pradal',
+                description='generate a PlantGL scene form a Caribu Scene',
+                category='scene',
+                nodemodule='alinea.caribu.CaribuScene_nodes',
+                nodeclass='generate_scene_node',
+                inputs=[{'interface': None, 'name': 'CaribuScene'},
+                        {'interface': IDict, 'name': 'colors', 'value': None}],
+                outputs=[{'interface': None, 'name': 'PlantGL scene'}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+__all__.append('CaribuScene_nodes_generate_scene')
 
 
 reduceDict_reduceDict = Factory(name='reduceDict',
@@ -79,39 +91,6 @@ reduceDict_reduceDict = Factory(name='reduceDict',
                 widgetclass=None,
                )
 # __all__.append('reduceDict_reduceDict')
-
-
-
-
-
-
-CaribuScene_nodes_generate_scene = Factory(name='generate scene',
-                authors='C. Fournier, C Pradal',
-                description='generate a PlantGL scene form a Caribu Scene',
-                category='scene',
-                nodemodule='alinea.caribu.CaribuScene_nodes',
-                nodeclass='generate_scene',
-                inputs=[{'interface': None, 'name': 'CaribuScene'}, {'interface': ISequence, 'name': 'colors', 'value': None}],
-                outputs=[{'interface': None, 'name': 'PlantGL scene'}],
-                widgetmodule=None,
-                widgetclass=None,
-               )
-# __all__.append('CaribuScene_nodes_generate_scene')
-
-
-
-MCSail_MCSail = Factory(name='MCSail',
-                authors='M. Chelle,C. Fournier (wralea authors)',
-                description='Compute mean fluxes on layered canopy',
-                category='scene.canopy',
-                nodemodule='alinea.caribu.MCSail',
-                nodeclass='MCSail',
-                inputs=[{'interface': None, 'name': 'Sailscene'}, {'interface': IBool, 'name': 'Sleep', 'value': False}],
-                outputs=[{'interface': IStr, 'name': 'Fluxes'}, {'interface': IStr, 'name': 'Log'}],
-                widgetmodule=None,
-                widgetclass=None,
-               )
-# __all__.append('MCSail_MCSail')
 
 
 
@@ -130,11 +109,6 @@ label_decode_label = Factory(name='decode label',
                 widgetclass=None,
                )
 __all__.append('label_decode_label')
-
-
-
-
-
 
 
 filterby_filterby = Factory(name='filterby',
@@ -182,18 +156,7 @@ PARaggregators_PARaggregators = Factory(name='PARaggregators',
 
 
 
-S2v_S2v = Factory(name='S2v',
-                authors='M. Chelle,C. Fournier (wralea authors)',
-                description='Transform a 3D CaribuScene into a 1D Sail Scene',
-                category='codec',
-                nodemodule='alinea.caribu.S2v',
-                nodeclass='S2v',
-                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IInt, 'name': 'Number of layers', 'value': 5, 'desc': ''}, {'interface': IFloat, 'name': 'ZmaxLayer', 'value': 2.0, 'desc': ''}, {'interface': IBool, 'name': 'Sleep', 'value': False, 'desc': ''}],
-                outputs=[{'interface': IStr, 'name': 'SailScene', 'desc': ''}, {'interface': ISequence, 'name': 'TriangleLayerLabels', 'desc': ''}, {'interface': IStr, 'name': 'Log', 'desc': ''}],
-                widgetmodule=None,
-                widgetclass=None,
-               )
-# __all__.append('S2v_S2v')
+
 
 
 
@@ -215,18 +178,7 @@ CaribuScene_nodes_WriteCan = Factory(name='WriteCan',
 
 
 
-Canestra_Canestra = Factory(name='Canestra',
-                authors='M. Chelle,C. Fournier (wralea authors)',
-                description='Nested radiosity illumination of a 3D Scene ',
-                category='scene.light',
-                nodemodule='alinea.caribu.Canestra',
-                nodeclass='Canestra',
-                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''}, {'interface': IStr, 'name': 'SailFluxes', 'value': None, 'desc': ''}, {'interface': IBool, 'name': 'No Multiple Scattering', 'value': True, 'desc': ''}, {'interface': IFloat, 'name': 'Sphere Diameter', 'value': 0.5, 'desc': ''}, {'interface': IBool, 'name': 'keep FF in Scene', 'value': False, 'desc': ''}],
-                outputs=[{'interface': IStr, 'name': 'CaribuScene', 'desc': ''}, {'interface': IStr, 'name': 'Etri', 'desc': ''}, {'interface': IStr, 'name': 'Eabs', 'desc': ''}, {'interface': IStr, 'name': 'Log', 'desc': ''}],
-                widgetmodule=None,
-                widgetclass=None,
-               )
-# __all__.append('Canestra_Canestra')
+
 
 
 
@@ -406,11 +358,28 @@ CaribuZenithPar = Factory(name='CaribuZenithPar',
                           nodeclass='CaribuZenithPar', category='Unclassified',
                           doc='', inputs=[
         {'desc': '', 'interface': IData, 'name': 'CanScene', 'value': None},
-        {'desc': '', 'interface': ISequence, 'name': 'Pattern', 'value': None}],
+        {'desc': '', 'interface': ISequence, 'name': 'Pattern', 'value': None},
+    {'desc': '', 'interface': IEnumStr, 'name': 'scene_unit', 'value': None}],
                           outputs=[{'desc': '', 'interface': None,
                                     'name': 'CaribuScene'},
                                    {'desc': '', 'interface': None,
                                     'name': 'CaribuOutDict'},
-                                   {'desc': '', 'interface': IDict,
+                                   {'desc': '', 'interface': None,
                                     'name': 'sceneid_to_caribu_id'}])
 __all__.append('CaribuZenithPar')
+
+CaribuZenithParSoil = Factory(name='CarribuZenithParSoil',
+                          description='This node is not functional. Use workflow/CaribuZenithParSoil instead',
+                          nodemodule='alinea.caribu.moved_nodes',
+                          nodeclass='CaribuZenithPar', category='Unclassified',
+                          doc='', inputs=[
+        {'desc': '', 'interface': IData, 'name': 'CanScene', 'value': None},
+        {'desc': '', 'interface': ISequence, 'name': 'Pattern', 'value': None},
+    {'desc': '', 'interface': IEnumStr, 'name': 'scene_unit', 'value': None}],
+                          outputs=[{'desc': '', 'interface': None,
+                                    'name': 'CaribuScene'},
+                                   {'desc': '', 'interface': None,
+                                    'name': 'CaribuOutDict'},
+                                   {'desc': '', 'interface': None,
+                                    'name': 'sceneid_to_caribu_id'}])
+__all__.append('CaribuZenithParSoil')

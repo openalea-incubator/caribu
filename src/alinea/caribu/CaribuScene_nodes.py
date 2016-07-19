@@ -5,6 +5,7 @@ They generally have an additional copyscene argument, that pass caribuscene by c
 """
 from copy import copy
 from alinea.caribu.CaribuScene import CaribuScene
+from alinea.caribu.display import generate_scene
 
 
 #caribuscene instance used to access doc strings of class methods
@@ -23,16 +24,16 @@ newCaribuScene.__doc__ = cdoc.__init__.__doc__
 
 def runCaribu(caribuscene, direct=True,
               scatterOpt={'d_sphere': 0.5, 'layers': 5, 'height': None},
-              infinite=False, screen_size=1536, split_faces=False,
+              infinite=False, screen_size=1536, split_face=False,
               simplify=True):
     if caribuscene is None:
         return None, {}, {}
     d_sphere, layers, height = scatterOpt['d_sphere'], scatterOpt['height'], \
                                scatterOpt['d_sphere']
-    raw, aggregated = caribuscene.runCaribu(direct=direct, infinite=infinite,
+    raw, aggregated = caribuscene.run(direct=direct, infinite=infinite,
                                         d_sphere=d_sphere, layers=layers,
                                         height=height, screen_size=screen_size,
-                                        split_faces=split_faces,
+                                        split_face=split_face,
                                         simplify=simplify)
     return caribuscene, aggregated, raw
 runCaribu.__doc__ = cdoc.run.__doc__
@@ -98,9 +99,9 @@ def periodise(caribuscene, copyscene):
 # periodise.__doc__ =''.join([cdoc.runPeriodise.__doc__,copyscenedoc])
 
    
-def generate_scene(caribuscene, colors):
-    return caribuscene.generate_scene(colors)
-# generate_scene.__doc__ = cdoc.generate_scene.__doc__
+def generate_scene_node(caribuscene, colors):
+    return generate_scene(caribuscene.scene, colors)
+
    
 def getIncidentEnergy(caribuscene):
         return caribuscene.getIncidentEnergy()

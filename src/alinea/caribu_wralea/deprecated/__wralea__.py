@@ -109,3 +109,53 @@ CaribuScene_nodes_getEi = Factory(name='get Ei',
          'desc': 'incident light flux received on an horizontal surface (per scene unit area)'}],
                                   widgetmodule=None, widgetclass=None, )
 __all__.append('CaribuScene_nodes_getEi')
+
+
+MCSail_MCSail = Factory(name='MCSail',
+                authors='M. Chelle,C. Fournier (wralea authors)',
+                description='Compute mean fluxes on layered canopy',
+                category='deprecated',
+                nodemodule='alinea.caribu.deprecated_nodes',
+                nodeclass='MCSail',
+                inputs=[{'interface': None, 'name': 'Sailscene'},
+                        {'interface': IBool, 'name': 'Sleep', 'value': False}],
+                outputs=[{'interface': IStr, 'name': 'Fluxes'},
+                         {'interface': IStr, 'name': 'Log'}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+__all__.append('MCSail_MCSail')
+
+S2v_S2v = Factory(name='S2v',
+                authors='M. Chelle,C. Fournier (wralea authors)',
+                description='Transform a 3D CaribuScene into a 1D Sail Scene',
+                category='deprecated',
+                nodemodule='alinea.caribu.deprecated_nodes',
+                nodeclass='S2v',
+                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''},
+                        {'interface': IInt, 'name': 'Number of layers', 'value': 5, 'desc': ''},
+                        {'interface': IFloat, 'name': 'ZmaxLayer', 'value': 2.0, 'desc': ''},
+                        {'interface': IBool, 'name': 'Sleep', 'value': False, 'desc': ''}],
+                outputs=[{'interface': IStr, 'name': 'SailScene', 'desc': ''},
+                         {'interface': ISequence, 'name': 'TriangleLayerLabels', 'desc': ''}, {'interface': IStr, 'name': 'Log', 'desc': ''}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+__all__.append('S2v_S2v')
+
+Canestra_Canestra = Factory(name='Canestra',
+                authors='M. Chelle,C. Fournier (wralea authors)',
+                description='Nested radiosity illumination of a 3D Scene ',
+                category='deprecated',
+                nodemodule='alinea.caribu.deprecated_nodes',
+                nodeclass='Canestra',
+                inputs=[{'interface': None, 'name': 'CaribuScene', 'value': None, 'desc': ''},
+                        {'interface': IStr, 'name': 'SailFluxes', 'value': None, 'desc': ''},
+                        {'interface': IBool, 'name': 'No Multiple Scattering', 'value': True, 'desc': ''},
+                        {'interface': IFloat, 'name': 'Sphere Diameter', 'value': 0.5, 'desc': ''},
+                        {'interface': IBool, 'name': 'keep FF in Scene', 'value': False, 'desc': ''}],
+                outputs=[{'interface': IStr, 'name': 'CaribuScene', 'desc': ''}, {'interface': IStr, 'name': 'Etri', 'desc': ''}, {'interface': IStr, 'name': 'Eabs', 'desc': ''}, {'interface': IStr, 'name': 'Log', 'desc': ''}],
+                widgetmodule=None,
+                widgetclass=None,
+               )
+__all__.append('Canestra_Canestra')
