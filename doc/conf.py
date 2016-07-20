@@ -247,7 +247,7 @@ latex_elements = {
 latex_documents = [
     ('index', 'caribu.tex',
      u'caribu Documentation',
-     u'openalea-incubator', 'manual'),
+     u'Christian Fournier', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at
@@ -278,7 +278,7 @@ latex_documents = [
 man_pages = [
     ('index', 'caribu',
      u'caribu Documentation',
-     [u'openalea-incubator'], 1)
+     [u'Christian Fournier'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -293,7 +293,7 @@ man_pages = [
 texinfo_documents = [
     ('index', 'caribu',
      u'caribu Documentation',
-     u'openalea-incubator',
+     u'Christian Fournier',
      'caribu',
      'Python/Visualea interface to Caribu Light model',
      'Miscellaneous'),

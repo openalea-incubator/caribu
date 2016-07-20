@@ -8,12 +8,12 @@
   "base": {
     "authors": [
       [
-        "openalea-incubator", 
-        "openalea@inra.fr"
-      ], 
-      [
         "Christian Fournier", 
         "Christian.Fournier@supagro.inra.fr"
+      ],
+      [
+        "Michael Chelle",
+        "michael.chelle@grignon.inra.fr"
       ]
     ], 
     "namespace": "alinea", 
@@ -27,7 +27,7 @@
     "keywords": []
   }, 
   "github": {
-    "owner": "{{ base.authors[0][0] }}", 
+    "owner": "openalea-incubator",
     "project": "{{ base.pkgname }}", 
     "url": "https://github.com/{{ github.owner }}/{{ github.project }}"
   }, 

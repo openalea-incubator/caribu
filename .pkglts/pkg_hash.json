@@ -30,7 +30,7 @@
   "doc/_static/nonempty.txt": {}, 
   "doc/authors.rst": {}, 
   "doc/conf.py": {
-    "sphinx": "lGfi5RXpJPQfetw+xzbZQr+2v9N4j+74C66KOSTr76ODpKhKxAM/dsOxoHtdaKgtDmVDxFrFTRDFGDzfVeQ+rQ=="
+    "sphinx": "nsrWp8dBqmM8+ECwiY+A0U5g1pAI2vE/oRCDlF0eq4amoLVbKoHJAObK4iC6NcoRWdRQp7ckFs9J+hHnPs7Gqg=="
   }, 
   "doc/contributing.rst": {}, 
   "doc/history.rst": {}, 
@@ -45,14 +45,14 @@
     "pysetup": "XWPKeIfT2RoNPeDhPDgWWOssKAjkq/OXoEfIpSs8vJrYkPahRrEs1qXFvqxzqoV09MjmnVg0zrG9m/wRXfrRxw=="
   }, 
   "requirements.txt": {
-    "pysetup": "XOMqU4M84h7cqhBNXGFSZWM8WyjdlrkwIrROwh87RdYexyy/8sbTsHsfOu4JSk3MWHU3f73Kqo1QxGhcYj2klQ=="
+    "pysetup": "+aXs205pdSiB+BVU1YbpQNOhvQ4/L/fKBxq4MMr3Qn4UELFKLQegvn2/q0whQ+hGLVkqbi50CJSIierbs4aMCQ=="
   }, 
   "setup.cfg": {
     "pysetup": "Ix9M3ztF290Zdg0b8H/RuzCwolLV7OsFkv+nZSyJO3BVrktdkt2LFK0OoT8qXYToeFBZl3AXdzfFtDsZqG/kQw=="
   }, 
   "setup.py": {
     "pysetup.call": "2wHuP94SpWKZpqOzExkQGTxnhGPgBHK3qOdPn0Ncstj5FkZ7FBGGM/inqAXaI4QLKQtTNlOUYRGSkYUWAUcf1w==", 
-    "pysetup.kwds": "CqM/S3Q3uCxLgmJ/suhSYQQtp8Et6yk6fWsYq2KY0rLgjDioW0ImjL7qcxlf+x45/h5AYfXLKgU4RDm7KdQbLA=="
+    "pysetup.kwds": "sJyK8cYd+yyBNnWZBsXIBy+ZLzB7GQD3glqi3MyFqjmLOFOJaK6zjVIBEw5JgwsXUUc/Ej7IcavMecWTbjamQQ=="
   }, 
   "src/alinea/caribu/__init__.py": {
     "base": "gR33dW0qqYmsV9NSNB+DD8XmuxnC2t0mKjnMoU5728qh97fSER6MbX+3QKxpZDLByZToaAay4xhx8acxketJmA=="
