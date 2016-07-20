@@ -207,3 +207,50 @@ CaribuScene_nodes_output_by_id = Factory(name='Output by id',
                 widgetclass=None,
                )
 __all__.append('CaribuScene_nodes_output_by_id')
+
+
+mtg_updateMTG = Factory(
+    name='updateMTG',
+    authors='M. Chelle,C. Fournier (wralea authors)',
+    category='deprecated',
+    nodemodule='alinea.caribu.deprecated_nodes',
+    nodeclass='updateMTG',
+    inputs=[
+        {'interface': None, 'name': 'mtg', 'value': None, 'desc': ''},
+        {'interface': None, 'name': 'caribu output','value': None, 'desc': ''},
+        {'interface': None, 'name': 'mtg id for triangles','value': None},
+        {'interface': IStr, 'name': 'prefix for mtg property', 'value': None}],
+    outputs=[
+        {'interface': None, 'name': 'updated mtg', 'desc': ''}],
+    widgetmodule=None, widgetclass=None, )
+__all__.append('mtg_updateMTG')
+
+
+mtg_to_canestra = Factory(
+    name='MtgToCan',
+    authors='M. Chelle,C. Fournier (wralea authors)',
+    description='Give a canestra repr of MTG',
+    category='deprecated',
+    nodemodule='alinea.caribu.deprecated_nodes',
+    nodeclass='to_canestra',
+    inputs=[
+        {'interface': None, 'name': 'MTG', 'value': None, 'desc': ''},
+        {'interface': IStr, 'name': 'Property to use as OptId',
+         'value': 'optical_specie', 'desc': ''},
+        {'interface': IStr, 'name': 'Property to use as opacity',
+         'value': 'transparency', 'desc': ''},
+        {'interface': IStr, 'name': 'Property to use as Geometry',
+         'value': 'geometry', 'desc': ''},
+        {'interface': IInt, 'name': 'Deault for optid', 'value': 1, 'desc': ''},
+        {'interface': IInt, 'name': 'Defalt for opacity', 'value': 0,
+         'desc': ''},
+        {'interface': IFloat(min=0, max=16777216, step=0.000001),
+                       'name': 'minimal area', 'value': 1e-05, 'desc': ''}],
+    outputs=[{'interface': None, 'name': 'mtgId',
+              'desc': 'list of mtd id associated with triangles'},
+             {'interface': None, 'name': 'CanString',
+              'desc': 'Canestra input file'}],
+    widgetmodule=None, widgetclass=None)
+__all__.append('mtg_to_canestra')
+
+

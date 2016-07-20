@@ -51,3 +51,21 @@ def output_by_id(caribuscene,output,mapid,groups,aggregate):
     """ This is a deprecated node, not functional anymore"""
     raise DeprecationWarning(
         'This node is deprecated, Caribu output are now already aggregated')
+
+def to_canestra(g, OptId, Opak, Geometry, defopt, defopak, epsilon):
+    """ This is a deprecated node, not functional anymore"""
+    raise DeprecationWarning(
+        'This node is deprecated, Caribu input accept PlantGL scene')
+
+def updateMTG(g,canout,tri_mtgid,prefix) :
+    """ This is a deprecated node, not functional anymore"""
+    raise DeprecationWarning(
+        'This node is partly deprecated, as Caribu output are properties. '
+        'For automated update of light on a mtg, see/contribute to  astk')
+
+def PARaggregators(caribu_outdict):
+    """ This is a deprecated node, not functional anymore"""
+    raise DeprecationWarning(
+        'This node is deprecated, as it is no more compatible '
+        'with current caribu outputs. To be redeveloped based on material')
+

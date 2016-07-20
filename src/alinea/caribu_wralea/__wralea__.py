@@ -227,134 +227,92 @@ label_decode_label = Factory(
 __all__.append('label_decode_label')
 
 
-reduceDict_reduceDict = Factory(name='reduceDict',
-                                authors='M. Chelle,C. Fournier (wralea authors)',
-                                description='apply dictionary reduction ',
-                                category='Unclassified',
-                                nodemodule='alinea.caribu.reduceDict',
-                                nodeclass='reduceDict', inputs=[
+misc_reduceDict = Factory(
+    name='reduceDict',
+    authors='C. Fournier',
+    description='bind list of values of dict sharing same keys',
+    nodemodule='alinea.caribu.misc_nodes',
+    nodeclass='reduceDict',
+    inputs=[
         {'interface': None, 'name': 'dictlist', 'value': None, 'desc': ''}],
-                                outputs=[
-                                    {'interface': None, 'name': 'reduceddict',
-                                     'desc': ''}], widgetmodule=None,
-                                widgetclass=None, )
-# __all__.append('reduceDict_reduceDict')
+    outputs=[
+        {'interface': None, 'name': 'reduceddict', 'desc': ''}],
+    widgetmodule=None, widgetclass=None, )
+
+__all__.append('misc_reduceDict')
 
 
-
-filterby_filterby = Factory(name='filterby',
-                            authors='M. Chelle,C. Fournier (wralea authors)',
-                            description='Return values whose indices match condition',
-                            category='Unclassified',
-                            nodemodule='alinea.caribu.filterby',
-                            nodeclass='filterby', inputs=[
+misc_filterby = Factory(
+    name='filterby',
+    authors='C. Fournier',
+    description='Return values whose indices match condition',
+    category='Unclassified',
+    nodemodule='alinea.caribu.misc_nodes',
+    nodeclass='filterby',
+    inputs=[
         {'interface': ISequence, 'name': 'indices', 'value': None, 'desc': ''},
         {'interface': ISequence, 'name': 'values', 'value': None, 'desc': ''},
-        {'interface': IFunction, 'name': 'condition', 'value': None,
-         'desc': ''}], outputs=[
-        {'interface': None, 'name': 'values', 'desc': ''}], widgetmodule=None,
-                            widgetclass=None, )
-# __all__.append('filterby_filterby')
+        {'interface': IFunction, 'name': 'condition', 'value': None}],
+    outputs=[
+        {'interface': None, 'name': 'values', 'desc': ''}],
+    widgetmodule=None, widgetclass=None, )
+
+__all__.append('misc_filterby')
 
 
+misc_mydict = Factory(
+    name='mydict',
+    authors='C. Fournier',
+    description='debug dict',
+    category='Unclassified',
+    nodemodule='alinea.caribu.misc_nodes',
+    nodeclass='mydict',
+    inputs=[
+        {'interface': None, 'name': 'liste of tuple', 'value': None}],
+    outputs=[
+        {'interface': None, 'name': 'dict', 'desc': ''}],
+    widgetmodule=None, widgetclass=None, )
 
-mtg_updateMTG = Factory(name='updateMTG',
-                        authors='M. Chelle,C. Fournier (wralea authors)',
-                        description='', category='data i/o',
-                        nodemodule='alinea.caribu.mtg', nodeclass='updateMTG',
-                        inputs=[
-                            {'interface': None, 'name': 'mtg', 'value': None,
-                             'desc': ''},
-                            {'interface': None, 'name': 'caribu output',
-                             'value': None, 'desc': ''},
-                            {'interface': None, 'name': 'mtg id for triangles',
-                             'value': None, 'desc': ''}, {'interface': IStr,
-                                                          'name': 'prefix for mtg property',
-                                                          'value': None,
-                                                          'desc': ''}],
-                        outputs=[{'interface': None, 'name': 'updated mtg',
-                                  'desc': ''}], widgetmodule=None,
-                        widgetclass=None, )
-# __all__.append('mtg_updateMTG')
+__all__.append('misc_mydict')
 
 
-
-PARaggregators_PARaggregators = Factory(name='PARaggregators',
-                                        authors='M. Chelle,C. Fournier (wralea authors)',
-                                        description='returns a dict of aggregators (0/1) for summing Eabs at different levels',
-                                        category='Unclassified',
-                                        nodemodule='alinea.caribu.PARaggregators',
-                                        nodeclass='PARaggregators', inputs=[
+PARaggregators_PARaggregators = Factory(
+    name='PARaggregators',
+    authors='M. Chelle,C. Fournier (wralea authors)',
+    description='returns a dict of aggregators (0/1) for summing Eabs at different levels',
+    category='Unclassified',
+    nodemodule='alinea.caribu.deprecated_nodes',
+    nodeclass='PARaggregators', inputs=[
         {'interface': None, 'name': 'aggregation table', 'value': None,
-         'desc': ''}], outputs=[
+         'desc': ''}],
+    outputs=[
         {'interface': None, 'name': 'aggegators', 'desc': ''}],
-                                        widgetmodule=None, widgetclass=None, )
-# __all__.append('PARaggregators_PARaggregators')
+    widgetmodule=None, widgetclass=None, )
+
+__all__.append('PARaggregators_PARaggregators')
 
 
-mtg_to_canestra = Factory(name='MtgToCan',
-                          authors='M. Chelle,C. Fournier (wralea authors)',
-                          description='Give a canestra repr of MTG',
-                          category='data i/o', nodemodule='alinea.caribu.mtg',
-                          nodeclass='to_canestra', inputs=[
-        {'interface': None, 'name': 'MTG', 'value': None, 'desc': ''},
-        {'interface': IStr, 'name': 'Property to use as OptId',
-         'value': 'optical_specie', 'desc': ''},
-        {'interface': IStr, 'name': 'Property to use as opacity',
-         'value': 'transparency', 'desc': ''},
-        {'interface': IStr, 'name': 'Property to use as Geometry',
-         'value': 'geometry', 'desc': ''},
-        {'interface': IInt, 'name': 'Deault for optid', 'value': 1, 'desc': ''},
-        {'interface': IInt, 'name': 'Defalt for opacity', 'value': 0,
-         'desc': ''}, {'interface': IFloat(min=0, max=16777216, step=0.000001),
-                       'name': 'minimal area', 'value': 1e-05, 'desc': ''}],
-                          outputs=[{'interface': None, 'name': 'mtgId',
-                                    'desc': 'list of mtd id associated with triangles'},
-                                   {'interface': None, 'name': 'CanString',
-                                    'desc': 'Canestra input file'}],
-                          widgetmodule=None, widgetclass=None, )
-# __all__.append('mtg_to_canestra')
-
-
-
-
-
-
-
-mydict_mydict = Factory(name='mydict',
-                        authors='M. Chelle,C. Fournier (wralea authors)',
-                        description='debug dict', category='Unclassified',
-                        nodemodule='alinea.caribu.mydict', nodeclass='mydict',
-                        inputs=[{'interface': None, 'name': 'liste of tuple',
-                                 'value': None, 'desc': ''}], outputs=[
-        {'interface': None, 'name': 'dict', 'desc': ''}], widgetmodule=None,
-                        widgetclass=None, )
-# __all__.append('mydict_mydict')
-
-
-lightString_lightString = Factory(name='light string',
-                                  authors='M. Chelle,C. Fournier (wralea authors)',
-                                  description='return a string formated for caribu light input from radiance plus azimutal and zenital angles',
-                                  category='Unclassified',
-                                  nodemodule='alinea.caribu.lightString',
-                                  nodeclass='lightString', inputs=[
+light_light_source = Factory(
+    name='light source',
+    alias=['light string'],
+    authors='M. Chelle,C. Fournier (wralea authors)',
+    description=' create a monodirectional light source for caribu',
+    category='scene.light',
+    nodemodule='alinea.caribu.light',
+    nodeclass='light_source',
+    inputs=[
         {'interface': IFloat, 'name': 'Radiance', 'value': 1, 'desc': ''},
-        {'interface': IFloat, 'name': 'Zenith angle (deg)', 'value': 0,
+        {'interface': IFloat, 'name': 'elevation angle (deg)', 'value': 90,
          'desc': ''},
-        {'interface': IFloat, 'name': 'Azimuth angle (deg)', 'value': 46,
-         'desc': ''}], outputs=[
-        {'interface': IStr, 'name': 'vector', 'desc': ''}], widgetmodule=None,
-                                  widgetclass=None, )
-# __all__.append('lightString_lightString')
+        {'interface': IFloat, 'name': 'azimuth angle (deg)', 'value': 0,
+         'desc': ''}],
+    outputs=[
+        {'interface': IStr, 'name': 'vector', 'desc': ''}],
+    widgetmodule=None, widgetclass=None, )
+__all__.append('light_light_source')
 
 
-exposition_rain_and_light = Factory(name='rain and light star',
-                                    nodemodule='caribu_star',
-                                    nodeclass='rain_and_light_star')
-# __all__.append('exposition_rain_and_light')
-
-
-# moved nodes
+# moved nodes. Re-declared here to help update by user
 
 CaribuZenithPar = Factory(
     name='CaribuZenithPar',

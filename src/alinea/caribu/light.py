@@ -74,6 +74,20 @@ def vecteur_direction(elevation, azimuth):
     phi = radians(azimuth)
     return sin(theta) * cos(phi), sin(theta) * sin(phi), -cos(theta)
 
+def light_source(horizontal_irradiance, elevation, azimuth):
+    """ return a  punctual infinite light source for caribu
+
+    Args:
+        horizontal_irradiance: horizontal irradiance of the source
+        elevation: elevation angle (deg)
+        azimuth: azimuth angle (deg). positive counter-clockwise from X+
+
+    Returns:
+        a list of one light source ready to use for caribu
+    """
+
+    return [(horizontal_irradiance, vecteur_direction(elevation, azimuth))],
+
 
 def emission_inv(elevation, energy):
     """ return energy of emmision for a source of a given direction and of a given energy
