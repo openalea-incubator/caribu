@@ -301,6 +301,7 @@ class CaribuScene(object):
         if a_property is None:
             color_property = None
             soil_colors = None
+            values = None
         else:
             values = a_property.values()
             if isinstance(values[0], list):
@@ -319,9 +320,12 @@ class CaribuScene(object):
             colors = jet_colors(values, 0, 1)
             color_property = {}
             for k, v in a_property.iteritems():
-                color_property[k] = []
-                for i in range(len(v)):
-                    color_property[k].append(colors.pop(0))
+                if isinstance(v, list):
+                    color_property[k] = []
+                    for i in range(len(v)):
+                        color_property[k].append(colors.pop(0))
+                else:
+                    color_property[k] = [colors.pop(0)] * len(self.scene[k])
         scene = generate_scene(self.scene, color_property)
         if display:
             Viewer.display(scene)
