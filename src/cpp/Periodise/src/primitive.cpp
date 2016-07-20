@@ -22,13 +22,13 @@ Primitive :: Primitive(Primitive &frere){
 
 void Polygone::init(Liste<Point>& liste_sommet,double name=0){
    int i=1;
-  
+
   nom=name;
   for( liste_sommet.debut();
       !liste_sommet.est_fin();
        liste_sommet.suivant() )
-    i++;        
-  
+    i++;
+
   nb_sommets=i;
   sommet=new Point[i];
   assert(sommet);
@@ -57,20 +57,20 @@ Polygone::Polygone(Polygone& frere):Primitive(frere){
 
 char * next_number(char *ch){
   char c;
-  int i; 
-  
-  for (i=0;  (c=ch[i])>0  && isspace(c)!=0; i++) 
-    ; //printf(">> ch[%d]=%c\n",i,c); 
-  return &(ch[i]); 
+  int i;
+
+  for (i=0;  (c=ch[i])>0  && isspace(c)!=0; i++)
+    ; //printf(">> ch[%d]=%c\n",i,c);
+  return &(ch[i]);
 
 }
 char * next_nonumber(char *ch){
   char c;
-  int i; 
-  
+  int i;
+
   for (i=0; (c=ch[i])>0 && isspace(c)==0; i++)
-    ; // printf(">> ch[%d]=%c\n",i,c); 
-  return &(ch[i]); 
+    ; // printf(">> ch[%d]=%c\n",i,c);
+  return &(ch[i]);
 
 }
 
@@ -83,14 +83,14 @@ Polygone::Polygone(char* line,double name,reel*mini,reel*maxi){
   char *ch;
   double x;
   float Pi;
-  
+
   //  printf("==> line=%s\n", line);
   ch=line;
   for(j=0;j<3;j++){
     mini[j]=99999999.0;
     maxi[j]=-99999999.0;
-  }    
-  nom=name;  
+  }
+  nom=name;
   // Lparag>>ii;
   ch=next_number(ch);
   sscanf(ch,"%d",&ii);
@@ -108,57 +108,57 @@ Polygone::Polygone(char* line,double name,reel*mini,reel*maxi){
       P[j]=Pi;
       mini[j]=T_min(P[j],mini[j]);
       maxi[j]=T_max(P[j],maxi[j]);
-    }    
+    }
     sommet[i]=P;
     // cerr<<" sommet " <<i<<" "; sommet[i].show();
   }
   // rejet test des 3 1st point
-  if(nb_sommets>=3) {
-    Vecteur u(sommet[0],sommet[1]),v(sommet[0],sommet[2]);
-    x=u.norme();
-    if(x==0.) {
-      fprintf(stderr,"\t=> Comme les sommets 0 et 1 sont egaux, \n");
-      mini[0] =1;
-      maxi[0]=0;
-      correct=false;
-      return;
-    }
-    u/=x;
-    x=v.norme();
-    if(x==0.) {
-      fprintf(stderr,"\t=> Comme les sommets 0 et 2 sont egaux, \n");
-      mini[0] =1;
-      maxi[0]=0;
-      correct=false;
-      return;
-    }
-    v/=x;
-    if(sommet[1]==sommet[2]){
-      fprintf(stderr,"\t=> Comme les sommets 1 et 2 sont egaux, \n");
-      mini[0] =1;
-      maxi[0]=0;
-      correct=false;
-      return;
-    }
-    if(fabs(u.prod_scalaire(v))>0.9999999999 ){
-      fprintf(stderr,"\t=> Comme les sommets 0, 1 et  2  sont aligne's, \n");
-      mini[0] =1;
-      maxi[0]=0;
-      correct=false;
-      return; 
-    }
-    v=u.prod_vectoriel(v);
-    x=v.norme();
-    if(x<=0){
-      fprintf(stderr,"\t=> Norme de (POP1)^(POP2 Nulle \n");
-      mini[0] =1;
-      maxi[0]=0;
-      correct=false;
-      return;
-    }
-  }
-  calcul_normale_cst_equ(sommet[0],sommet [1],sommet[2]);
-  calc_surface();
+//  if(nb_sommets>=3) {
+//    Vecteur u(sommet[0],sommet[1]),v(sommet[0],sommet[2]);
+//    x=u.norme();
+//    if(x==0.) {
+//      fprintf(stderr,"\t=> Comme les sommets 0 et 1 sont egaux, \n");
+//      mini[0] =1;
+//      maxi[0]=0;
+//      correct=false;
+//      return;
+//    }
+//    u/=x;
+//    x=v.norme();
+//    if(x==0.) {
+//      fprintf(stderr,"\t=> Comme les sommets 0 et 2 sont egaux, \n");
+//      mini[0] =1;
+//      maxi[0]=0;
+//      correct=false;
+//      return;
+//    }
+//    v/=x;
+//    if(sommet[1]==sommet[2]){
+//      fprintf(stderr,"\t=> Comme les sommets 1 et 2 sont egaux, \n");
+//      mini[0] =1;
+//      maxi[0]=0;
+//      correct=false;
+//      return;
+//    }
+//    if(fabs(u.prod_scalaire(v))>0.9999999999 ){
+//      fprintf(stderr,"\t=> Comme les sommets 0, 1 et  2  sont aligne's, \n");
+//      mini[0] =1;
+//      maxi[0]=0;
+//      correct=false;
+//      return;
+//    }
+//    v=u.prod_vectoriel(v);
+//    x=v.norme();
+//    if(x<=0){
+//      fprintf(stderr,"\t=> Norme de (POP1)^(POP2 Nulle \n");
+//      mini[0] =1;
+//      maxi[0]=0;
+//      correct=false;
+//      return;
+//    }
+//  }
+//  calcul_normale_cst_equ(sommet[0],sommet [1],sommet[2]);
+//  calc_surface();
   correct=true;
 }//Polygone
 
@@ -170,8 +170,8 @@ Polygone::Polygone(float(*T)[3],double name,reel*mini,reel*maxi){
   for(j=0;j<3;j++){
     mini[j]=99999999.0;
     maxi[j]=-99999999.0;
-  }    
-  nom=name;  
+  }
+  nom=name;
   nb_sommets=i=3;
   sommet=new Point[i];
   assert(sommet);
@@ -181,7 +181,7 @@ Polygone::Polygone(float(*T)[3],double name,reel*mini,reel*maxi){
       P[j]=T[i][j];
       mini[j]=T_min(P[j],mini[j]);
       maxi[j]=T_max(P[j],maxi[j]);
-    }    
+    }
     sommet[i]=P;
     //cerr<<" sommet " <<i<<" "; sommet[i].show();
   }
@@ -218,7 +218,7 @@ Polygone::Polygone(float(*T)[3],double name,reel*mini,reel*maxi){
       mini[0] =1;
       maxi[0]=0;
       correct=false;
-      return; 
+      return;
     }
     v=u.prod_vectoriel(v);
     x=v.norme();
@@ -239,7 +239,7 @@ void Polygone::show(const char* msg,ostream &out)
 {   out << msg<<"-Polygone :"; qui();
 for (register int i=0; i<nb_sommets; i++)
 	{ out << "\t" <<sommet[i][0]<<" "<<sommet[i][1]<<" "<<sommet[i][2]<<endl;
-		
+
 	}
 }//show
 Polygone::~Polygone()
@@ -271,7 +271,7 @@ int Polygone::tout_point_inf(reel& position, char& axe){
   //	cout << "axe=" << axe << endl;
   //	cout << "nb_sommets=" << nb_sommets << endl;
   for (i=0; i<nb_sommets; i++) {
-    
+
     //		cout << "sommet[i][axe]=" << sommet[i][axe] << endl;
     if (sommet[i][axe]>position)
       compris=0;
@@ -282,7 +282,7 @@ int Polygone::tout_point_inf(reel& position, char& axe){
 
 int Polygone::tout_point_sup(reel& position, char& axe){
   short i, compris=1;
- 
+
   //	cout << "position=" << position << endl;
   //	cout << "axe=" << axe << endl;
   for ( i=0; i<nb_sommets; i++){
@@ -302,7 +302,7 @@ int Polygone::nb_in(reel& amin,reel& amax, char& axe) {
       if(nbp<0) {
 	cerr<<" (!) Pb Polygone::nb_in : primitive no. "<<nom<<" plus grande que les bornes \n";
 	info=true;
-      }	  
+      }
       nbp++;
     }
     else
@@ -310,7 +310,7 @@ int Polygone::nb_in(reel& amin,reel& amax, char& axe) {
 	if(nbp>0) {
 	  cerr<<" (!) Pb Polygone::nb_in : primitive No. "<<nom<<" plus grande que les bornes\n!";
 	info=true;
-	}	  
+	}
 	nbp--;
       }
   }//for sommets
@@ -320,7 +320,7 @@ int Polygone::nb_in(reel& amin,reel& amax, char& axe) {
 	cerr<<"\tP["<<i<<"] = "<<sommet[i][axe]<<endl;
       }
   }
-  return nbp;  
+  return nbp;
 }//Polygone::nb_in()
 
 void Polygone::calcul_normale_cst_equ(Point& p1, Point& p2, Point& p3){
@@ -362,7 +362,7 @@ return G;
 Vecteur Polygone::azi(){
 // renvoie l'azimuth zero du polygone , qui correspond au 1er segment
   Vecteur u(sommet[0],sommet[1]);
-  
+
   return u;
 }//Polygone::azi()
 
@@ -370,7 +370,7 @@ Vecteur Polygone::azi(){
 Triangle::Triangle(Liste<Point>& liste_sommet,double name=0) : Polygone(liste_sommet,name)
 {
   if (nb_sommets != 3)
-    { cout << "ERREUR - nombre de sommets incoherent pour un triangle\n"; 
+    { cout << "ERREUR - nombre de sommets incoherent pour un triangle\n";
       cout << "nombre de sommets=" << nb_sommets << "\n"; cout.flush();
       exit(1);
     }
@@ -388,12 +388,12 @@ Triangle::Triangle(Point &A,Point &B,Point &C,double name=0){
 }
 
 
-inline bool signe(const double& x) 
+inline bool signe(const double& x)
  { return(x>=0.0);
- } 
+ }
 bool Polygone::dedans(Point I)
 // teste si le point I est "dans" le polugone poly
- { 
+ {
 
    int i,j,k,inc;
    Vecteur u,v;
@@ -401,10 +401,10 @@ bool Polygone::dedans(Point I)
 
    i=0;
    if (fabs(normale[1]) > fabs(normale[0])) i=1;
-   if (fabs(normale[2]) > fabs(normale[1])) i=2;   
+   if (fabs(normale[2]) > fabs(normale[1])) i=2;
    j=(i+1)%3;
    k=(j+1)%3;
- 
+
    u.formation_vecteur(I,sommet[0]);
    v.formation_vecteur(I,sommet[1]);
    sign=signe(u[j]*v[k]-(u[k]*v[j]));
@@ -414,7 +414,7 @@ bool Polygone::dedans(Point I)
       if(signe(u[j]*v[k]-(u[k]*v[j]))!=sign) return false;
     }//for
 //   cout<<"Polygone|[dedans] vrai: ";qui();
-   return true;   
+   return true;
  }//dedans
 
 double Polygone::intersect(Param_Inter& parag,Point *I) {
@@ -434,7 +434,7 @@ double Polygone::intersect(Param_Inter& parag,Point *I) {
      */
 
   double scal=normale.prod_scalaire(parag.direct());
-  
+
   //  cout<<" Polygone[intersect] DEBUT - scal = "<<scal ; qui();
   if (fabs(scal) < 1e-6)     /* scal== 0 : droite // plan */
     return 2e9;
@@ -499,13 +499,13 @@ void Polygone::calc_surface(){
       //cerr<<"Polygone[calc_surface]poly qcque\n";
     }
     break;
-  }//switch   
- }// Polygone::calc_surface() 
+  }//switch
+ }// Polygone::calc_surface()
 
 
 //***************************   Triangle::calc_surface()   *************************
 void Triangle::calc_surface(){
-  Vecteur AB(sommet[0],sommet[1]), AC(sommet[0],sommet[2]);   
+  Vecteur AB(sommet[0],sommet[1]), AC(sommet[0],sommet[2]);
 
   AB.normalise();
   AC.normalise();
@@ -513,7 +513,7 @@ void Triangle::calc_surface(){
   //   cout <<"@@@@@@@@@@ M_PI_2 = "<< M_PI_2<<" - alpha = "<<psurf<<endl;
   psurf=sommet[0].dist(sommet[1])*sommet[0].dist(sommet[2])*sin(psurf)/2.0;
   //raus(psurf<0.0,"Triangle[calc_surface] surface < 0.0 !!??!!?!!!");
-}// Triangle::calc_surface() 
+}// Triangle::calc_surface()
 
 
 #ifdef _SEGURA
@@ -524,16 +524,16 @@ void Triangle::calc_surface(){
 
 double signo3D ( Point p1 , Point p2 , Point p3 , Point p4 ){
   double suma;
-  
+
   suma = p1[0]*( (p2[1]*p3[2]) + (p2[2]*p4[1]) + (p3[1]*p4[2])
-                -(p3[2]*p4[1]) - (p4[2]*p2[1]) - (p2[2]*p3[1]) 
-	       ) 
+                -(p3[2]*p4[1]) - (p4[2]*p2[1]) - (p2[2]*p3[1])
+	       )
 	-p2[0]*(  (p1[1]*p3[2]) + (p1[2]*p4[1]) + (p3[1]*p4[2])
                  -(p3[2]*p4[1]) - (p1[2]*p3[1]) - (p4[2]*p1[1])
-	       ) 
+	       )
         +p3[0]*(  (p1[1]*p2[2]) + (p2[1]*p4[2]) + (p1[2]*p4[1])
                  -(p2[2]*p4[1]) - (p4[2]*p1[1]) - (p1[2]*p2[1])
-	       ) 
+	       )
        -p4[0]*(  (p1[1]*p2[2]) + (p2[1]*p3[2]) + (p1[2]*p3[1])
                 -(p2[2]*p3[1]) - (p3[2]*p1[1]) - (p1[2]*p2[1])
 	      ) ;
@@ -544,13 +544,13 @@ void signo3D2 ( Point p1a, Point p1b , Point p2 , Point p3 , Point p4, double&s1
   double tmp[4];
 
    tmp[0] =  (p2[1]*p3[2]) + (p2[2]*p4[1]) + (p3[1]*p4[2])
-            -(p3[2]*p4[1]) - (p4[2]*p2[1]) - (p2[2]*p3[1]); 
+            -(p3[2]*p4[1]) - (p4[2]*p2[1]) - (p2[2]*p3[1]);
    tmp[1] =  (p2[0]*p3[2]) + (p2[2]*p4[0]) + (p3[0]*p4[2])
-            -(p3[2]*p4[0]) - (p4[2]*p2[0]) - (p2[2]*p3[0]); 
+            -(p3[2]*p4[0]) - (p4[2]*p2[0]) - (p2[2]*p3[0]);
    tmp[2] =  (p2[0]*p3[1]) + (p2[1]*p4[0]) + (p3[0]*p4[1])
-            -(p2[1]*p3[0]) - (p4[1]*p2[0]) - (p3[1]*p4[0]); 
+            -(p2[1]*p3[0]) - (p4[1]*p2[0]) - (p3[1]*p4[0]);
    tmp[3] =  p4[2]*(p2[0]*p3[1]) +  p3[2]*(p2[1]*p4[0]) + p2[2]*(p3[0]*p4[1])
-            -p2[2]*(p3[1]*p4[0]) -  p3[2]*(p4[1]*p2[0]) - p4[2]*(p2[1]*p3[0]); 
+            -p2[2]*(p3[1]*p4[0]) -  p3[2]*(p4[1]*p2[0]) - p4[2]*(p2[1]*p3[0]);
 
    // printf("~~> tmp=%g, %g,%g,%g\n",tmp[0],tmp[1],tmp[2],tmp[3] );
   s1a = (p1a[0]*tmp[0] - p1a[1]*tmp[1] + p1a[2]*tmp[2] - tmp[3]);
@@ -560,16 +560,16 @@ void signo3D2 ( Point p1a, Point p1b , Point p2 , Point p3 , Point p4, double&s1
 double Triangle::intersect(Param_Inter& parag,Point *I) {
   // algo de Segura&Leito, C&G98
   double t,a,b,c,h1,h2;
- 
+
   if(parag.prems){
     O=parag.origin();
     Q1= O + parag.direct()*L8 ;
     parag.prems=false;
   }
-  a = signo3D (O ,Q1 , sommet[2] , sommet[0]); 
-  b = signo3D (O ,Q1 , sommet[1] , sommet[2]); 
-  c = signo3D (O ,Q1 , sommet[0] , sommet[1]); 
- 
+  a = signo3D (O ,Q1 , sommet[2] , sommet[0]);
+  b = signo3D (O ,Q1 , sommet[1] , sommet[2]);
+  c = signo3D (O ,Q1 , sommet[0] , sommet[1]);
+
   if( (a>0 && b>0 && c>0) || (a<0 && b<0 && c<0) ){// Il y a intersection
     // printf("*** h1=%g, h2=%g --> t=%g\n",h1,h2,fabs(h1/(h1-h2))*L8);
     signo3D2(O,Q1, sommet[0] , sommet[1], sommet[2] , h1,h2);

@@ -1,21 +1,66 @@
-""" Unit Tests for caribu module """
+from nose.tools import assert_raises
+
+from alinea.caribu.caribu import green_leaf_PAR, radiosity, raycasting
 
 
-from alinea.caribu.caribu import caribu_run_case,CaribuOptionError
+def test_default_light_in_raycasting():
+    pts1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+    triangles = [pts1]
+    mats = [green_leaf_PAR]
+
+    # default light
+    res = raycasting(triangles, mats)
+
+    assert 'area' in res
 
 
-# Original test of caribu.csh script by M. Chelle
-def test_caribu_script():
-    for i in range(1,6):
-        yield caribu_run_case,i#this makes nose generate 5 tests
-        
-def test_caribu_script_inconsistent():
-    for i in range(1,3):
-        yield caribu_run_inconsistent_case,i
+def test_default_light_in_radiosity():
+    pts1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+    pts2 = [(0, 0, 1), (1, 0, 1), (0, 1, 1)]
+    triangles = [pts1, pts2]
+    mats = [green_leaf_PAR] * 2
 
-def caribu_run_inconsistent_case(i):
-    try:
-        caribu_run_case(-i)
-        assert False, "This test uses inconsistent options, it should raise an CaribuOptionError"
-    except CaribuOptionError:
-        assert True
+    # default light
+    res = radiosity(triangles, mats)
+
+    assert 'area' in res
+
+
+def test_raycasting_exception():
+    points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+    triangles = [points]
+
+    # black body
+    materials = [(0,)]
+    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+    materials = [(0.,)]
+    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+    materials = [(0., 0)]
+    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+    materials = [(0., 0, 0, 0.)]
+    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+
+    # unmatch
+    materials = [(0.1,)] * 2
+    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+
+
+def test_radiosity_exception():
+    points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+    triangles = [points]
+    materials = [green_leaf_PAR]
+
+    # one triangle
+    assert_raises(ValueError, lambda: radiosity(triangles, materials))
+
+    pts1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+    pts2 = [(0, 0, 1), (1, 0, 1), (0, 1, 1)]
+    triangles = [pts1, pts2]
+
+    # black body
+    materials = [(0,)] * 2
+    assert_raises(ValueError, lambda: radiosity(triangles, materials))
+
+    # unmatch triangles <-> materials
+    materials = [green_leaf_PAR]
+    assert_raises(ValueError, lambda: radiosity(triangles, materials))

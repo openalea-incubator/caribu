@@ -266,9 +266,12 @@ void Voxel::construction(reel* bornemin, reel* bornemax,
     //Ferr <<"delta["  << i<<"]= "  << delta[i]<<" \n" ;
 
     reste=delta[i]/taille_vox;
-    nb_vox[i]=(int)reste;
-    if(nb_vox[i]<reste)
-      (nb_vox[i])++;
+	// CF 2016 : meme si reste = 0, il faut aussi ajouter un voxel de plus 
+	//sinon ca plante pour une primitive situee sur la frontiere
+	nb_vox[i] = (int)reste + 1;
+    // nb_vox[i]=(int)reste;
+    //if(nb_vox[i]<reste)
+    //  (nb_vox[i])++;
     delta[i]=(taille_vox*nb_vox[i]-delta[i])/2.0;
     Ferr <<"delta2["  << i<<"]= "  << delta[i]<<" \n" ;
     bornemax[i]+=delta[i];

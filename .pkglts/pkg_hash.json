@@ -1,0 +1,68 @@
+{
+  ".coveragerc": {
+    "coverage": "hHdxCGHgKSQ6XVf5r+nLuAMtK9yNIRd4tWqwcKh6SIOyZj41V9loMVmKKfzOTEZHcv9TSjzdxJikd+fmcicSfg=="
+  }, 
+  ".gitignore": {
+    "github": "wVVlsQPP65I5Gg6bW37JENFtYxO6Naq7x+mO0DaDGFVbMPk2o5QJ3DUwMoYfkOfou9lcR/6DC0MXr7hnrTWc9g=="
+  }, 
+  ".travis.yml": {
+    "travis": "p39laCS5PHN7gbwAtgU28Z+UXHRifGIORlali3ZkK7OQKjjRhn1Dbwscp76SZeocjKUEBtl3fI1857Ri37wPWQ==", 
+    "travis.addons": "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==", 
+    "travis.after": "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==", 
+    "travis.install": "FiRO88L+iYzkoEpfXqiR83Hiafse/daW9XGbsz1B142WhVyetTkhK5cnlVvMd0RG6+NPd7B5k8NP2Kae1NKhmg==", 
+    "travis.script": "STjpu3u3YoOeTz4mBIflZ58OodPdFRPFtLt6c8CUciNwe/fYhCTxlKTMB/S7VL1ippUsQVIfrFGl+OQ/ALWmPQ=="
+  }, 
+  "AUTHORS.rst": {}, 
+  "CONTRIBUTING.rst": {}, 
+  "HISTORY.rst": {}, 
+  "LICENSE": {
+    "license": "410Vv0XO77FeDf6NUOm3bHov98+wmG6Pmy42ipXc7UjgP3hQuuFHE2l6iXZVBXj3cS8EwWy+PYgvukpP0adC4g=="
+  }, 
+  "MANIFEST.in": {
+    "pysetup": "itmRrdzzZKF3uMKyU570XAFNkh0T7lcsjsstIL7/J3r20so4iVoCGYXRQh3J7L6Xq0TylgyPDGnNw1IEJL+qWg=="
+  }, 
+  "README.rst": {
+    "doc": "mRlaI0bXyz8xyCeFzCONfrlSPRjP8XRoTspksrrIZWCCh6/sPsyX7TYoTMsSN9EMLa9ICaUDEUU/fVtXfljhYQ=="
+  }, 
+  "doc/Makefile": {
+    "sphinx": "C58jxdu8XJNOoaWOw7VWy4LwFmS8lTQt/JeZLt5JozMSJ503plOZchucx+vAEzELbx/Czs/h9pshe9s+9HeOeQ=="
+  }, 
+  "doc/_static/nonempty.txt": {}, 
+  "doc/authors.rst": {}, 
+  "doc/conf.py": {
+    "sphinx": "nsrWp8dBqmM8+ECwiY+A0U5g1pAI2vE/oRCDlF0eq4amoLVbKoHJAObK4iC6NcoRWdRQp7ckFs9J+hHnPs7Gqg=="
+  }, 
+  "doc/contributing.rst": {}, 
+  "doc/history.rst": {}, 
+  "doc/index.rst": {}, 
+  "doc/installation.rst": {}, 
+  "doc/make.bat": {
+    "sphinx": "oA67PK7JSR3w9u1V0gOXFZAb8qgfgUJ0wQ46cVXu7M3iJyAbLf76WkEqw6Y1r5Q6EvHAogcjmImdGsOpiYZ22g=="
+  }, 
+  "doc/readme.rst": {}, 
+  "doc/usage.rst": {}, 
+  "dvlpt_requirements.txt": {
+    "pysetup": "XWPKeIfT2RoNPeDhPDgWWOssKAjkq/OXoEfIpSs8vJrYkPahRrEs1qXFvqxzqoV09MjmnVg0zrG9m/wRXfrRxw=="
+  }, 
+  "requirements.txt": {
+    "pysetup": "+aXs205pdSiB+BVU1YbpQNOhvQ4/L/fKBxq4MMr3Qn4UELFKLQegvn2/q0whQ+hGLVkqbi50CJSIierbs4aMCQ=="
+  }, 
+  "setup.cfg": {
+    "pysetup": "Ix9M3ztF290Zdg0b8H/RuzCwolLV7OsFkv+nZSyJO3BVrktdkt2LFK0OoT8qXYToeFBZl3AXdzfFtDsZqG/kQw=="
+  }, 
+  "setup.py": {
+    "pysetup.call": "2wHuP94SpWKZpqOzExkQGTxnhGPgBHK3qOdPn0Ncstj5FkZ7FBGGM/inqAXaI4QLKQtTNlOUYRGSkYUWAUcf1w==", 
+    "pysetup.kwds": "sJyK8cYd+yyBNnWZBsXIBy+ZLzB7GQD3glqi3MyFqjmLOFOJaK6zjVIBEw5JgwsXUUc/Ej7IcavMecWTbjamQQ=="
+  }, 
+  "src/alinea/caribu/__init__.py": {
+    "base": "gR33dW0qqYmsV9NSNB+DD8XmuxnC2t0mKjnMoU5728qh97fSER6MbX+3QKxpZDLByZToaAay4xhx8acxketJmA=="
+  }, 
+  "src/alinea/caribu/data_access.py": {
+    "data": "7+MILHWDtY+zT+R6iS8UBp7uwniOMTJeUu2sCSc/ZSCE6Uxlp5cBvThK7keVBghZd+6yErj45IJzzdxk4oFGTg=="
+  }, 
+  "src/alinea/caribu/version.py": {
+    "version": "ZDt/R5FtE9kaoSVb77sPZHJP14vhnZBukcnHdUjKosuhObXnw4NxT+DSV4ndUjljQAfSVOPG+cR29dVoP8jaRA=="
+  }, 
+  "src/caribu_data/__init__.py": {}, 
+  "test/__init__.py": {}
+}

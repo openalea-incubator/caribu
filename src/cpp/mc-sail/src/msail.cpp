@@ -18,7 +18,7 @@ struct Mlayin{// a allouer pour n couches
   REEL att, sig, ks, sb, sf, ko, uf, ub, w;
 };
 
-static Mlayin* Tlayin=NULL, layin,*playin;
+static Mlayin* Tlayin=NULL, layin,*playin=NULL;
 // prototype
 void distrib(double *,double,double);
 
@@ -39,7 +39,7 @@ void msailad(Msailin &msailin){
   REEL cspsi, tanto, tants, t1, btran1, btran2;
   REEL bt1, bt2, bt3, sw1, sw2, sbf;
   REEL bto, sko, bts, sks, rtm, ttl, rtp;
-  double u,v,*fbeta;//loi beta
+  double u,v,*fbeta=NULL;//loi beta
  
   /*
     l   : indice foliaire de la couche                                    
@@ -194,7 +194,8 @@ void msailad(Msailin &msailin){
     playin->w=msailin.l[ic]*.01*(msailin.roo[ic]*.01*sw1 + 2*rtp*sw2/pi);
   }//for ic couche
   // mis en comment pour plantage sur sun 11/12/97
-  //delete [] fbeta;
+  // uncomment as fbeta is now initialised to NULL pointer
+  delete [] fbeta;
   printf("msailad() : Fin\n");fflush(stdout);
 }//msailad()
 
