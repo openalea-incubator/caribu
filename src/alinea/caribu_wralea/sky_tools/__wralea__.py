@@ -975,7 +975,7 @@ Genlight = Fa(uid="259cd4834e8511e6bff6d4bed973e64a",
                   {'interface': ISequence, 'name': 'sky object', 'value': None},
                   {'interface': IFileStr, 'name': 'outfile name',
                    'value': 'sky.light'}],
-              outputs=[{'interface': IFileStr, 'name': None}],
+              outputs=[{'interface': IFileStr, 'name': 'res'}],
               widgetmodule=None,
               widgetclass=None,
               )
