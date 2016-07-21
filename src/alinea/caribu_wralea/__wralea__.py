@@ -22,7 +22,9 @@ CaribuScene = Fa(uid="96612da84e8311e6bff6d4bed973e64a",
                  description='instantiate a CaribuScene object',
                  category='scene.light',
                  nodemodule='alinea.caribu.CaribuScene_nodes',
-                 nodeclass='newCaribuScene')
+                 nodeclass='newCaribuScene',
+                 inputs=[dict(name="in1"), dict(name="in2"), dict(name="in3"), dict(name="in4")],
+                 outputs=[dict(name='obj')])
 
 __all__.append('CaribuScene')
 
@@ -33,6 +35,7 @@ runCaribu = Fa(uid="96612da94e8311e6bff6d4bed973e64a",
                category='scene.light',
                nodemodule='alinea.caribu.CaribuScene_nodes',
                nodeclass='runCaribu',
+               inputs=[dict(name="in1")],
                outputs=[{'name': 'CaribuScene'},
                         {'name': 'aggregated output'},
                         {'name': 'raw (per triangle) output'}],
