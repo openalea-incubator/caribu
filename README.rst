@@ -5,6 +5,11 @@ alinea.caribu
 .. {# pkglts, doc
 
 
+.. image:: https://readthedocs.org/projects/caribu/badge/?version=latest
+    :alt: Documentation status
+    :target: https://caribu.readthedocs.io/en/latest/?badge=latest
+
+
 .. image:: https://travis-ci.org/openalea-incubator/caribu.svg?branch=master
     :alt: Travis build status
     :target: https://travis-ci.org/openalea-incubator/caribu

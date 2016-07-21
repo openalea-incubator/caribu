@@ -10,9 +10,9 @@
       [
         "Christian Fournier", 
         "Christian.Fournier@supagro.inra.fr"
-      ],
+      ], 
       [
-        "Michael Chelle",
+        "Michael Chelle", 
         "michael.chelle@grignon.inra.fr"
       ]
     ], 
@@ -27,7 +27,7 @@
     "keywords": []
   }, 
   "github": {
-    "owner": "openalea-incubator",
+    "owner": "openalea-incubator", 
     "project": "{{ base.pkgname }}", 
     "url": "https://github.com/{{ github.owner }}/{{ github.project }}"
   }, 
@@ -41,9 +41,23 @@
     "intended_versions": [
       "27"
     ], 
-    "require": [["git", "openalea/deploy"],
-                ["git", "openalea/sconsx"],
-                [null, "path.py"]]
+    "require": [
+      [
+        "git", 
+        "openalea/deploy"
+      ], 
+      [
+        "git", 
+        "openalea/sconsx"
+      ], 
+      [
+        null, 
+        "path.py"
+      ]
+    ]
+  }, 
+  "readthedocs": {
+    "project": "{{ github.project }}"
   }, 
   "sphinx": {
     "autodoc_dvlpt": true, 
