@@ -60,9 +60,11 @@ setup_kwds = dict(
         ],
     tests_require=[
         "coverage",
+        "flake8",
         "mock",
         "nose",
         "sphinx",
+        "coveralls",
         ],
     entry_points={},
     keywords='',

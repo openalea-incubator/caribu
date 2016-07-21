@@ -21,16 +21,19 @@
     "url": null
   }, 
   "coverage": {}, 
+  "coveralls": {}, 
   "data": {}, 
   "doc": {
     "description": "Python/Visualea interface to Caribu Light model", 
     "keywords": []
   }, 
+  "flake8": {}, 
   "github": {
     "owner": "openalea-incubator", 
     "project": "{{ base.pkgname }}", 
     "url": "https://github.com/{{ github.owner }}/{{ github.project }}"
   }, 
+  "landscape": {}, 
   "license": {
     "name": "INRA_License_agreement", 
     "organization": "OpenAlea", 

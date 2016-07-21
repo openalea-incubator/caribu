@@ -40,9 +40,11 @@ install:
   - pip install git+https://github.com/openalea/sconsx
   - conda install path.py
   - conda install coverage
+  - conda install flake8
   - conda install mock
   - conda install nose
   - conda install sphinx
+  - pip install coveralls
 
   - python setup.py install
 # #}
@@ -55,5 +57,5 @@ script:
 
 after_success:
 # {# pkglts, travis.after
-
+- coveralls
 # #}

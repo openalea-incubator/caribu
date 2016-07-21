@@ -14,6 +14,16 @@ alinea.caribu
     :alt: Travis build status
     :target: https://travis-ci.org/openalea-incubator/caribu
 
+
+.. image:: https://coveralls.io/repos/github/openalea-incubator/caribu/badge.svg?branch=master
+    :alt: Coverage report status
+    :target: https://coveralls.io/github/openalea-incubator/caribu?branch=master
+
+
+.. image:: https://landscape.io/github/openalea-incubator/caribu/master/landscape.svg?style=flat
+    :alt: Code health status
+    :target: https://landscape.io/github/openalea-incubator/caribu/master
+
 .. #}
 
 What is Caribu ?

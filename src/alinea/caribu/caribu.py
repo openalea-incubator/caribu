@@ -452,7 +452,7 @@ def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
         screen_size: (int) buffer size for projection images (pixels)
 
     Returns:
-       a {band_name: {property_name:property_values} } dict of dict) with  properties:
+       a ({band_name: {property_name:property_values} } dict of dict) with  properties:
           - index(int) : the indices of the input triangles present in outputs ?
           - label(str) : the internal barcode (canlabel) used by caribu (for debugging)
           - area (float): the individual areas of triangles
