@@ -11,7 +11,8 @@
 # ==============================================================================
 """ 3D display of caribu objects
 """
-from matplotlib import pyplot, mpl
+import matplotlib as mpl
+from matplotlib import pyplot
 
 
 try:

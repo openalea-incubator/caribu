@@ -1,4 +1,5 @@
-from matplotlib import pyplot, mpl
+import matplotlib as mpl
+from matplotlib import pyplot
 
 def colorScale(minval, maxval, label):
     '''    Produce an plot of the colorscale used by ViewMapOnCan when gamma == 1

@@ -1,3 +1,19 @@
+import sys
+from mock import Mock as MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ['scipy',
+
+                'openalea',
+                'openalea.core',
+                'openalea.mtg', 'openalea.mtg.mtg',
+                'openalea.plantgl', 'openalea.plantgl.all']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 # {# pkglts, sphinx
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
