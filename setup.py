@@ -10,7 +10,6 @@ from os.path import join as pj
 
 from setuptools import setup, find_packages
 
-
 short_descr = "Python/Visualea interface to Caribu Light model"
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
@@ -52,7 +51,7 @@ setup_kwds = dict(
 
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    
+
     include_package_data=True,
     package_data={'caribu_data': data_files},
     install_requires=[
@@ -73,10 +72,12 @@ setup_kwds = dict(
 # #}
 # change setup_kwds below before the next pkglts tag
 
-build_prefix = "build-scons"
-setup_kwds['scons_scripts'] = ['SConstruct']
-setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
-setup_kwds['entry_points']['wralea'] = ['caribu = alinea.caribu_wralea']
+#build_prefix = "build-scons"
+#setup_kwds['scons_scripts'] = ['SConstruct']
+#setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
+setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
+setup_kwds['entry_points']["console_scripts"] = []
+setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
 
 # do not change things below
 # {# pkglts, pysetup.call
