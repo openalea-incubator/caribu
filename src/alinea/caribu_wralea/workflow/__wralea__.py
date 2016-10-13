@@ -7,9 +7,9 @@ __editable__ = True
 __description__ = ' Caribu package '
 __license__ = ''
 __url__ = ''
-__alias__ = []
+__alias__ = ['alinea.caribu']
 __version__ = '0.0.4'
-__authors__ = 'M. Chelle,C. Fournier'
+__authors__ = 'M. Chelle,C. Fournier, C. Pradal'
 __institutes__ = 'INRA'
 __icon__ = ''
 

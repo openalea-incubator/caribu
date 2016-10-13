@@ -8,9 +8,9 @@ __editable__ = True
 __description__ = ' Caribu package '
 __license__ = ''
 __url__ = ''
-__alias__ = ['Caribu']
+__alias__ = ['Caribu', 'alinea.caribu.workflow']
 __version__ = '0.0.4'
-__authors__ = 'M. Chelle,C. Fournier'
+__authors__ = 'M. Chelle,C. Fournier, C. Pradal'
 __institutes__ = 'INRA'
 __icon__ = 'Caribou.png'
 
@@ -317,66 +317,66 @@ __all__.append('light_source')
 
 # moved nodes. Re-declared here to help update by user
 
-ZenithPar = Fa(uid="96612db84e8311e6bff6d4bed973e64a",
-               name='CaribuZenithPar',
-               description='This node is not functional. '
-                           'Use workflow/CaribuZenithPar instead',
-               nodemodule='alinea.caribu.moved_nodes',
-               nodeclass='CaribuZenithPar',
-               category='Unclassified',
-               doc='',
-               inputs=[
-                   {'desc': '', 'interface': IData, 'name': 'CanScene',
-                    'value': None},
-                   {'desc': '', 'interface': ISequence, 'name': 'Pattern',
-                    'value': None},
-                   {'desc': '', 'interface': IEnumStr, 'name': 'scene_unit',
-                    'value': None}],
-               outputs=[
-                   {'desc': '', 'interface': None, 'name': 'CaribuScene'},
-                   {'desc': '', 'interface': None, 'name': 'CaribuOutDict'},
-                   {'desc': '', 'interface': None,
-                    'name': 'sceneid_to_caribu_id'}])
+# ZenithPar = Fa(uid="96612db84e8311e6bff6d4bed973e64a",
+#                name='CaribuZenithPar',
+#                description='This node is not functional. '
+#                            'Use workflow/CaribuZenithPar instead',
+#                nodemodule='alinea.caribu.moved_nodes',
+#                nodeclass='CaribuZenithPar',
+#                category='Unclassified',
+#                doc='',
+#                inputs=[
+#                    {'desc': '', 'interface': IData, 'name': 'CanScene',
+#                     'value': None},
+#                    {'desc': '', 'interface': ISequence, 'name': 'Pattern',
+#                     'value': None},
+#                    {'desc': '', 'interface': IEnumStr, 'name': 'scene_unit',
+#                     'value': None}],
+#                outputs=[
+#                    {'desc': '', 'interface': None, 'name': 'CaribuScene'},
+#                    {'desc': '', 'interface': None, 'name': 'CaribuOutDict'},
+#                    {'desc': '', 'interface': None,
+#                     'name': 'sceneid_to_caribu_id'}])
 
-__all__.append('ZenithPar')
+# __all__.append('ZenithPar')
 
-ZenithParSoil = Fa(uid="96612db94e8311e6bff6d4bed973e64a",
-                   name='CarribuZenithParSoil',
-                   description='This node is not functional.'
-                               ' Use workflow/CaribuZenithParSoil instead',
-                   nodemodule='alinea.caribu.moved_nodes',
-                   nodeclass='CaribuZenithPar',
-                   category='Unclassified',
-                   doc='',
-                   inputs=[
-                       {'desc': '', 'interface': IData, 'name': 'CanScene',
-                        'value': None},
-                       {'desc': '', 'interface': ISequence, 'name': 'Pattern',
-                        'value': None},
-                       {'desc': '', 'interface': IEnumStr, 'name': 'scene_unit',
-                        'value': None}],
-                   outputs=[
-                       {'desc': '', 'interface': None, 'name': 'CaribuScene'},
-                       {'desc': '', 'interface': None, 'name': 'CaribuOutDict'},
-                       {'desc': '', 'interface': None,
-                        'name': 'sceneid_to_caribu_id'}])
+# ZenithParSoil = Fa(uid="96612db94e8311e6bff6d4bed973e64a",
+#                    name='CarribuZenithParSoil',
+#                    description='This node is not functional.'
+#                                ' Use workflow/CaribuZenithParSoil instead',
+#                    nodemodule='alinea.caribu.moved_nodes',
+#                    nodeclass='CaribuZenithPar',
+#                    category='Unclassified',
+#                    doc='',
+#                    inputs=[
+#                        {'desc': '', 'interface': IData, 'name': 'CanScene',
+#                         'value': None},
+#                        {'desc': '', 'interface': ISequence, 'name': 'Pattern',
+#                         'value': None},
+#                        {'desc': '', 'interface': IEnumStr, 'name': 'scene_unit',
+#                         'value': None}],
+#                    outputs=[
+#                        {'desc': '', 'interface': None, 'name': 'CaribuScene'},
+#                        {'desc': '', 'interface': None, 'name': 'CaribuOutDict'},
+#                        {'desc': '', 'interface': None,
+#                         'name': 'sceneid_to_caribu_id'}])
 
-__all__.append('ZenithParSoil')
+# __all__.append('ZenithParSoil')
 
-LIE = Fa(uid="9774ebb24e8311e6bff6d4bed973e64a",
-         name='LIE',
-         description='This node is not functional.'
-                     ' Use workflow/LIE instead',
-         nodemodule='alinea.caribu.moved_nodes',
-         nodeclass='LIE',
-         inputs=[
-             {'desc': '', 'interface': IData, 'name': 'CaribuScene',
-              'value': None},
-             {'desc': '', 'interface': None, 'name': 'EnergyDict',
-              'value': None}],
-         outputs=[
-             {'desc': '', 'interface': None, 'name': 'Efficience'},
-             {'desc': '', 'interface': None, 'name': 'Total sol'},
-             {'desc': '', 'interface': None, 'name': 'Total Incident'}])
+# LIE = Fa(uid="9774ebb24e8311e6bff6d4bed973e64a",
+#          name='LIE',
+#          description='This node is not functional.'
+#                      ' Use workflow/LIE instead',
+#          nodemodule='alinea.caribu.moved_nodes',
+#          nodeclass='LIE',
+#          inputs=[
+#              {'desc': '', 'interface': IData, 'name': 'CaribuScene',
+#               'value': None},
+#              {'desc': '', 'interface': None, 'name': 'EnergyDict',
+#               'value': None}],
+#          outputs=[
+#              {'desc': '', 'interface': None, 'name': 'Efficience'},
+#              {'desc': '', 'interface': None, 'name': 'Total sol'},
+#              {'desc': '', 'interface': None, 'name': 'Total Incident'}])
 
-__all__.append('LIE')
+# __all__.append('LIE')
