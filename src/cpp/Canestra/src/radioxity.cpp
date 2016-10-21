@@ -121,7 +121,8 @@ int main(int argc,char **argv){
           denv+=x*x;
       }
     
-      denv=sqrt(denv)/2.;
+      //denv=sqrt(denv)/2.;
+      denv = sqrt(denv); // CF 2016, denv is the sphere radius, that should be equal to the scene box diagonal
       Ferr <<"<*> Full-matrix case: denv<0 ==> denv="  << denv<<"\n" ;
     }
     clock.Stop();
