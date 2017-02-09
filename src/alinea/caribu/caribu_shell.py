@@ -12,7 +12,7 @@
 """ Chaine les appel de s2v, mcsail et canestra, comme le fait cpfg via caribu
     Syntaxe: caribu.csh Ds file.light file.can nz h file.8 file1.opt ... fileN.opt
 
-  Exemple /home/tld/chelle/QHS/Calgary/dev/Canestra/MC-SAIL/Test 
+  Exemple /home/tld/chelle/QHS/Calgary/dev/Canestra/MC-SAIL/Test
   caribu.csh 0.2 sky2.light Tout.can 3 18 Tout.8 test nir par
 
   MC98
@@ -25,12 +25,17 @@ import os
 from subprocess import Popen, STDOUT, PIPE
 import tempfile
 import platform
-from path import path
-
+try:
+    from path import path
+except ImportError:
+    try:
+        from openalea.core.path import path
+    except ImportError:
+        from IPython.external.path import path
 
 def _process(cmd, directory, out):
-    """ 
-    Run a process in a shell. 
+    """
+    Run a process in a shell.
     Return the outputs in a file or string.
     """
     # print ">> caribu.py: process(%s) called..."%(cmd)
@@ -114,13 +119,13 @@ class Caribu(object):
                  ):
         """
         Class fo Nested radiosity illumination on a 3D scene.
-        
+
         canfile: file '.can' (or file content) representing 3d scene
         skyfile: file/file content containing all the light description
         optfiles: list of files/files contents defining optical property
         optnames: list of name to be used as keys for output dict (if None use the name of the opt files or
         the generic names band0,band1 if optfiles are given as content)
-        patternfile: file/file content that defines a domain to till the scene. 
+        patternfile: file/file content that defines a domain to till the scene.
         direct: consider only direct projection
         infinitise: Consider a toric canopy (infinite). Needs a pattern to take effet
         nb_layers: number of layers to be consider for the scene
@@ -559,9 +564,9 @@ def vcaribu(canopy, lightsource, optics, pattern, options):
     """
 
     sim = Caribu(resdir=None, resfile=None)  # no output on disk
-    # --canfile 
+    # --canfile
     sim.scene = canopy
-    # --optics 
+    # --optics
     sim.opticals = optics
     # --skyfile
     sim.sky = lightsource
@@ -604,7 +609,7 @@ def vcaribu(canopy, lightsource, optics, pattern, options):
 def vperiodise(canopy, pattern):
     """ low level interface to periodise. return modified canopy in can format """
     sim = Caribu(resdir=None, resfile=None)  # no output on disk
-    # --canfile 
+    # --canfile
     sim.scene = canopy
     # --pattern
     sim.pattern = pattern
@@ -694,19 +699,19 @@ mv *.log temp/
 setenv Sc /tmp/virtualis.can
 
 #
-if ( $#argv < 7 ) then 
+if ( $#argv < 7 ) then
  echo "Syntax error: caribu.csh Ds file.light file.can nz h file.8 file1.opt [... fileN.opt]"
 else
- 
+
 # Periodise (caribu le fait il ?)
-# 
+#
   echo "periodise"  -m $argv[3] -8 $argv[6] -o $Sc
  periodise -m $argv[3] -8 $argv[6] -o $Sc
 # S2V
  echo "s2v" $argv[3-]
  #s2v $argv[3-] >& s2v.log
  s2v $Sc $argv[4-] >& s2v.log
- if( $status != 0) then 
+ if( $status != 0) then
    echo "S2V a plante!"
    exit(-1)
  endif # Loop sur le p.o.
@@ -717,7 +722,7 @@ else
    cp $po".spec" spectral
    echo "  mcsail" $argv[2]
    mcsail $argv[2]>& sail-$po.log
-   if( $status != 0) then 
+   if( $status != 0) then
     echo "Sail a plante!"
     exit(-1)
    endif
@@ -726,18 +731,18 @@ else
    date
    if ( $i == 1 ) then
       ## 1ere fois: calcul des FF et Bfar
-      echo "Appel no. "$i ": canestrad" -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r  $argv[1] -1   
-       canestrad -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r $argv[1]  -t /tmp/ -f caribu -v 2 >& nr-$po.log  
+      echo "Appel no. "$i ": canestrad" -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r  $argv[1] -1
+       canestrad -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r $argv[1]  -t /tmp/ -f caribu -v 2 >& nr-$po.log
   else
       ## ie fois: pas de calcul des FF et Bfar
-      echo "Appel no. "$i ": canestrad" -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r  $argv[1] -1   
-       canestrad -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r $argv[1]    -t /tmp/ -w caribu  -v 2>& nr-$po.log 
+      echo "Appel no. "$i ": canestrad" -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r  $argv[1] -1
+       canestrad -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r $argv[1]    -t /tmp/ -w caribu  -v 2>& nr-$po.log
   # nr-$po'_'$i.log
   endif
   date
   cp E0.dat E_$po.dat
   cp B.dat B_$po.dat
-  echo " " 
+  echo " "
  @ i = $i  + 1
  end
  # \rm leafarea spectral cropchar
@@ -747,7 +752,7 @@ endif
 
 ### Trucs & Astuces
 #
-# $status = variable de retour 
+# $status = variable de retour
 #
 # Exemple de calcul en variable Cshell
 #setenv c `cat $1|wc -w`
