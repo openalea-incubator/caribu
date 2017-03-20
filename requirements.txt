@@ -5,6 +5,6 @@
 
 # openalea/deploy
 # openalea/sconsx
-path.py
+path.py=8.2.1
 
 # #}
