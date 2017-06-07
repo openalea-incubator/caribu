@@ -79,6 +79,7 @@ setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
 setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
 setup_kwds['entry_points']["console_scripts"] = []
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
+setup_kwds['namespace_packages']=['alinea']
 
 # do not change things below
 # {# pkglts, pysetup.call
