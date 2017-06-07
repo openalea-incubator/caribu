@@ -1,76 +1,76 @@
 {
   "_pkglts": {
-    "auto_install": true, 
-    "install_front_end": "stdout", 
-    "use_prompts": false, 
+    "auto_install": true,
+    "install_front_end": "stdout",
+    "use_prompts": false,
     "version": 3
-  }, 
+  },
   "base": {
     "authors": [
       [
-        "Christian Fournier", 
+        "Christian Fournier",
         "Christian.Fournier@supagro.inra.fr"
-      ], 
+      ],
       [
-        "Michael Chelle", 
+        "Michael Chelle",
         "michael.chelle@grignon.inra.fr"
       ]
-    ], 
-    "namespace": "alinea", 
-    "pkgname": "caribu", 
+    ],
+    "namespace": "alinea",
+    "pkgname": "caribu",
     "url": null
-  }, 
-  "coverage": {}, 
-  "coveralls": {}, 
-  "data": {}, 
+  },
+  "coverage": {},
+  "coveralls": {},
+  "data": {},
   "doc": {
-    "description": "Python/Visualea interface to Caribu Light model", 
+    "description": "Python/Visualea interface to Caribu Light model",
     "keywords": []
-  }, 
-  "flake8": {}, 
+  },
+  "flake8": {},
   "github": {
-    "owner": "openalea-incubator", 
-    "project": "{{ base.pkgname }}", 
+    "owner": "openalea-incubator",
+    "project": "{{ base.pkgname }}",
     "url": "https://github.com/{{ github.owner }}/{{ github.project }}"
-  }, 
-  "landscape": {}, 
+  },
+  "landscape": {},
   "license": {
-    "name": "INRA_License_agreement", 
-    "organization": "OpenAlea", 
-    "project": "{{ base.pkgname }}", 
+    "name": "INRA_License_agreement",
+    "organization": "OpenAlea",
+    "project": "{{ base.pkgname }}",
     "year": 2016
-  }, 
+  },
   "pysetup": {
     "intended_versions": [
       "27"
-    ], 
+    ],
     "require": [
       [
-        "git", 
+        "git",
         "openalea/deploy"
-      ], 
+      ],
       [
-        "git", 
+        "git",
         "openalea/sconsx"
-      ], 
+      ],
       [
-        null, 
-        "path.py"
+        null,
+        "path.py=8.2.1"
       ]
     ]
-  }, 
+  },
   "readthedocs": {
     "project": "{{ github.project }}"
-  }, 
+  },
   "sphinx": {
-    "autodoc_dvlpt": true, 
+    "autodoc_dvlpt": true,
     "theme": "default"
-  }, 
-  "test": {}, 
-  "travis": {}, 
+  },
+  "test": {},
+  "travis": {},
   "version": {
-    "major": 7, 
-    "minor": 0, 
+    "major": 7,
+    "minor": 0,
     "post": 0
   }
 }
