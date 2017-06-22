@@ -106,6 +106,7 @@ class Caribu(object):
                  skyfile=None,
                  optfiles=None,
                  patternfile=None,
+                 sensorfile=None,
                  optnames=None,
                  direct=True,
                  infinitise=True,
@@ -123,6 +124,7 @@ class Caribu(object):
         canfile: file '.can' (or file content) representing 3d scene
         skyfile: file/file content containing all the light description
         optfiles: list of files/files contents defining optical property
+        sensorfile: file or file content with virtual sensor positions
         optnames: list of name to be used as keys for output dict (if None use the name of the opt files or
         the generic names band0,band1 if optfiles are given as content)
         patternfile: file/file content that defines a domain to till the scene.
@@ -151,6 +153,7 @@ class Caribu(object):
         self.sky = skyfile
         self.opticals = optfiles
         self.pattern = patternfile
+        self.sensor = sensorfile
 
         # User options
         self.optnames = optnames
@@ -188,6 +191,7 @@ class Caribu(object):
             optnames %s
             opticals %s
             pattern %s
+            sensor %s
             infinity %s
             direct %s
             nb_layers %s
@@ -200,7 +204,7 @@ class Caribu(object):
             periodise: %s
             s2v: %s
         """ % (_abrev(self.scene), _abrev(self.sky), ' '.join(map(str, _safe_iter(self.optnames))),
-               ''.join(map(_abrev, _safe_iter(self.opticals))), self.pattern, self.infinity, self.direct,
+               ''.join(map(_abrev, _safe_iter(self.opticals))), self.pattern,_abrev(self.sensor),  self.infinity, self.direct,
                self.nb_layers, self.can_height, self.sphere_diameter, self.form_factor, self.canestra_name,
                self.sail_name, self.periodise_name, self.s2v_name)
         if self.my_dbg:
@@ -245,6 +249,9 @@ class Caribu(object):
 
         # nrj is a dictionary of dictionary, each containing one simulation outputs. There will be as much dictionaries as optical files given as input
         self.nrj = {}
+        # sensor measurements
+        self.measures = {}
+
         if self.my_dbg:
             self.show("Caribu::init()")
 
@@ -324,6 +331,15 @@ class Caribu(object):
                     fn.write_text(self.pattern)
                 self.pattern = path(fn.basename())
 
+        if self.sensor is not None:
+            if os.path.exists(self.sensor):
+                fn = path(self.sensor)
+                fn.copy(d / fn.basename())
+            else:
+                fn = d / 'sensor.can'
+                fn.write_text(self.sensor)
+            self.sensor = path(fn.basename())
+
         if not skip_opt:
             optn = map(lambda (x): x + '.opt', _safe_iter(self.optnames))
             try:
@@ -379,6 +395,18 @@ class Caribu(object):
         f.close()
         data = {'index': idx, 'label': label, 'area': area, 'Eabs': Eabs, 'Ei_sup': Ei_sup, 'Ei_inf': Ei_inf}
         self.nrj[band_name] = {'doc': doc, 'data': data}
+
+    def store_sensor(self, filename, band_name):
+        id, eio, ei, area = [], [], [], []
+        with open(filename, 'r') as handle:
+            for line in handle:
+                elements = line.split()
+                floats = [float(el) for el in elements]
+                id.append(floats[0])
+                eio.append(floats[1])
+                ei.append(floats[2])
+                area.append(floats[3])
+        self.measures[band_name] = {'sensor_id': id, 'Ei0': eio, 'Ei': ei, 'area': area}
 
     def run(self):
         """
@@ -490,7 +518,7 @@ class Caribu(object):
         optname, ext = path(opt.basename()).splitext()
         if self.my_dbg:
             print optname
-        str_pattern = str_direct = str_FF = str_diam = str_env = ""
+        str_pattern = str_direct = str_FF = str_diam = str_env = str_sensor = ""
 
         if self.infinity:
             str_pattern = " -8 %s " % (self.pattern)
@@ -510,17 +538,25 @@ class Caribu(object):
             if self.sphere_diameter >= 0:
                 str_env = " -e %s.env " % (optname)
 
+        if self.sensor is not None:
+            str_sensor = " -C %s " % (self.sensor)
+
         str_img = "-L %d" % (self.img_size)
 
-        cmd = "%s -M %s -l %s -p %s -A %s %s %s %s %s %s " % (
-            self.canestra_name, self.scene, self.sky, opt, str_pattern, str_direct, str_diam, str_FF, str_env, str_img)
+        cmd = "%s -M %s -l %s -p %s -A %s %s %s %s %s %s %s " % (
+            self.canestra_name, self.scene, self.sky, opt, str_pattern, str_direct, str_diam, str_FF, str_env, str_img, str_sensor)
         if self.my_dbg:
             print(">>> Canestrad(): %s" % (cmd))
         status = _process(cmd, self.tempdir, d / "nr.log")
 
         ficres = d / 'Etri.vec0'
+        ficsens = d / 'solem.dat'
         if ficres.exists():
             self.store_result(ficres, str(optname))
+
+            if self.sensor is not None:
+                if ficsens.exists():
+                    self.store_sensor(ficsens, str(optname))
 
             if self.resdir is not None:
                 # copy result files
@@ -528,6 +564,12 @@ class Caribu(object):
                 if self.my_dbg:
                     print fdest
                 ficres.move(self.resdir / fdest)
+
+                if self.sensor is not None:
+                    fdest = path(optname + ".sens")
+                    if self.my_dbg:
+                        print fdest
+                    ficsens.move(self.resdir / fdest)
         else:
             f = open(d / "nr.log")
             msg = f.readlines()
