@@ -20,8 +20,7 @@ conf.UpdateOptions(options)
 # tools = ['opengl']
 # env = config.ALEASolution(options, tools)
 # oldies
-env = Environment(options=options)
-
+env = Environment(ENV = os.environ, options=options)
 conf.Update(env)
 
 # Generate Help available with the cmd scons -h
