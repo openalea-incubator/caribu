@@ -9,11 +9,15 @@
     "authors": [
       [
         "Christian Fournier",
-        "Christian.Fournier@supagro.inra.fr"
+        "Christian.Fournier@inra.fr"
       ],
       [
         "Michael Chelle",
-        "michael.chelle@grignon.inra.fr"
+        "michael.chelle@inra.fr"
+      ],
+      [
+        "Christophe Pradal",
+        "christophe pradal at cirad fr"
       ]
     ],
     "namespace": "alinea",
@@ -54,7 +58,7 @@
         "openalea/sconsx"
       ],
       [
-        null,
+        "pip",
         "path.py=8.2.1"
       ]
     ]
