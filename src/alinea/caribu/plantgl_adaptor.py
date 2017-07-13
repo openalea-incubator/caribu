@@ -24,9 +24,12 @@ def pgl_to_triangles(pgl_object, tesselator=None):
         tesselator = pgl.Tesselator()
     pgl_object.apply(tesselator)
     mesh = tesselator.triangulation
-    pts = numpy.array(mesh.pointList, ndmin=2)
-    indices = numpy.array(mesh.indexList, ndmin=2)
-    return [_triangle(itri, pts) for itri in indices]
+    if mesh:
+        pts = numpy.array(mesh.pointList, ndmin=2)
+        indices = numpy.array(mesh.indexList, ndmin=2)
+        return [_triangle(itri, pts) for itri in indices]
+    else:
+        return []
 
 
 def scene_to_cscene(scene):
@@ -44,7 +47,9 @@ def scene_to_cscene(scene):
     cscene = {}
     tesselator = pgl.Tesselator()
     for pid, pgl_object in enumerate(scene):
-        cscene[pid] = pgl_to_triangles(pgl_object, tesselator)
+        triangles = pgl_to_triangles(pgl_object, tesselator)
+        if triangles:
+            cscene[pid] = triangles
 
     return cscene
 
