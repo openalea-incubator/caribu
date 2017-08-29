@@ -1,7 +1,8 @@
 """
 Utilities to create lights
 """
-from math import radians, sin, cos
+from numpy import radians, sin, cos, array
+from collections import Sequence
 
 elevations = [9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 10.81, 10.81, 10.81, 10.81, 10.81, 26.57,
               26.57, 26.57, 26.57, 26.57, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 47.41,
@@ -70,9 +71,39 @@ def turtle(sectors='46', format='soc', energy=1.):
 
 
 def vecteur_direction(elevation, azimuth):
-    theta = radians(90 - elevation)
+    """ coordinate of look_at source vector from elevation and azimuth (deg, f
+    rom X+ positive counter-clockwise)"""
+    theta = radians(90 - array(elevation))
     phi = radians(azimuth)
-    return sin(theta) * cos(phi), sin(theta) * sin(phi), -cos(theta)
+    return -sin(theta) * cos(phi), -sin(theta) * sin(phi), -cos(theta)
+
+
+def light_sources(elevation, azimuth, irradiance, orientation=0):
+    """Create caribu light sources
+
+    Args:
+        elevation: (array-like) elevation angle (degree, positive) from
+         horizontal of sources
+        azimuth: (array-like) : azimuth angle (degree, from North, positive
+         clockwards) of sources
+        irradiance: (array-like): horizontal irradiance of sources
+        orientation: (float)  the angle (deg, positive clockwise) from X+ to
+         North (default: 0)
+
+    Returns:
+        a list of (irradiance, (x, y, z)) tuples
+    """
+    if not isinstance(elevation, Sequence):
+        elevation = [elevation]
+    if not isinstance(azimuth, Sequence):
+        azimuth = [azimuth]
+    if not isinstance(irradiance, Sequence):
+        irradiance = [irradiance]
+    az = -(array(azimuth) + orientation)
+    x, y, z = vecteur_direction(elevation, az)
+    return [(irr, (xx, yy, zz)) for irr, xx, yy, zz in
+            zip(array(irradiance), array(x), array(y), array(z))]
+
 
 def light_source(horizontal_irradiance, elevation, azimuth):
     """ return a  punctual infinite light source for caribu
