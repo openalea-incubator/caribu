@@ -39,6 +39,7 @@ install:
   - pip install git+https://github.com/openalea/deploy
   - pip install git+https://github.com/openalea/sconsx
   - conda install path.py==8.2.1
+  - conda install numpy
   - conda install coverage
   - conda install flake8
   - conda install mock
