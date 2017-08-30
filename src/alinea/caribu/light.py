@@ -1,8 +1,7 @@
 """
 Utilities to create lights
 """
-from numpy import radians, sin, cos, array
-from collections import Sequence
+from numpy import radians, sin, cos, array, ndarray
 
 elevations = [9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 9.23, 10.81, 10.81, 10.81, 10.81, 10.81, 26.57,
               26.57, 26.57, 26.57, 26.57, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 31.08, 47.41,
@@ -93,11 +92,11 @@ def light_sources(elevation, azimuth, irradiance, orientation=0):
     Returns:
         a list of (irradiance, (x, y, z)) tuples
     """
-    if not isinstance(elevation, Sequence):
+    if not isinstance(elevation, (list, tuple, ndarray)):
         elevation = [elevation]
-    if not isinstance(azimuth, Sequence):
+    if not isinstance(azimuth, (list, tuple, ndarray)):
         azimuth = [azimuth]
-    if not isinstance(irradiance, Sequence):
+    if not isinstance(irradiance, (list, tuple, ndarray)):
         irradiance = [irradiance]
     az = -(array(azimuth) + orientation)
     x, y, z = vecteur_direction(elevation, az)
