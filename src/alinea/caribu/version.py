@@ -15,7 +15,7 @@
 
 major = 1
 minor = 4
-post = 3
+post = 4
 
 __version__ = ".".join([str(s) for s in (major, minor, post)])
 # #}
