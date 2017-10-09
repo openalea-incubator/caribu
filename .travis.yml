@@ -38,7 +38,7 @@ install:
 
   - conda install -c openalea openalea.deploy==2.0.0
   - conda install -c openalea openalea.sconsx
-  - conda install path.py==8.2.1
+  - conda install path.py
   - conda install numpy
   - conda install coverage
   - conda install flake8
