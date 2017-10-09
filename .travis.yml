@@ -36,11 +36,8 @@ install:
   - source activate myenv
 
 
-  - git clone https://github.com/openalea/deploy
-  - cd deploy; python setup.py install; cd ..
-  - conda install -c openalea scons
-  - git clone https://github.com/openalea/sconsx
-  - cd sconsx; python setup.py install; cd ..
+  - conda install -c openalea openalea.deploy==2.0.0
+  - conda install -c openalea openalea.sconsx
   - conda install path.py
   - conda install numpy
   - conda install coverage
