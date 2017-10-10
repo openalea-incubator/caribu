@@ -92,6 +92,20 @@ if run_test:
         return cs
 
 
+    def test_bbox():
+        s = pgl.Scene()
+        s.add(pgl.Sphere())
+        cs = CaribuScene(scene=s)
+        bbox = cs.bbox()
+        assert bbox == ((-0.5, -0.5, -0.5), (0.5, 0.5, 0.5))
+        points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        triangles = [points]
+        pyscene = {'t1': triangles}
+        cs = CaribuScene(scene=pyscene)
+        bbox = cs.bbox()
+        assert bbox == ((0, 0, 0), (1, 1, 0))
+
+
     def test_aggregation():
         # simple case
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]

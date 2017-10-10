@@ -12,6 +12,7 @@
 """ This module defines CaribuScene and CaribuSceneError classes."""
 
 import os
+import numpy
 from itertools import groupby, izip, chain
 from math import sqrt
 
@@ -109,8 +110,7 @@ class CaribuScene(object):
                     list of 3-tuples points coordinates
                     Alternatively, scene can be a *.can file or a mtg with
                     'geometry' property or a plantGL scene.
-                    For the later case, primitive_id is taken as the index of
-                    the shape in the scene shape list.
+                    For the later case, shape.id are used as primitive_id.
             light (list): a list of (Energy, (vx, vy, vz)) tuples defining light
                     sources
                     Alternatively,  a *.light file
@@ -281,6 +281,18 @@ class CaribuScene(object):
                         z_soil = min(z)
                 self.soil = domain_mesh(self.pattern, z_soil, soil_mesh)
 
+    def bbox(self):
+        """ Scene bounding box extreme points
+
+        Returns:
+            two tuples: (xmin, ymin, zmin), (xmax, ymax, zmax)
+        """
+
+        x, y, z = map(numpy.array, zip(*map(lambda x: zip(*x),
+                                            reduce(lambda x, y: x + y,
+                                                   self.scene.values()))))
+        return (x.min(), y.min(), z.min()), (x.max(), y.max(), z.max())
+
     def plot(self, a_property=None, minval=None, maxval=None, gamma=None, display=True):
         """
 
@@ -419,10 +431,9 @@ class CaribuScene(object):
 
         return triangles, groups, materials, bands, albedo
 
-
-
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10,
-            height=None, screen_size=1536, split_face=False, simplify=False):
+            height=None, screen_size=1536, screen_resolution=None,
+            split_face=False, simplify=False):
         """ Compute illumination using the appropriate caribu algorithm
 
         Args:
@@ -436,7 +447,11 @@ class CaribuScene(object):
             layers: (int) the number of horizontal layers for estimating far contributions
             height: (float) the height of the canopy (m).
                     if None (default), the maximal height of the scene is used.
-            screen_size: (int) buffer size for projection images (pixels)
+            screen_size: (int) size of the screen_size x screen_size square
+                    projection screen (pixels)
+            screen_resolution: (float) size (meter) of one pixel on the projection
+             screen. If None(default), screen_size is used. If not None,
+             screen_size is ignored
             split_face: (bool) Whether results of incidence on individual faces
             of triangle should be outputed. Default is False
             simplify: (bool)  Whether results per band should be simplified to
