@@ -281,8 +281,25 @@ class CaribuScene(object):
                         z_soil = min(z)
                 self.soil = domain_mesh(self.pattern, z_soil, soil_mesh)
 
+    def triangle_areas(self, convert=True):
+        """ compute mean area of elementary triangles in the scene
+
+        If convert is true, area is xpressed in meter (scene unit otherwise)"""
+
+        def _surf(triangle):
+            a, b, c = map(numpy.array, triangle)
+            x, y, z = numpy.cross(b - a, c - a).tolist()
+            if convert:
+                return self.conv_unit**2 * numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
+            else:
+                return numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
+
+        return numpy.array(
+            map(_surf, reduce(lambda x, y: x + y, self.scene.values())))
+
+
     def bbox(self):
-        """ Scene bounding box extreme points
+        """ Scene bounding box opposite corner points
 
         Returns:
             two tuples: (xmin, ymin, zmin), (xmax, ymax, zmax)
@@ -292,6 +309,14 @@ class CaribuScene(object):
                                             reduce(lambda x, y: x + y,
                                                    self.scene.values()))))
         return (x.min(), y.min(), z.min()), (x.max(), y.max(), z.max())
+
+    def auto_screen(self, screen_resolution):
+        pix = screen_resolution * self.conv_unit
+        (xmin, ymin, zmin), (xmax, ymax, zmax) = self.bbox()
+        xres = int((xmax - xmin) / pix)
+        yres = int((ymax - ymin) / pix)
+        zres = int((ymax - ymin) / pix)
+        return max(2, xres, yres, zres)
 
     def plot(self, a_property=None, minval=None, maxval=None, gamma=None, display=True):
         """
@@ -532,6 +557,10 @@ class CaribuScene(object):
             if infinite and self.pattern is None:
                 raise ValueError(
                     'infinite canopy illumination needs a pattern to be defined')
+
+            if screen_resolution is not None:
+                screen_size = self.auto_screen(screen_resolution)
+                print 'adjusted projection screen size: ' + str(screen_size)
 
             if not direct and infinite:  # mixed radiosity
                 out = algos['mixed_radiosity'](triangles, materials,
