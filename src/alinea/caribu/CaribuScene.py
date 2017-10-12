@@ -313,10 +313,9 @@ class CaribuScene(object):
     def auto_screen(self, screen_resolution):
         pix = screen_resolution * self.conv_unit
         (xmin, ymin, zmin), (xmax, ymax, zmax) = self.bbox()
-        xres = int((xmax - xmin) / pix)
-        yres = int((ymax - ymin) / pix)
-        zres = int((ymax - ymin) / pix)
-        return max(2, xres, yres, zres)
+        ldiag = numpy.sqrt(
+            (xmax - xmin) ** 2 + (ymax - ymin) ** 2 + (zmax - zmin) ** 2)
+        return max(2, int(ldiag / pix))
 
     def plot(self, a_property=None, minval=None, maxval=None, gamma=None, display=True):
         """
@@ -469,14 +468,14 @@ class CaribuScene(object):
             d_sphere: (float) the diameter (m) of the sphere defining the close
                      neighbourhood of mixed radiosity algorithm
                        if d_sphere = 0, direct + pure layer algorithm is used
-            layers: (int) the number of horizontal layers for estimating far contributions
+            layers: (int) the number of horizontal layers for estimating far
+            contributions
             height: (float) the height of the canopy (m).
                     if None (default), the maximal height of the scene is used.
             screen_size: (int) size of the screen_size x screen_size square
                     projection screen (pixels)
-            screen_resolution: (float) size (meter) of one pixel on the projection
-             screen. If None(default), screen_size is used. If not None,
-             screen_size is ignored
+            screen_resolution: (float) real world size (meter) of a pixel of the
+             projection screen. If None(default), screen_size is used.
             split_face: (bool) Whether results of incidence on individual faces
             of triangle should be outputed. Default is False
             simplify: (bool)  Whether results per band should be simplified to

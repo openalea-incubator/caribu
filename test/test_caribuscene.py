@@ -106,6 +106,20 @@ if run_test:
         assert bbox == ((0, 0, 0), (1, 1, 0))
 
 
+    def test_autoscreen():
+        s = pgl.Scene()
+        s.add(pgl.Sphere())
+        cs = CaribuScene(scene=s)
+        npix = cs.auto_screen(0.01)
+        assert npix == 173
+        points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        triangles = [points]
+        pyscene = {'t1': triangles}
+        cs = CaribuScene(scene=pyscene)
+        npix = cs.auto_screen(0.01)
+        assert npix == 141
+
+
     def test_aggregation():
         # simple case
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
