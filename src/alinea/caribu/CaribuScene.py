@@ -12,6 +12,7 @@
 """ This module defines CaribuScene and CaribuSceneError classes."""
 
 import os
+import numpy
 from itertools import groupby, izip, chain
 from math import sqrt
 
@@ -109,8 +110,7 @@ class CaribuScene(object):
                     list of 3-tuples points coordinates
                     Alternatively, scene can be a *.can file or a mtg with
                     'geometry' property or a plantGL scene.
-                    For the later case, primitive_id is taken as the index of
-                    the shape in the scene shape list.
+                    For the later case, shape.id are used as primitive_id.
             light (list): a list of (Energy, (vx, vy, vz)) tuples defining light
                     sources
                     Alternatively,  a *.light file
@@ -281,6 +281,42 @@ class CaribuScene(object):
                         z_soil = min(z)
                 self.soil = domain_mesh(self.pattern, z_soil, soil_mesh)
 
+    def triangle_areas(self, convert=True):
+        """ compute mean area of elementary triangles in the scene
+
+        If convert is true, area is xpressed in meter (scene unit otherwise)"""
+
+        def _surf(triangle):
+            a, b, c = map(numpy.array, triangle)
+            x, y, z = numpy.cross(b - a, c - a).tolist()
+            if convert:
+                return self.conv_unit**2 * numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
+            else:
+                return numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
+
+        return numpy.array(
+            map(_surf, reduce(lambda x, y: x + y, self.scene.values())))
+
+
+    def bbox(self):
+        """ Scene bounding box opposite corner points
+
+        Returns:
+            two tuples: (xmin, ymin, zmin), (xmax, ymax, zmax)
+        """
+
+        x, y, z = map(numpy.array, zip(*map(lambda x: zip(*x),
+                                            reduce(lambda x, y: x + y,
+                                                   self.scene.values()))))
+        return (x.min(), y.min(), z.min()), (x.max(), y.max(), z.max())
+
+    def auto_screen(self, screen_resolution):
+        pix = screen_resolution * self.conv_unit
+        (xmin, ymin, zmin), (xmax, ymax, zmax) = self.bbox()
+        ldiag = numpy.sqrt(
+            (xmax - xmin) ** 2 + (ymax - ymin) ** 2 + (zmax - zmin) ** 2)
+        return max(2, int(ldiag / pix))
+
     def plot(self, a_property=None, minval=None, maxval=None, gamma=None, display=True):
         """
 
@@ -419,10 +455,9 @@ class CaribuScene(object):
 
         return triangles, groups, materials, bands, albedo
 
-
-
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10,
-            height=None, screen_size=1536, split_face=False, simplify=False):
+            height=None, screen_size=1536, screen_resolution=None,
+            split_face=False, simplify=False):
         """ Compute illumination using the appropriate caribu algorithm
 
         Args:
@@ -433,10 +468,14 @@ class CaribuScene(object):
             d_sphere: (float) the diameter (m) of the sphere defining the close
                      neighbourhood of mixed radiosity algorithm
                        if d_sphere = 0, direct + pure layer algorithm is used
-            layers: (int) the number of horizontal layers for estimating far contributions
+            layers: (int) the number of horizontal layers for estimating far
+            contributions
             height: (float) the height of the canopy (m).
                     if None (default), the maximal height of the scene is used.
-            screen_size: (int) buffer size for projection images (pixels)
+            screen_size: (int) size of the screen_size x screen_size square
+                    projection screen (pixels)
+            screen_resolution: (float) real world size (meter) of a pixel of the
+             projection screen. If None(default), screen_size is used.
             split_face: (bool) Whether results of incidence on individual faces
             of triangle should be outputed. Default is False
             simplify: (bool)  Whether results per band should be simplified to
@@ -517,6 +556,10 @@ class CaribuScene(object):
             if infinite and self.pattern is None:
                 raise ValueError(
                     'infinite canopy illumination needs a pattern to be defined')
+
+            if screen_resolution is not None:
+                screen_size = self.auto_screen(screen_resolution)
+                print 'adjusted projection screen size: ' + str(screen_size)
 
             if not direct and infinite:  # mixed radiosity
                 out = algos['mixed_radiosity'](triangles, materials,
