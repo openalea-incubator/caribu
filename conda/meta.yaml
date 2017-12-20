@@ -1,0 +1,39 @@
+package:
+  name: alinea.caribu
+  version: 7.0.2
+
+source:
+  path: ..
+
+about:
+  home: http://openalea.gforge.inria.fr
+  summary: Eco-physiological model of light interception by plants.
+
+
+build:
+  preserve_egg_dir: True
+  number: 0
+  script: python setup.py install
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - openalea.deploy
+    - openalea.sconsx
+  run:
+    - python
+    - openalea.deploy
+    - path.py ==8.2.1
+    - numpy
+
+test:
+  requires:
+    - nose
+  imports:
+    - alinea.caribu
+  source_files:
+    - test/test_*.py
+  commands:
+   - nosetests -v
+

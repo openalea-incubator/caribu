@@ -1,62 +1,49 @@
-# {# pkglts, travis
-# Config file for automatic testing at travis-ci.org
+language: cpp
 
-language: python
+os:
+  - linux
+  - osx
 
-python:
-  - "2.7"
+sudo: required
 
-# #}
+services:
+  - docker
 
-addons:
-  apt:
-    packages:
-# {# pkglts, travis.addons
-
-# #}
+env:
+ - CONDA_RECIPE=conda
+   CONDA_VERSION=2
+   ANACONDA_UPLOAD=openalea
+   ANACONDA_LABEL=unstable
 
 install:
-# {# pkglts, travis.install
-  # We do this conditionally because it saves us some downloading if the
-  # version is the same.
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-    else
-      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    fi
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  # Useful for debugging any issues with conda
-  - conda info -a
+  - git clone https://github.com/openalea/travis-ci.git
+  - cd travis-ci
+  - source install.sh
+  - conda config --add channels openalea/label/unstable
+  - conda config --add channels openalea
 
-  - conda create -q -n myenv python=$TRAVIS_PYTHON_VERSION
-  - source activate myenv
-
-
-  - conda install -c openalea openalea.deploy==2.0.0
-  - conda install -c openalea openalea.sconsx
-  - conda install path.py==8.2.1
-  - conda install numpy
-  - conda install coverage
-  - conda install flake8
-  - conda install mock
-  - conda install nose
-  - conda install sphinx
-  - pip install coveralls
-
-  - python setup.py install
-# #}
-  - export PATH=$PWD/build/lib/bin:$PATH
+before_script:
+  - source before_script.sh
 
 script:
-# {# pkglts, travis.script
-  - nosetests
-# #}
+  - source script.sh
 
 after_success:
-# {# pkglts, travis.after
-- coveralls
-# #}
+  - source after_success.sh
+
+after_failure:
+  - source after_failure.sh
+
+before_deploy:
+  - source before_deploy.sh
+
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: bash deploy_script.sh
+
+after_deploy:
+  - source after_deploy.sh
+
+after_script:
+  - source after_script.sh
