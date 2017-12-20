@@ -24,7 +24,7 @@ requirements:
   run:
     - python
     - openalea.deploy
-    - path.py ==8.2.1
+    - path.py
     - numpy
 
 test:
