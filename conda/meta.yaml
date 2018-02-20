@@ -30,6 +30,8 @@ requirements:
 test:
   requires:
     - nose
+    - openalea.plantgl
+    - openalea.mtg
   imports:
     - alinea.caribu
   source_files:
