@@ -13,7 +13,6 @@ about:
 build:
   preserve_egg_dir: True
   number: 0
-  script: python setup.py install
 
 requirements:
   build:
@@ -21,6 +20,7 @@ requirements:
     - setuptools
     - openalea.deploy
     - openalea.sconsx
+    - mingw   [win]
   run:
     - python
     - openalea.deploy
@@ -30,6 +30,8 @@ requirements:
 test:
   requires:
     - nose
+    - openalea.plantgl
+    - openalea.mtg
   imports:
     - alinea.caribu
   source_files:

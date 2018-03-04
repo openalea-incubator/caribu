@@ -60,10 +60,10 @@ if run_test:
 
         cs = CaribuScene(scene=s, light=sky, pattern=pattern)
         assert len(cs.scene) == 1
-        assert len(cs.scene[0]) == 112
+        assert len(cs.scene.values()[0]) == 112
         assert len(cs.light) == 2
         assert len(cs.pattern) == 4
-        assert cs.material[cs.default_band][0] == cs.default_material
+        assert cs.material[cs.default_band].values()[0] == cs.default_material
         assert cs.soil_reflectance[
                    cs.default_band] == cs.default_soil_reflectance
 
