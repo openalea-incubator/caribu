@@ -9,7 +9,7 @@ environment:
       CONDA_VERSION: 2
 
 install:
-  - git clone https://github.com/OpenAlea/appveyor-ci.git appveyor-ci
+  - git clone https://github.com/openalea/appveyor-ci.git appveyor-ci
   - cd appveyor-ci
   - call install.bat
 
