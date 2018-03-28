@@ -10,6 +10,7 @@ from os.path import join as pj
 
 from setuptools import setup, find_packages
 
+
 short_descr = "Python/Visualea interface to Caribu Light model"
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
@@ -43,19 +44,19 @@ setup_kwds = dict(
     version=version["__version__"],
     description=short_descr,
     long_description=readme + '\n\n' + history,
-    author="Christian Fournier, Michael Chelle, Christophe Pradal ",
-    author_email="Christian.Fournier@supagro.inra.fr, michael.chelle@grignon.inra.fr, christophe dot pradal _at_ cirad fr ",
+    author="Christian Fournier, Michael Chelle, Christophe Pradal, ",
+    author_email="Christian.Fournier@inra.fr, michael.chelle@inra.fr, christophe pradal at cirad fr, ",
     url='https://github.com/openalea-incubator/caribu',
     license='INRA_License_agreement',
     zip_safe=False,
 
     packages=find_packages('src'),
     package_dir={'': 'src'},
-
+    
     include_package_data=True,
     package_data={'caribu_data': data_files},
     install_requires=[
-        "path.py",
+        "path.py=8.2.1",
         ],
     tests_require=[
         "coverage",
