@@ -60,10 +60,10 @@ if run_test:
 
         cs = CaribuScene(scene=s, light=sky, pattern=pattern)
         assert len(cs.scene) == 1
-        assert len(cs.scene[0]) == 112
+        assert len(cs.scene.values()[0]) == 112
         assert len(cs.light) == 2
         assert len(cs.pattern) == 4
-        assert cs.material[cs.default_band][0] == cs.default_material
+        assert cs.material[cs.default_band].values()[0] == cs.default_material
         assert cs.soil_reflectance[
                    cs.default_band] == cs.default_soil_reflectance
 
@@ -90,6 +90,34 @@ if run_test:
         assert cs.soil_reflectance == soil_reflectance
 
         return cs
+
+
+    def test_bbox():
+        s = pgl.Scene()
+        s.add(pgl.Sphere())
+        cs = CaribuScene(scene=s)
+        bbox = cs.bbox()
+        assert bbox == ((-0.5, -0.5, -0.5), (0.5, 0.5, 0.5))
+        points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        triangles = [points]
+        pyscene = {'t1': triangles}
+        cs = CaribuScene(scene=pyscene)
+        bbox = cs.bbox()
+        assert bbox == ((0, 0, 0), (1, 1, 0))
+
+
+    def test_autoscreen():
+        s = pgl.Scene()
+        s.add(pgl.Sphere())
+        cs = CaribuScene(scene=s)
+        npix = cs.auto_screen(0.01)
+        assert npix == 173
+        points = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+        triangles = [points]
+        pyscene = {'t1': triangles}
+        cs = CaribuScene(scene=pyscene)
+        npix = cs.auto_screen(0.01)
+        assert npix == 141
 
 
     def test_aggregation():
