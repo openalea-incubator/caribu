@@ -11,7 +11,13 @@
 # ==============================================================================
 """ paths to module data file
 """
-from path import path
+try:
+    from path import path
+except ImportError:
+    try:
+        from openalea.core.path import path
+    except ImportError:
+        from IPython.external.path import path
 
 
 def data_path(filename):
