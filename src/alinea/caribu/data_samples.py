@@ -12,15 +12,18 @@
 """ paths to module data file
 """
 try:
-    from path import path
+    from path import Path
 except ImportError:
     try:
-        from openalea.core.path import path
+        from path import path as Path
     except ImportError:
-        from IPython.external.path import path
+        try:
+            from openalea.core.path import path as Path
+        except ImportError:
+            from IPython.external.path import path as Path
 
 
 def data_path(filename):
-    d = path(__file__).dirname()
+    d = Path(__file__).dirname()
     fn = 'data/' + filename
     return d / fn
