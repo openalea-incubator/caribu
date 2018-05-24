@@ -26,12 +26,15 @@ from subprocess import Popen, STDOUT, PIPE
 import tempfile
 import platform
 try:
-    from path import path
+    from path import Path
 except ImportError:
     try:
-        from openalea.core.path import path
+        from path import path as Path
     except ImportError:
-        from IPython.external.path import path
+        try:
+            from openalea.core.path import path as Path
+        except ImportError:
+            from IPython.external.path import path as Path
 
 def _process(cmd, directory, out):
     """
@@ -146,7 +149,7 @@ class Caribu(object):
         self.my_dbg = debug
         # print "my_dbg = ",   self.my_dbg
         # tempdir (initialised to allow testing of  existence in del)
-        self.tempdir = path('')
+        self.tempdir = Path('')
 
         # Input files
         self.scene = canfile
@@ -261,7 +264,7 @@ class Caribu(object):
             optn = []
             for i, opt in enumerate(_safe_iter(self.opticals)):
                 if os.path.exists(opt):
-                    name = str(path(path(opt).basename()).stripext())
+                    name = str(Path(Path(opt).basename()).stripext())
                     optn.append(name)
                 else:
                     optn.append('band%d' % (i))
@@ -285,16 +288,16 @@ class Caribu(object):
         """ Create working directories for caribu."""
         try:
             if self.my_dbg:
-                self.tempdir = path("./Run-tmp")
+                self.tempdir = Path("./Run-tmp")
                 if not self.tempdir.exists():
                     self.tempdir.mkdir()
             else:
                 # build a temporary directory
-                self.tempdir = path(tempfile.mkdtemp())
+                self.tempdir = Path(tempfile.mkdtemp())
 
             # Result directory (if specified)
             if self.resdir is not None:
-                self.resdir = path(self.resdir)
+                self.resdir = Path(self.resdir)
                 if not self.resdir.exists():
                     self.resdir.mkdir()
         except:
@@ -305,31 +308,31 @@ class Caribu(object):
         d = self.tempdir
 
         if os.path.exists(self.scene):
-            fn = path(self.scene)
+            fn = Path(self.scene)
             fn.copy(d / fn.basename())
         else:
             fn = d / 'cscene.can'
             fn.write_text(self.scene)
-        self.scene = path(fn.basename())
+        self.scene = Path(fn.basename())
 
         if not skip_sky:
             if os.path.exists(self.sky):
-                fn = path(self.sky)
+                fn = Path(self.sky)
                 fn.copy(d / fn.basename())
             else:
                 fn = d / 'sky.light'
                 fn.write_text(self.sky)
-            self.sky = path(fn.basename())
+            self.sky = Path(fn.basename())
 
         if not skip_pattern:
             if self.infinity:
                 if os.path.exists(self.pattern):
-                    fn = path(self.pattern)
+                    fn = Path(self.pattern)
                     fn.copy(d / fn.basename())
                 else:
                     fn = d / 'pattern.8'
                     fn.write_text(self.pattern)
-                self.pattern = path(fn.basename())
+                self.pattern = Path(fn.basename())
 
         if self.sensor is not None:
             if os.path.exists(self.sensor):
@@ -347,12 +350,12 @@ class Caribu(object):
                     # safe_iter allows not to iterate along character composing the optfile name when only one optfile is given
                     if os.path.exists(opt):
                         # print opt
-                        fn = path(opt)
+                        fn = Path(opt)
                         fn.copy(d / optn[i])
                     else:
                         fn = d / optn[i]
                         fn.write_text(opt)
-                self.opticals = map(path, _safe_iter(optn))
+                self.opticals = map(Path, _safe_iter(optn))
             except IndexError:
                 raise CaribuOptionError("Optnames list must be None or as long as optfiles list")
 
@@ -490,7 +493,7 @@ class Caribu(object):
 
     def mcsail(self, opt):
         d = self.tempdir
-        optname, ext = path(opt.basename()).splitext()
+        optname, ext = Path(opt.basename()).splitext()
         (d / optname + '.spec').copy(d / 'spectral')
 
         cmd = "%s %s " % (self.sail_name, self.sky)
@@ -515,7 +518,7 @@ class Caribu(object):
         """Fonction d'appel de l'executable canestrad, code C++ compilee de la radiosite mixte  - MC09"""
         # canestrad -M $Sc -8 $argv[6] -l $argv[2] -p $po.opt -e $po.env -s -r  $argv[1] -1
         d = self.tempdir
-        optname, ext = path(opt.basename()).splitext()
+        optname, ext = Path(opt.basename()).splitext()
         if self.my_dbg:
             print optname
         str_pattern = str_direct = str_FF = str_diam = str_env = str_sensor = ""
@@ -560,7 +563,7 @@ class Caribu(object):
 
             if self.resdir is not None:
                 # copy result files
-                fdest = path(optname + ".vec")
+                fdest = Path(optname + ".vec")
                 if self.my_dbg:
                     print fdest
                 ficres.move(self.resdir / fdest)
@@ -577,9 +580,9 @@ class Caribu(object):
             print(">>>  canestra has not finished properly => STOP")
             raise CaribuRunError(''.join(msg))
 
-        if (d / path("nr.log")).exists():
+        if (d / Path("nr.log")).exists():
             # copy log files
-            fic = path("nr-" + optname + ".log")
+            fic = Path("nr-" + optname + ".log")
             (d / "nr.log").move(d / fic)
 
         if self.my_dbg:
