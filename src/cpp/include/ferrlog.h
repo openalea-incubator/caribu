@@ -1,9 +1,9 @@
 /*
- * Flux C++ de logs; les messages gérés par ce flux sont recopiés sur 
+ * Flux C++ de logs; les messages gï¿½rï¿½s par ce flux sont recopiï¿½s sur 
  * cerr ET dans le fichier dont le nom est fourni au constructeur
  * de l'objet ferrlog.
  * Bug ? 
- * aucune gestion des accès au fichier n'est réalisée
+ * aucune gestion des accï¿½s au fichier n'est rï¿½alisï¿½e
  *
  */
 #ifndef __FERRLOG_H
@@ -31,7 +31,7 @@ class ferrlog
   ferrlog &operator << ( float msg) ;
   ferrlog &operator << ( double msg) ;
   ferrlog &operator << ( void *msg) ;
-  ferrlog &operator << ( ostream & other) ;
+  // ferrlog &operator << ( ostream & other) ;
   ferrlog &operator << ( string msg) ;
   ferrlog &flush (void) ;
   void close(void);

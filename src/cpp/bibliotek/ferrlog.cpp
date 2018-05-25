@@ -7,10 +7,10 @@ using namespace std ;
 void ferrlog::open(char *filename)
 {
 #ifdef DEBUG_OBJ
-  clog << "Objet: reçu demande d'ouverture de "<<filename<<endl ;
+  clog << "Objet: reï¿½u demande d'ouverture de "<<filename<<endl ;
 #endif
 
-  // La destruction du fichier précédent n'est possible que si
+  // La destruction du fichier prï¿½cï¿½dent n'est possible que si
   // aucun autre process ne l'utilise, l'ouverture est soumise
   // aux memes conditions et "resette" l'ancien ==> on le laisse.
     out = new ofstream(filename, ios::out) ;
@@ -173,6 +173,7 @@ if (out != NULL)
 } ;
 // operateur ferrlog << void*
 
+/*
 ferrlog & ferrlog::operator << ( ostream & other) 
 {
   clog << other ;
@@ -182,6 +183,7 @@ ferrlog & ferrlog::operator << ( ostream & other)
   return *this ;
   
 } ;
+*/
 
 ferrlog & ferrlog::operator << ( string msg) 
 {
@@ -206,7 +208,7 @@ void ferrlog::close(void) {
 // operator ferrlog << ostream &
 //void prog_terminate (int code) 
 //{
-//  Ferr << "Exit appelé avec valeur " << code << "\n" ;
+//  Ferr << "Exit appelï¿½ avec valeur " << code << "\n" ;
 //  delete (ferr) ;
 //  exit (code) ;
 //}

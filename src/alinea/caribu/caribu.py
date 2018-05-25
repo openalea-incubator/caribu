@@ -131,6 +131,24 @@ def triangles_string(triangles, labels):
     return ''.join(lines)
 
 
+def sensor_string(triangles):
+    """ format sensor triangles as caribu sensor string content
+    """
+
+    n = len(triangles)
+    o_string = '#%s\n' % n
+
+    def _sensor_can_string(idx, triangle):
+        s = "p 1 %s 3" % str(idx)
+        for pt in triangle:
+            s += " %.6f %.6f %.6f" % pt
+        return s + '\n'
+
+    lines = [_sensor_can_string(i + 1, t) for i, t in enumerate(triangles)]
+
+    return o_string + ''.join(lines)
+
+
 def _absorptance(material):
     if len(material) <= 2:
         return 1 - sum(material)
@@ -152,7 +170,7 @@ def get_incident(eabs, materials):
 
 
 def raycasting(triangles, materials, lights=(default_light,), domain=None,
-               screen_size=1536):
+               screen_size=1536, sensors=None):
     """Compute monochrome illumination of triangles using caribu raycasting mode.
 
     Args:
@@ -171,6 +189,7 @@ def raycasting(triangles, materials, lights=(default_light,), domain=None,
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
                  if None (default), scene is not repeated
         screen_size: (int) buffer size for projection images (pixels)
+        sensors: (list of list of tuples) a list of triangles defining virtual sensors
 
     Returns:
         (dict of str:property) properties computed:
@@ -181,6 +200,8 @@ def raycasting(triangles, materials, lights=(default_light,), domain=None,
           - Ei (float): the surfacic density of energy incoming on the triangles
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle.
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
+          - sensor (dict): a dict with id, area, surfacic density of incoming
+            direct energy and surfacic density of incoming total energy of sensors, if any
     """
 
     o_string, labels = opt_string_and_labels(materials)
@@ -194,10 +215,16 @@ def raycasting(triangles, materials, lights=(default_light,), domain=None,
         infinite = True
         pattern_str = pattern_string(domain)
 
+    if sensors is None:
+        sensor_str = None
+    else:
+        sensor_str = sensor_string(sensors)
+
     algo = Caribu(canfile=can_string,
                   skyfile=sky_string,
                   optfiles=o_string,
                   patternfile=pattern_str,
+                  sensorfile=sensor_str,
                   direct=True,
                   infinitise=infinite,
                   projection_image_size=screen_size,
@@ -205,12 +232,14 @@ def raycasting(triangles, materials, lights=(default_light,), domain=None,
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)
+    if sensors is not None:
+        out['sensors'] = algo.measures['band0']
 
     return out
 
 
 def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
-                 screen_size=1536):
+                 screen_size=1536, sensors=None):
     """Compute monochrome illumination of triangles using caribu raycasting mode.
 
     Args:
@@ -230,6 +259,7 @@ def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
                  (xmin, ymin, xmax, ymax) scene is not bounded along z axis
                  if None (default), scene is not repeated
         screen_size: (int) buffer size for projection images (pixels)
+        sensors: (list of list of tuples) a list of triangles defining virtual sensors
 
     Returns:
         a ({band_name: {property_name:property_values} } dict of dict) with  properties:
@@ -240,12 +270,16 @@ def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
           - Ei (float): the surfacic density of energy incoming on the triangles
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
+          - sensor (dict): a dict with id, area, surfacic density of incoming
+            direct energy and surfacic density of incoming total energy of sensors, if any
     """
 
     x_out = {}
+    # copy to avoid altering input dict
+    x_materials = {k: v for k, v in x_materials.iteritems()}
     band, materials = x_materials.popitem()
     out = raycasting(triangles, materials, lights=lights, domain=domain,
-                     screen_size=screen_size)
+                     screen_size=screen_size, sensors=sensors)
     x_out[band] = out
 
     for band in x_materials:
@@ -260,7 +294,8 @@ def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
     return x_out
 
 
-def radiosity(triangles, materials, lights=(default_light,), screen_size=1536):
+def radiosity(triangles, materials, lights=(default_light,), screen_size=1536,
+              sensors=None):
     """Compute monochromatic illumination of triangles using radiosity method.
 
     Args:
@@ -276,6 +311,8 @@ def radiosity(triangles, materials, lights=(default_light,), screen_size=1536):
                 By default a normalised zenital light is used.
                 Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
         screen_size: (int) buffer size for projection images (pixels)
+        sensors: (list of list of tuples) a list of triangles defining virtual sensors
+
 
     Returns:
         (dict of str:property) properties computed:
@@ -286,6 +323,8 @@ def radiosity(triangles, materials, lights=(default_light,), screen_size=1536):
           - Ei (float): the surfacic density of energy incoming on the triangles
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
+          - sensor (dict): a dict with id, area, surfacic density of incoming
+            direct energy and surfacic density of incoming total energy of sensors, if any
     """
 
     if len(triangles) <= 1:
@@ -295,9 +334,15 @@ def radiosity(triangles, materials, lights=(default_light,), screen_size=1536):
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
 
+    if sensors is None:
+        sensor_str = None
+    else:
+        sensor_str = sensor_string(sensors)
+
     algo = Caribu(canfile=can_string,
                   skyfile=sky_string,
                   optfiles=o_string,
+                  sensorfile=sensor_str,
                   patternfile=None,
                   direct=False,
                   infinitise=False,
@@ -307,11 +352,14 @@ def radiosity(triangles, materials, lights=(default_light,), screen_size=1536):
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)
+    if sensors is not None:
+        out['sensors'] = algo.measures['band0']
 
     return out
 
 
-def x_radiosity(triangles, x_materials, lights=(default_light,), screen_size=1536):
+def x_radiosity(triangles, x_materials, lights=(default_light,),
+                screen_size=1536, sensors=None):
     """Compute multi-chromatic illumination of triangles using radiosity method.
 
     Args:
@@ -328,6 +376,7 @@ def x_radiosity(triangles, x_materials, lights=(default_light,), screen_size=153
                 By default a normalised zenital light is used.
                 Energy is ligth flux passing throuh a unit area (scene unit) horizontal plane.
         screen_size: (int) buffer size for projection images (pixels)
+        sensors: (list of list of tuples) a list of triangles defining virtual sensors
 
     Returns:
         a {band_name: {property_name:property_values} } dict of dict) with  properties:
@@ -338,6 +387,8 @@ def x_radiosity(triangles, x_materials, lights=(default_light,), screen_size=153
           - Ei (float): the surfacic density of energy incoming on the triangles
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
+          - sensor (dict): a dict with id, area, surfacic density of incoming
+            direct energy and surfacic density of incoming total energy of sensors, if any
     """
 
     if len(triangles) <= 1:
@@ -348,11 +399,17 @@ def x_radiosity(triangles, x_materials, lights=(default_light,), screen_size=153
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
 
+    if sensors is None:
+        sensor_str = None
+    else:
+        sensor_str = sensor_string(sensors)
+
     caribu = Caribu(canfile=can_string,
                     skyfile=sky_string,
                     optfiles=opt_strings.values(),
                     optnames=opt_strings.keys(),
                     patternfile=None,
+                    sensorfile=sensor_str,
                     direct=False,
                     infinitise=False,
                     sphere_diameter=-1,
@@ -362,12 +419,15 @@ def x_radiosity(triangles, x_materials, lights=(default_light,), screen_size=153
     out = {k: v['data'] for k, v in caribu.nrj.iteritems()}
     for band in out:
         out[band]['Ei'] = get_incident(out[band]['Eabs'], x_materials[band])
+        if sensors is not None:
+            out[band]['sensors'] = caribu.measures[band]
 
     return out
 
 
 def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
-                    diameter, layers, height, screen_size=1536, debug=False):
+                    diameter, layers, height, screen_size=1536, sensors=None,
+                    debug=False):
     """Compute monochrome illumination of triangles using mixed-radiosity model.
 
     Args:
@@ -388,6 +448,7 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
         layers: vertical subdivisions of scene used for approximation of far contrbution
         height: upper limit of canopy layers (scene unit)
         screen_size: (int) buffer size for projection images (pixels)
+        sensors: (list of list of tuples) a list of triangles defining virtual sensors
         debug: (bool) Whether Caribu should be called in debug mode
 
     Returns:
@@ -399,6 +460,8 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
           - Ei (float): the surfacic density of energy incoming on the triangles
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
+          - sensor (dict): a dict with id, area, surfacic density of incoming
+            direct energy and surfacic density of incoming total energy of sensors, if any
     """
 
     if len(triangles) <= 1:
@@ -409,10 +472,18 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
     sky_string = light_string(lights)
     pattern_str = pattern_string(domain)
 
+    if sensors is None:
+        sensor_str = None
+    else:
+        sensor_str = sensor_string(sensors)
+        raise NotImplementedError(
+            'virtual sensors are not operational for mixed_radiosity')
+
     algo = Caribu(canfile=can_string,
                   skyfile=sky_string,
                   optfiles=o_string,
                   patternfile=pattern_str,
+                  sensorfile=sensor_str,
                   direct=False,
                   infinitise=True,
                   nb_layers=layers,
@@ -423,6 +494,8 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)
+    if sensors is not None:
+        out['sensors'] = algo.measures['band0']
 
     return out
 

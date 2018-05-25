@@ -142,3 +142,23 @@ def test_vcaribu():
     pattern = None
     options = {'infinity': False}
     nrj, status = vcaribu(can, sky, opts, pattern, options)
+
+
+def test_sensor(debug=False):
+    can = data_path('filterT.can')
+    sky = data_path('zenith.light')
+    opts = [data_path('par.opt'), data_path('nir.opt')]
+    sensor = data_path('sensor.can')
+
+    sim = Caribu(canfile=can, skyfile=sky,
+                 optfiles=opts, sensorfile=sensor, resdir=None, resfile=None, debug=debug)
+
+    sim.infinity = False
+    sim.direct = True  # direct light only
+    sim.nb_layers = None
+    sim.can_height = None
+    sim.sphere_diameter = -1
+    sim.pattern = None
+    sim.run()
+    return sim.measures
+
