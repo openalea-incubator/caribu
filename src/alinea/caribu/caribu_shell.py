@@ -36,6 +36,7 @@ except ImportError:
         except ImportError:
             from IPython.external.path import path as Path
 
+
 def _process(cmd, directory, out):
     """
     Run a process in a shell.
@@ -336,12 +337,12 @@ class Caribu(object):
 
         if self.sensor is not None:
             if os.path.exists(self.sensor):
-                fn = path(self.sensor)
+                fn = Path(self.sensor)
                 fn.copy(d / fn.basename())
             else:
                 fn = d / 'sensor.can'
                 fn.write_text(self.sensor)
-            self.sensor = path(fn.basename())
+            self.sensor = Path(fn.basename())
 
         if not skip_opt:
             optn = map(lambda (x): x + '.opt', _safe_iter(self.optnames))
@@ -569,7 +570,7 @@ class Caribu(object):
                 ficres.move(self.resdir / fdest)
 
                 if self.sensor is not None:
-                    fdest = path(optname + ".sens")
+                    fdest = Path(optname + ".sens")
                     if self.my_dbg:
                         print fdest
                     ficsens.move(self.resdir / fdest)
