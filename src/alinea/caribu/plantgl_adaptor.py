@@ -31,7 +31,6 @@ def pgl_to_triangles(pgl_object, tesselator=None):
         triangles = [_triangle(itri, pts) for itri in indices]
     return triangles
 
-
 def scene_to_cscene(scene):
     """ Build a caribu-compatible scene from a PlantGl scene
 
