@@ -615,7 +615,7 @@ class CaribuScene(object):
                             aggregated[band]['sensors'][k] = _agregate(sensors[k], sensors_id, sum)
                         else:
                             aggregated[band]['sensors'][k] = _agregate(
-                                izip(sensors[k], output['area']), sensors_id, _wsum)
+                                izip(sensors[k], sensors['area']), sensors_id, _wsum)
                 for k in results:
                     raw[band][k] = _agregate(output[k], groups, list)
                     if k is 'area':
