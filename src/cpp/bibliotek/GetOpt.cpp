@@ -74,7 +74,7 @@ GetOpt::exchange (char **argv)
 
   if (temp == NULL) 
     {
-      Ferr << "GetOpt n'a pas assez de mémoire" << "\n" ;
+      Ferr << "GetOpt n'a pas assez de memoire" << "\n" ;
       exit (21) ; 
     }
 
