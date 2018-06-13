@@ -480,7 +480,8 @@ class CaribuScene(object):
                     projection screen (pixels)
             screen_resolution: (float) real world size (meter) of a pixel of the
              projection screen. If None(default), screen_size is used.
-            sensors: (list of list of tuples) a list of triangles defining virtual sensors
+            sensors: (dict of list of list of tuples) a {sensor_id: [triangle,...]} dict defining the virtual sensors
+                each triangle is a list of tuple defining the coordinates of its vertices
             split_face: (bool) Whether results of incidence on individual faces
             of triangle should be outputed. Default is False
             simplify: (bool)  Whether results per band should be simplified to
@@ -491,9 +492,8 @@ class CaribuScene(object):
             - raw (dict of dict) a {band_name: {result_name: property}} dict of dict.
             Except for result_name='sensors', each property is a {primitive_id: [values,]} dict containing results
              for individual triangles of the primitive
-             sensors is dict with
             - aggregated (dict of dict) : a {band_name: {result_name: property}}
-            Each property is a {primitive_id: value} dict containing aggregated
+            Except for result_name='sensors', each property is a {primitive_id: value} dict containing aggregated
              results for each primitive
             result_name are :
                       - area (float): the individual areas (m2)
@@ -504,9 +504,9 @@ class CaribuScene(object):
                       on the inferior face (m-2)
                       - Ei_sup (float): the surfacic density of energy incoming
                        on the superior face (m-2)
-                      - sensors (dict): id, area, surfacic density of incoming
+                      - sensors (dict of dict): area, surfacic density of incoming
                        direct energy and surfacic density of incoming total energy
-                       of sensors, if any
+                       of sensors grouped by id, if any
         """
 
         raw, aggregated = {}, {}
@@ -570,6 +570,10 @@ class CaribuScene(object):
                 screen_size = self.auto_screen(screen_resolution)
                 print 'adjusted projection screen size: ' + str(screen_size)
 
+            if sensors is not None:
+                sensors_id = reduce(lambda x, y: x + y, [[k] * len(v) for k, v in sensors.iteritems()], [])
+                sensors = reduce(lambda x, y: x + y, sensors.values(), [])
+
             if not direct and infinite:  # mixed radiosity
                 out = algos['mixed_radiosity'](triangles, materials,
                                                lights=lights,
@@ -603,8 +607,15 @@ class CaribuScene(object):
                 aggregated[band] = {}
                 if 'sensors' in output:
                     sensors = output.pop('sensors')
-                    raw[band]['sensors'] = sensors
-                    aggregated[band]['sensors'] = sensors
+                    raw[band]['sensors'] = {}
+                    aggregated[band]['sensors'] = {}
+                    for k in ('Ei', 'Ei0', 'area'):
+                        raw[band]['sensors'][k] = _agregate(sensors[k], sensors_id, list)
+                        if k is 'area':
+                            aggregated[band]['sensors'][k] = _agregate(sensors[k], sensors_id, sum)
+                        else:
+                            aggregated[band]['sensors'][k] = _agregate(
+                                izip(sensors[k], output['area']), sensors_id, _wsum)
                 for k in results:
                     raw[band][k] = _agregate(output[k], groups, list)
                     if k is 'area':
