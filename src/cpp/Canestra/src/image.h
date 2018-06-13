@@ -21,11 +21,11 @@ class Image {
    char filename[80];
  public:
     Image(){}
-    Image(int x,int y,char * nom="out.ppm")
+    Image(int x,int y,const char * nom="out.ppm")
       {init(x, y,nom);}
 
     // typage AH 02 2001
-    void init(int x,int y,char * nom="out.ppm")
+    void init(int x,int y,const char * nom="out.ppm")
       { btm.alloue(x,y);strcpy(filename,nom);bitmax=-9.9e10;}
 
     Image & operator =(Image &img)
@@ -78,13 +78,13 @@ class Image {
      { btm.maj(val);bitmax=val;}
 
    // typage AH 02 2001 
-    void charge(char *name=(char*)" ")
+    void charge(const char *name=" ")
       { if(!strcmp(name," ")) name=filename;
         cout<<"Image[charge] Pas encore implemente !\n";
       }
 
    // typage AH 02 2001 
-    void     sauve(char *name=(char*)" ")
+    void     sauve(const char *name=(" ")
       {
 	// unsigned char bit;
 	unsigned int pix ;
@@ -121,10 +121,10 @@ class RGB {
    char filename[80];
  public:
     RGB(){}
-    RGB(int x,int y,char * nom="out.ppm")
+    RGB(int x,int y,const char * nom="out.ppm")
       {init(x, y,nom);}
    // typage AH 02 2001 
-    void     init(int x,int y,char * nom="out.ppm")
+    void     init(int x,int y,const char * nom="out.ppm")
       { btm.alloue(x,y,3);strcpy(filename,nom);bitmax=-9.9e10;}
     RGB & operator =(RGB &img)
       { cout<<"RGB[=]  DEBUT \n";cout.flush();
@@ -184,13 +184,13 @@ class RGB {
      { btm.maj(val);bitmax=val;}
 
    // typage AH 02 2001 
-    void     charge(char *name=" ")
+    void     charge(const char *name=" ")
       { if(!strcmp(name," ")) name=filename;
         cout<<"RGB[charge] Pas encore implemente !\n";
       }
 
    // typage AH 02 2001 
-    void     sauve(char *name=" ")
+    void     sauve(const char *name=" ")
       { 
 	//unsigned char bit;
 	unsigned int pix ;
