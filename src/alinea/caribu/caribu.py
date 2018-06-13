@@ -501,7 +501,7 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
 
 
 def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
-                      diameter, layers, height, screen_size=1536):
+                      diameter, layers, height, sensors=None, screen_size=1536):
     """Compute multi-chromatic illumination of triangles using mixed-radiosity model.
 
     Args:
@@ -523,6 +523,7 @@ def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
         layers: vertical subdivisions of scene used for approximation of far contribution
         height: upper limit of canopy layers (scene unit)
         screen_size: (int) buffer size for projection images (pixels)
+        sensors: (list of list of tuples) a list of triangles defining virtual sensors
 
     Returns:
        a ({band_name: {property_name:property_values} } dict of dict) with  properties:
@@ -533,7 +534,9 @@ def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
           - Ei (float): the surfacic density of energy incoming on the triangles
           - Ei_inf (float): the surfacic density of energy incoming on the inferior face of the triangle
           - Ei_sup (float): the surfacic density of energy incoming on the superior face of the triangle
-    """
+          - sensor (dict): a dict with id, area, surfacic density of incoming
+            direct energy and surfacic density of incoming total energy of sensors, if any
+   """
 
     if len(triangles) <= 1:
         raise ValueError('Radiosity method needs at least two primitives')
@@ -542,12 +545,19 @@ def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
     can_string = triangles_string(triangles, labels)
     sky_string = light_string(lights)
     pattern_str = pattern_string(domain)
+    if sensors is None:
+        sensor_str = None
+    else:
+        sensor_str = sensor_string(sensors)
+        raise NotImplementedError(
+            'virtual sensors are not operational for mixed_radiosity')
 
     caribu = Caribu(canfile=can_string,
                     skyfile=sky_string,
                     optfiles=opt_strings.values(),
                     optnames=opt_strings.keys(),
                     patternfile=pattern_str,
+                    sensorfile=sensor_str,
                     direct=False,
                     infinitise=True,
                     nb_layers=layers,

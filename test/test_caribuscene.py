@@ -228,7 +228,7 @@ if run_test:
         assert len(out[cscene.default_band]['Eabs']) == 2
         assert len(out[cscene.default_band]['Eabs']['lower']) == 2
         assert len(out[cscene.default_band]['Eabs']['upper']) == 1
-        assert len(out[cscene.default_band]['sensors']['Ei']) == 1
+        assert len(out[cscene.default_band]['sensors']['Ei']) == 2
 
         # radiosity
         out, agg = cscene.run(direct=False, infinite=False)
@@ -251,7 +251,8 @@ if run_test:
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
         pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
         pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
-        sensors = [[(0, 0, 2), (1, 0, 2), (0, 1, 2)]]
+        sensors = {'solem': [[(0, 0, 2), (1, 0, 2), (0, 1, 2)], [(1, 0, 2), (1, 1, 2), (0, 1, 2)]],
+                   'kipp': [[(0, 0, 3), (1, 0, 3), (0, 1, 3)]]}
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         opt = {'par': {'lower': (0.1,), 'upper': (0.1,)},
                'nir': {'lower': (0.5,), 'upper': (0.5,)}}
