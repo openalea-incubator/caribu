@@ -35,7 +35,7 @@ def test_other_algos():
     height = 1
     mats = [green_leaf_PAR] * 2
     x_mats = {'PAR':mats, 'NIR':mats}
-    sensors = [[(0, 0, 2), (1, 0, 2), (0, 1, 2)]]
+    sensors = [[(0, 0, 2), (1, 0, 2), (0, 1, 2)],[(0, 0, 2), (1, 0, 2), (1, 0, 3)]]
     lights = [(1, (0, 0, -1))]
 
     res = raycasting(triangles, mats, sensors=sensors)
