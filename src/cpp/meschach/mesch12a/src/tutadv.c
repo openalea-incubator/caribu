@@ -152,7 +152,7 @@ int k;
 }
 
 
-void main()
+int main()
 {
   MAT3D *M;
   int i,j,k;

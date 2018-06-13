@@ -34,5 +34,5 @@ main()
 	old_i = i;
 	i = (i << 1) | 1;
     }
-    printf("%d\n", old_i);
+    //printf("%d\n", old_i);
 }
