@@ -216,16 +216,19 @@ if run_test:
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
         pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
         pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
+        sensors = {'solem': [[(0, 0, 2), (1, 0, 2), (0, 1, 2)], [(1, 0, 2), (1, 1, 2), (0, 1, 2)]],
+                   'kipp': [[(0, 0, 3), (1, 0, 3), (0, 1, 3)]]}
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         domain = (0, 0, 1, 1)
         cscene = CaribuScene(pyscene, pattern=domain)
 
         # raycasting
-        out, agg = cscene.run(direct=True, infinite=False)
+        out, agg = cscene.run(direct=True, infinite=False, sensors=sensors)
         assert len(out) == 1
         assert len(out[cscene.default_band]['Eabs']) == 2
         assert len(out[cscene.default_band]['Eabs']['lower']) == 2
         assert len(out[cscene.default_band]['Eabs']['upper']) == 1
+        assert len(out[cscene.default_band]['sensors']['Ei']) == 2
 
         # radiosity
         out, agg = cscene.run(direct=False, infinite=False)
@@ -248,6 +251,8 @@ if run_test:
         pts_1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
         pts_2 = [(0, 0, 1e-5), (1, 0, 1e-5), (0, 1, 1e-5)]
         pts_3 = [(1, 0, 0), (1, 1, 0), (0, 1, 0)]
+        sensors = {'solem': [[(0, 0, 2), (1, 0, 2), (0, 1, 2)], [(1, 0, 2), (1, 1, 2), (0, 1, 2)]],
+                   'kipp': [[(0, 0, 3), (1, 0, 3), (0, 1, 3)]]}
         pyscene = {'lower': [pts_1, pts_3], 'upper': [pts_2]}
         opt = {'par': {'lower': (0.1,), 'upper': (0.1,)},
                'nir': {'lower': (0.5,), 'upper': (0.5,)}}
@@ -255,7 +260,7 @@ if run_test:
         cscene = CaribuScene(pyscene, pattern=domain, opt=opt)
 
         # raycasting
-        out, agg = cscene.run(direct=True, infinite=False)
+        out, agg = cscene.run(direct=True, infinite=False,sensors=sensors)
         assert 'par' in out.keys()
         assert 'nir' in out.keys()
         assert len(out['par']['Eabs']) == 2

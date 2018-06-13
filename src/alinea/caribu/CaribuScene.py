@@ -53,6 +53,10 @@ def _convert(output, conv_unit):
         output['area'] = [area * meter_square for area in output['area']]
         for k in ['Eabs', 'Ei', 'Ei_sup', 'Ei_inf']:
             output[k] = [nrj / meter_square for nrj in output[k]]
+        if 'sensors' in output:
+            output['sensors']['area'] = [area * meter_square for area in output['sensors']['area']]
+            for k in ['Ei', 'Ei0']:
+                output['sensors'][k] = [nrj / meter_square for nrj in output['sensors'][k]]
         return output
 
 
@@ -456,7 +460,7 @@ class CaribuScene(object):
         return triangles, groups, materials, bands, albedo
 
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10,
-            height=None, screen_size=1536, screen_resolution=None,
+            height=None, screen_size=1536, screen_resolution=None, sensors=None,
             split_face=False, simplify=False):
         """ Compute illumination using the appropriate caribu algorithm
 
@@ -476,6 +480,8 @@ class CaribuScene(object):
                     projection screen (pixels)
             screen_resolution: (float) real world size (meter) of a pixel of the
              projection screen. If None(default), screen_size is used.
+            sensors: (dict of list of list of tuples) a {sensor_id: [triangle,...]} dict defining the virtual sensors
+                each triangle is a list of tuple defining the coordinates of its vertices
             split_face: (bool) Whether results of incidence on individual faces
             of triangle should be outputed. Default is False
             simplify: (bool)  Whether results per band should be simplified to
@@ -484,10 +490,10 @@ class CaribuScene(object):
 
         Returns:
             - raw (dict of dict) a {band_name: {result_name: property}} dict of dict.
-            Each property is a {primitive_id: [values,]} dict containing results
+            Except for result_name='sensors', each property is a {primitive_id: [values,]} dict containing results
              for individual triangles of the primitive
             - aggregated (dict of dict) : a {band_name: {result_name: property}}
-            Each property is a {primitive_id: value} dict containing aggregated
+            Except for result_name='sensors', each property is a {primitive_id: value} dict containing aggregated
              results for each primitive
             result_name are :
                       - area (float): the individual areas (m2)
@@ -498,6 +504,9 @@ class CaribuScene(object):
                       on the inferior face (m-2)
                       - Ei_sup (float): the surfacic density of energy incoming
                        on the superior face (m-2)
+                      - sensors (dict of dict): area, surfacic density of incoming
+                       direct energy and surfacic density of incoming total energy
+                       of sensors grouped by id, if any
         """
 
         raw, aggregated = {}, {}
@@ -561,6 +570,10 @@ class CaribuScene(object):
                 screen_size = self.auto_screen(screen_resolution)
                 print 'adjusted projection screen size: ' + str(screen_size)
 
+            if sensors is not None:
+                sensors_id = reduce(lambda x, y: x + y, [[k] * len(v) for k, v in sensors.iteritems()], [])
+                sensors = reduce(lambda x, y: x + y, sensors.values(), [])
+
             if not direct and infinite:  # mixed radiosity
                 out = algos['mixed_radiosity'](triangles, materials,
                                                lights=lights,
@@ -568,20 +581,23 @@ class CaribuScene(object):
                                                soil_reflectance=albedo,
                                                diameter=d_sphere, layers=layers,
                                                height=height,
-                                               screen_size=screen_size)
+                                               screen_size=screen_size,
+                                               sensors=sensors)
             elif not direct:  # pure radiosity
                 out = algos['radiosity'](triangles, materials, lights=lights,
-                                         screen_size=screen_size)
+                                         screen_size=screen_size, sensors=sensors)
             else:  # ray_casting
                 if infinite:
                     out = algos['raycasting'](triangles, materials,
                                               lights=lights,
                                               domain=self.pattern,
-                                              screen_size=screen_size)
+                                              screen_size=screen_size,
+                                              sensors=sensors)
                 else:
                     out = algos['raycasting'](triangles, materials,
                                               lights=lights, domain=None,
-                                              screen_size=screen_size)
+                                              screen_size=screen_size,
+                                              sensors=sensors)
 
             if len(bands) == 1:
                 out = {bands[0]: out}
@@ -589,6 +605,17 @@ class CaribuScene(object):
                 output = _convert(out[band], self.conv_unit)
                 raw[band] = {}
                 aggregated[band] = {}
+                if 'sensors' in output:
+                    sensors = output.pop('sensors')
+                    raw[band]['sensors'] = {}
+                    aggregated[band]['sensors'] = {}
+                    for k in ('Ei', 'Ei0', 'area'):
+                        raw[band]['sensors'][k] = _agregate(sensors[k], sensors_id, list)
+                        if k is 'area':
+                            aggregated[band]['sensors'][k] = _agregate(sensors[k], sensors_id, sum)
+                        else:
+                            aggregated[band]['sensors'][k] = _agregate(
+                                izip(sensors[k], sensors['area']), sensors_id, _wsum)
                 for k in results:
                     raw[band][k] = _agregate(output[k], groups, list)
                     if k is 'area':
