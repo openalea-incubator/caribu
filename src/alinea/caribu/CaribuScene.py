@@ -290,6 +290,8 @@ class CaribuScene(object):
             import shutil
             shutil.rmtree(self.tempdir)
 
+
+
     def triangle_areas(self, convert=True):
         """ compute mean area of elementary triangles in the scene
 
@@ -466,7 +468,7 @@ class CaribuScene(object):
 
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10,
             height=None, screen_size=1536, screen_resolution=None,
-            split_face=False, simplify=False, debug = False):
+            split_face=False, simplify=False):
         """ Compute illumination using the appropriate caribu algorithm
 
         Args:
@@ -617,8 +619,7 @@ class CaribuScene(object):
                                               sensors=sensors,
                                               debug = self.debug)
                 else:
-
-                    out = algos['raycasting'](triangles, materials, #self.scnefile, self.lightfile
+                    out = algos['raycasting'](triangles, materials,
                                               lights=lights, domain=None,
                                               screen_size=screen_size,
                                               sensors=sensors,
