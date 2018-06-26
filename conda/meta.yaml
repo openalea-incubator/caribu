@@ -1,6 +1,6 @@
 package:
   name: alinea.caribu
-  version: 7.0.2
+  version: 7.0.3
 
 source:
   path: ..
