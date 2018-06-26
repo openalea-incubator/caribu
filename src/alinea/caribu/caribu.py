@@ -169,8 +169,20 @@ def get_incident(eabs, materials):
     return [float(e) / a if a != 0 else e for e, a in zip(eabs, alpha)]
 
 
+def write_scene(triangles, materials, canfile, optfile):
+    if len(triangles) != len(materials):
+        raise ValueError(len(triangles), len(materials))
+    o_string, labels = opt_string_and_labels(materials)
+    can_string = triangles_string(triangles, labels)
+    print canfile
+    print optfile
+    file(canfile,'w').write(can_string)
+    file(optfile,'w').write(o_string)
+
+
+
 def raycasting(triangles, materials, lights=(default_light,), domain=None,
-               screen_size=1536, sensors=None, debug=False):
+               screen_size=1536, sensors=None, debug = False, canfile = None, optfile = None):
     """Compute monochrome illumination of triangles using caribu raycasting mode.
 
     Args:
@@ -204,8 +216,14 @@ def raycasting(triangles, materials, lights=(default_light,), domain=None,
             direct energy and surfacic density of incoming total energy of sensors, if any
     """
 
-    o_string, labels = opt_string_and_labels(materials)
-    can_string = triangles_string(triangles, labels)
+    if canfile is None or optfile is None:
+        o_string, labels = opt_string_and_labels(materials)
+        can_string = triangles_string(triangles, labels)
+    else:
+        if len(triangles) != len(materials):
+            raise ValueError(len(triangles), len(materials))
+        o_string = optfile
+        can_string = canfile
     sky_string = light_string(lights)
 
     if domain is None:
@@ -239,7 +257,7 @@ def raycasting(triangles, materials, lights=(default_light,), domain=None,
 
 
 def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
-                 screen_size=1536, sensors=None, debug=False):
+                 screen_size=1536, sensors=None, debug= False, canfile = None, optfile = None):
     """Compute monochrome illumination of triangles using caribu raycasting mode.
 
     Args:

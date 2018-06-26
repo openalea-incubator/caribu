@@ -41,14 +41,19 @@ class AbstractCaribuTriangleSet:
 
 
 
-def CaribuTriangleSet(AbstractCaribuTriangleSet):
+class CaribuTriangleSet(AbstractCaribuTriangleSet):
     def __init__(self, pointtuplelistdict):
+        AbstractCaribuTriangleSet.__init__(self)
         self.values = pointtuplelistdict
-        self.allpoints = reduce(lambda x, y: x + y, self.values.values())
+        import itertools
+        self.allpoints = list(itertools.chain(*self.values.values()))
+        self.bbox = None
 
     def getBoundingBox(self):
-        x, y, z = map(numpy.array, zip(*map(lambda x: zip(*x), self.allpoints)))
-        return (x.min(), y.min(), z.min()), (x.max(), y.max(), z.max())        
+        if self.bbox is None:
+            x, y, z = map(numpy.array, zip(*map(lambda x: zip(*x), self.allpoints)))
+            self.bbox = (x.min(), y.min(), z.min()), (x.max(), y.max(), z.max()) 
+        return self.bbox     
         
     def triangle_areas(self):
         """ compute mean area of elementary triangles in the scene """
@@ -61,12 +66,10 @@ def CaribuTriangleSet(AbstractCaribuTriangleSet):
         return numpy.array(map(_surf, self.allpoints))
 
     def getZmin(self):
-        z = (pt[2] for tri in self.allpoints for pt in tri)
-        return min(z)
+        return self.getBoundingBox()[0][2]
 
     def getZmax(self):
-        z = (pt[2] for tri in self.allpoints for pt in tri)
-        return max(z)
+        return self.getBoundingBox()[1][2]
 
     def __getitem__(self, shapeid):
         """ Return all triangles of a shape """
@@ -86,8 +89,10 @@ def CaribuTriangleSet(AbstractCaribuTriangleSet):
             return self.allpoints
 
     def allids(self):
-        groups = [[pid] * self.scene.getNumberOfTriangles(pid) for pid in self.scene.keys()]
-        return reduce(lambda x, y: x + y, groups)
+        return self.repeat_for_triangles(self.values.keys())
+
+    def repeat_for_triangles(self, values):
+        return [v for v,nb in zip(values,[len(v) for v in self.values.values()]) for j in xrange(nb)]
 
     def items(self):
         return self.values.items()
