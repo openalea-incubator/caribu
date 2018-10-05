@@ -20,7 +20,7 @@ conf.UpdateOptions(options)
 # tools = ['opengl']
 # env = config.ALEASolution(options, tools)
 # oldies
-env = Environment(options=options)
+env = config.ALEASolution(options,[])
 
 conf.Update(env)
 
