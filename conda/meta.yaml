@@ -26,12 +26,12 @@ requirements:
     - openalea.deploy
     - path.py
     - numpy
+    - openalea.plantgl
+    - openalea.mtg
 
 test:
   requires:
     - nose
-    - openalea.plantgl
-    - openalea.mtg
   imports:
     - alinea.caribu
   source_files:
