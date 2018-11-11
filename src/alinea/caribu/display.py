@@ -89,13 +89,13 @@ def generate_scene(triangle_scene, colors=None, soil=None, soil_colors=None):
     """
     plant_color = (0, 180, 0)
     soil_color = (170, 85, 0)
+    missing_color = (0, 0, 0)
     scene = pgl.Scene()
 
     if colors is None:
         colors = {k: [plant_color] * len(triangle_scene[k]) for k in triangle_scene}
     else:
-        if len(triangle_scene) != len(colors):
-            raise ValueError('length of triangle_scene and of color should match')
+        colors = {k: colors.get(k, [missing_color] * len(triangle_scene[k])) for k in triangle_scene}
 
     for k, triangles in triangle_scene.iteritems():
         shape = pgl.TriangleSet([], [])
