@@ -20,7 +20,7 @@ requirements:
     - setuptools
     - openalea.deploy
     - openalea.sconsx
-    - mingw   [win]
+    - mingwpy   [win]
   run:
     - python
     - openalea.deploy
