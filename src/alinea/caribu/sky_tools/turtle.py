@@ -56,7 +56,7 @@ def _emission(energy, elevation,azimuth):
 def turtle(sectors='46', format='soc',energy=1.):
     """ Return energy on horizontal surface, energy in the direction of emission, direction vector, elevation (deg) and azimuth (deg) for a turtle discretisation of the sky hemisphere"""
     res = [(energy, _emission(energy,elevation, azimuth), (_vecteur_direction(elevation, azimuth)), elevation, azimuth) for elevation, azimuth, energy in _turtle(sectors,format,energy)]
-    return zip(*res)
+    return list(zip(*res))
         
         
 

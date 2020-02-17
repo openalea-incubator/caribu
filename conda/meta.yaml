@@ -12,18 +12,21 @@ about:
 
 build:
   preserve_egg_dir: True
-  number: 0
+  number: 1
 
 requirements:
   build:
-    - python
+    - {{ compiler('c') }}   # [unix]
+    - {{ compiler('cxx') }} # [unix]
+    - mingw   [win]
+  host:
+    - python {{PY_VER}}
     - setuptools
-    - openalea.deploy
+    #- openalea.deploy
     - openalea.sconsx
-    - mingwpy   [win]
   run:
-    - python
-    - openalea.deploy
+    - python {{PY_VER}}
+    #- openalea.deploy
     - path.py
     - numpy
     - openalea.plantgl

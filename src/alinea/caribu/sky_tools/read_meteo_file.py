@@ -1,4 +1,4 @@
-import IOtable
+from . import IOtable
 
 class read_meteo_file(object):
     """  Doc... """ 

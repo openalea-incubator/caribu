@@ -75,7 +75,7 @@ def test_raycasting_infinite_null_triangle_inside_domain():
 
     domain = (-2, -2, 2, 2)
     res = raycasting(triangles, mats, lights, domain)
-    print res
+    print(res)
 
     assert_almost_equal(res['area'][0], 0.5, 3)
     assert_almost_equal(res['Ei'][0], 100, 0)

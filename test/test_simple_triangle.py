@@ -100,7 +100,7 @@ def test_mixed_radiosity_four_triangles_full_occlusion():
     lower_pts_layer2 = [(0, 0, z2), (sqrt(2), 0, z2), (0, sqrt(2), z2)]
     upper_pts_layer2 = [(0, 0, z2 + dz), (sqrt(2), 0, z2 + dz), (0, sqrt(2), z2 + dz)]
     triangles = [lower_pts_layer1, upper_pts_layer1, lower_pts_layer2, upper_pts_layer2]
-    lower1, upper1, lower2, upper2 = range(4)
+    lower1, upper1, lower2, upper2 = list(range(4))
 
     lights = [(100, (0, 0, -1))]
     materials = [(0.06, 0.04)] * 4
