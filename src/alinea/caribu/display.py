@@ -70,7 +70,7 @@ def jet_colors(values, minval=None, maxval=None):
     if maxval is None:
         maxval = max(values)
     cmap = ColorMap()
-    return map(lambda x: cmap(x, minval, maxval, 250., 20.), values)
+    return [cmap(x, minval, maxval, 250., 20.) for x in values]
 
 
 def generate_scene(triangle_scene, colors=None, soil=None, soil_colors=None):
@@ -97,7 +97,7 @@ def generate_scene(triangle_scene, colors=None, soil=None, soil_colors=None):
         if len(triangle_scene) != len(colors):
             raise ValueError('length of triangle_scene and of color should match')
 
-    for k, triangles in triangle_scene.iteritems():
+    for k, triangles in triangle_scene.items():
         shape = pgl.TriangleSet([], [])
         shape.colorList = []
         shape.colorPerVertex = False

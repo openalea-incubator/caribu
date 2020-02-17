@@ -43,7 +43,7 @@ def scene_to_cscene(scene):
 
     cscene = {}
     tesselator = pgl.Tesselator()
-    for pid, pgl_objects in scene.todict().iteritems():
+    for pid, pgl_objects in scene.todict().items():
         cscene[pid] = sum([pgl_to_triangles(pgl_object, tesselator) for pgl_object in pgl_objects],[])
 
     return cscene

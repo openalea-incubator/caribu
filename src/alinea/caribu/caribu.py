@@ -41,7 +41,7 @@ def light_string(lights):
         e, p = light
         return ' '.join(map(str, [e] + list(p))) + '\n'
 
-    lines = map(_as_string, lights)
+    lines = list(map(_as_string, lights))
 
     return ''.join(lines)
 
@@ -69,7 +69,7 @@ def opt_string(species, soil_reflectance=-1):
 
 
 def encode_labels(materials, species, x_mat=False):
-    mapping = {v: k for k, v in species.iteritems()}
+    mapping = {v: k for k, v in species.items()}
 
     def _label(material):
         lab = Label()
@@ -101,14 +101,14 @@ def x_opt_strings_and_labels(x_materials, x_soil_reflectance):
     """ format multispectral materials as caribu opt file strings content
     """
 
-    x_opts = zip(*x_materials.values())
+    x_opts = list(zip(*list(x_materials.values())))
     x_species = {i + 1: po for i, po in enumerate(list(set(x_opts)))}
 
     labels = encode_labels(x_opts, x_species, x_mat=True)
 
     opt_strings = {}
     for i, k in enumerate(x_materials.keys()):
-        species = {k: v[i] for k, v in x_species.iteritems()}
+        species = {k: v[i] for k, v in x_species.items()}
         opt_strings[k] = opt_string(species, x_soil_reflectance[k])
 
     return opt_strings, labels
@@ -276,7 +276,7 @@ def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
 
     x_out = {}
     # copy to avoid altering input dict
-    x_materials = {k: v for k, v in x_materials.iteritems()}
+    x_materials = {k: v for k, v in x_materials.items()}
     band, materials = x_materials.popitem()
     out = raycasting(triangles, materials, lights=lights, domain=domain,
                      screen_size=screen_size, sensors=sensors)
@@ -406,8 +406,8 @@ def x_radiosity(triangles, x_materials, lights=(default_light,),
 
     caribu = Caribu(canfile=can_string,
                     skyfile=sky_string,
-                    optfiles=opt_strings.values(),
-                    optnames=opt_strings.keys(),
+                    optfiles=list(opt_strings.values()),
+                    optnames=list(opt_strings.keys()),
                     patternfile=None,
                     sensorfile=sensor_str,
                     direct=False,
@@ -416,7 +416,7 @@ def x_radiosity(triangles, x_materials, lights=(default_light,),
                     projection_image_size=screen_size,
                     resdir=None, resfile=None)
     caribu.run()
-    out = {k: v['data'] for k, v in caribu.nrj.iteritems()}
+    out = {k: v['data'] for k, v in caribu.nrj.items()}
     for band in out:
         out[band]['Ei'] = get_incident(out[band]['Eabs'], x_materials[band])
         if sensors is not None:
@@ -554,8 +554,8 @@ def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
 
     caribu = Caribu(canfile=can_string,
                     skyfile=sky_string,
-                    optfiles=opt_strings.values(),
-                    optnames=opt_strings.keys(),
+                    optfiles=list(opt_strings.values()),
+                    optnames=list(opt_strings.keys()),
                     patternfile=pattern_str,
                     sensorfile=sensor_str,
                     direct=False,
@@ -566,7 +566,7 @@ def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
                     projection_image_size=screen_size,
                     resdir=None, resfile=None)
     caribu.run()
-    out = {k: v['data'] for k, v in caribu.nrj.iteritems()}
+    out = {k: v['data'] for k, v in caribu.nrj.items()}
     for band in out:
         out[band]['Ei'] = get_incident(out[band]['Eabs'], materials[band])
 

@@ -13,7 +13,7 @@
 
 import os
 import numpy
-from itertools import groupby, izip, chain
+from itertools import groupby, chain
 from math import sqrt
 
 from openalea.mtg.mtg import MTG
@@ -27,12 +27,13 @@ from alinea.caribu.caribu import raycasting, radiosity, mixed_radiosity, \
     triangles_string, pattern_string
 from alinea.caribu.display import jet_colors, generate_scene, nan_to_zero
 from alinea.caribu.caribu_shell import vperiodise
+from functools import reduce
 
 
 def _agregate(values, indices, fun=sum):
     """ performs aggregation of outputs along indices """
     ag = {}
-    for key, group in groupby(sorted(izip(indices, values), key=lambda x: x[0]),
+    for key, group in groupby(sorted(zip(indices, values), key=lambda x: x[0]),
                               lambda x: x[0]):
         vals = [elt[1] for elt in group]
         try:
@@ -61,7 +62,7 @@ def _convert(output, conv_unit):
 
 
 def _wsum(nrj_area):
-    nrj, area = zip(*nrj_area)
+    nrj, area = list(zip(*nrj_area))
     area_tot = sum(area)
     if area_tot == 0:
         return 0
@@ -167,7 +168,7 @@ class CaribuScene(object):
         self.scene = None
         if scene is not None:
             if isinstance(scene, dict):
-                elt = scene[scene.keys()[0]]
+                elt = scene[list(scene.keys())[0]]
                 try:
                     assert isinstance(elt, list)
                     assert isinstance(elt[0], list)
@@ -220,7 +221,7 @@ class CaribuScene(object):
                 bands = [self.default_band]
             else:
                 self.soil_reflectance = soil_reflectance
-                bands = soil_reflectance.keys()
+                bands = list(soil_reflectance.keys())
             if self.scene is not None:
                 self.material = {}
                 for band in bands:
@@ -239,11 +240,11 @@ class CaribuScene(object):
                     for path in opt:
                         band = os.path.basename(path).split('.')[0]
                         n, ro_soil, po = read_opt(path)
-                        self.material[band] = build_materials(self.scene.keys(),
+                        self.material[band] = build_materials(list(self.scene.keys()),
                                                               po, ro_soil)
                         self.soil_reflectance[band] = ro_soil
             elif isinstance(opt, dict):
-                elt = opt[opt.keys()[0]]
+                elt = opt[list(opt.keys())[0]]
                 if not isinstance(elt, dict):
                     if isinstance(elt, tuple):
                         self.material = {}
@@ -280,7 +281,7 @@ class CaribuScene(object):
                         z_soil = 0
                     else:
                         triangles = reduce(lambda x, y: x + y,
-                                           self.scene.values())
+                                           list(self.scene.values()))
                         z = (pt[2] for tri in triangles for pt in tri)
                         z_soil = min(z)
                 self.soil = domain_mesh(self.pattern, z_soil, soil_mesh)
@@ -291,7 +292,7 @@ class CaribuScene(object):
         If convert is true, area is xpressed in meter (scene unit otherwise)"""
 
         def _surf(triangle):
-            a, b, c = map(numpy.array, triangle)
+            a, b, c = list(map(numpy.array, triangle))
             x, y, z = numpy.cross(b - a, c - a).tolist()
             if convert:
                 return self.conv_unit**2 * numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
@@ -299,7 +300,7 @@ class CaribuScene(object):
                 return numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
 
         return numpy.array(
-            map(_surf, reduce(lambda x, y: x + y, self.scene.values())))
+            list(map(_surf, reduce(lambda x, y: x + y, list(self.scene.values())))))
 
 
     def bbox(self):
@@ -309,9 +310,8 @@ class CaribuScene(object):
             two tuples: (xmin, ymin, zmin), (xmax, ymax, zmax)
         """
 
-        x, y, z = map(numpy.array, zip(*map(lambda x: zip(*x),
-                                            reduce(lambda x, y: x + y,
-                                                   self.scene.values()))))
+        x, y, z = list(map(numpy.array, list(zip(*[list(zip(*x)) for x in reduce(lambda x, y: x + y,
+                                                   list(self.scene.values()))]))))
         return (x.min(), y.min(), z.min()), (x.max(), y.max(), z.max())
 
     def auto_screen(self, screen_resolution):
@@ -343,7 +343,7 @@ class CaribuScene(object):
             soil_colors = None
             values = None
         else:
-            values = a_property.values()
+            values = list(a_property.values())
             if isinstance(values[0], list):
                 values = list(chain.from_iterable(values))
             values = nan_to_zero(values)
@@ -356,10 +356,10 @@ class CaribuScene(object):
             norm = 1
             if minval != maxval:
                 norm = maxval - minval
-            values = map(lambda x: ((x - minval) / float(norm))**gamma, values)
+            values = [((x - minval) / float(norm))**gamma for x in values]
             colors = jet_colors(values, 0, 1)
             color_property = {}
-            for k, v in a_property.iteritems():
+            for k, v in a_property.items():
                 if isinstance(v, list):
                     color_property[k] = []
                     for i in range(len(v)):
@@ -390,10 +390,10 @@ class CaribuScene(object):
             return abs(vz / norme)
 
         if self.light is not None:
-            nrj, direction = zip(*self.light)
+            nrj, direction = list(zip(*self.light))
             Qi = sum(nrj)
-            costheta = map(_costheta, direction)
-            Qem = sum(map(lambda x : x[0] / x[1], zip(nrj, costheta)))
+            costheta = list(map(_costheta, direction))
+            Qem = sum([x[0] / x[1] for x in zip(nrj, costheta)])
 
             if self.pattern is not None:
                 xmin, ymin, xmax, ymax = self.pattern
@@ -414,7 +414,7 @@ class CaribuScene(object):
             raise ValueError('Caribu should have been called  to allow SoilEnargy Estimation')
 
         # hack, TODO : take care of bands
-        Qi = res.values()[0]['Ei']
+        Qi = list(res.values())[0]['Ei']
         if self.pattern is not None:
             xmin, ymin, xmax, ymax = self.pattern
             d_area = abs((xmax - xmin) * (ymax - ymin)) * self.conv_unit**2
@@ -431,13 +431,13 @@ class CaribuScene(object):
         """
         triangles, groups, materials, bands, albedo = None, None, None, None, None
         if self.scene is not None:
-            triangles = reduce(lambda x, y: x + y, self.scene.values())
+            triangles = reduce(lambda x, y: x + y, list(self.scene.values()))
             groups = [[pid] * len(self.scene[pid]) for pid in self.scene]
             groups = reduce(lambda x, y: x + y, groups)
             if self.soil is not None:
                 triangles += self.soil
                 groups = groups + ['soil'] * len(self.soil)
-            bands = self.material.keys()
+            bands = list(self.material.keys())
             if len(bands) == 1:
                 materials = [
                     [self.material[bands[0]][pid]] * len(self.scene[pid]) for
@@ -521,13 +521,13 @@ class CaribuScene(object):
             lights = [(e * self.conv_unit ** 2, vect) for e, vect in self.light]
 
         if self.scene is not None:
-            triangles = reduce(lambda x, y: x + y, self.scene.values())
+            triangles = reduce(lambda x, y: x + y, list(self.scene.values()))
             groups = [[pid] * len(self.scene[pid]) for pid in self.scene]
             groups = reduce(lambda x, y: x + y, groups)
             if self.soil is not None:
                 triangles += self.soil
                 groups = groups + ['soil'] * len(self.soil)
-            bands = self.material.keys()
+            bands = list(self.material.keys())
             if len(bands) == 1:
                 materials = [
                     [self.material[bands[0]][pid]] * len(self.scene[pid]) for
@@ -568,11 +568,11 @@ class CaribuScene(object):
 
             if screen_resolution is not None:
                 screen_size = self.auto_screen(screen_resolution)
-                print 'adjusted projection screen size: ' + str(screen_size)
+                print('adjusted projection screen size: ' + str(screen_size))
 
             if sensors is not None:
-                sensors_id = reduce(lambda x, y: x + y, [[k] * len(v) for k, v in sensors.iteritems()], [])
-                sensors = reduce(lambda x, y: x + y, sensors.values(), [])
+                sensors_id = reduce(lambda x, y: x + y, [[k] * len(v) for k, v in sensors.items()], [])
+                sensors = reduce(lambda x, y: x + y, list(sensors.values()), [])
 
             if not direct and infinite:  # mixed radiosity
                 out = algos['mixed_radiosity'](triangles, materials,
@@ -615,14 +615,14 @@ class CaribuScene(object):
                             aggregated[band]['sensors'][k] = _agregate(sensors[k], sensors_id, sum)
                         else:
                             aggregated[band]['sensors'][k] = _agregate(
-                                izip(sensors[k], sensors['area']), sensors_id, _wsum)
+                                zip(sensors[k], sensors['area']), sensors_id, _wsum)
                 for k in results:
                     raw[band][k] = _agregate(output[k], groups, list)
                     if k is 'area':
                         aggregated[band][k] = _agregate(output[k], groups, sum)
                     else:
                         aggregated[band][k] = _agregate(
-                            izip(output[k], output['area']), groups, _wsum)
+                            zip(output[k], output['area']), groups, _wsum)
                 if self.soil is not None:
                     self.soil_raw[band] = {k: raw[band][k].pop('soil') for k in
                                            results}
@@ -654,8 +654,8 @@ class CaribuScene(object):
             label = fields[2]
             if label not in cscene:
                 cscene[label] = []
-            coords = map(float, fields[-9:])
-            cscene[label].append(map(tuple, [coords[:3], coords[3:6], coords[6:]]))
+            coords = list(map(float, fields[-9:]))
+            cscene[label].append(list(map(tuple, [coords[:3], coords[3:6], coords[6:]])))
 
         self.scene = cscene
 

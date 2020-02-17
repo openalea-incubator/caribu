@@ -1,6 +1,6 @@
 package:
   name: alinea.caribu
-  version: 7.0.3
+  version: 7.0.4
 
 source:
   path: ..
@@ -12,18 +12,21 @@ about:
 
 build:
   preserve_egg_dir: True
-  number: 0
+  number: 1
 
 requirements:
   build:
-    - python
-    - setuptools
-    - openalea.deploy
-    - openalea.sconsx
+    - {{ compiler('c') }}   # [unix]
+    - {{ compiler('cxx') }} # [unix]
     - mingw   [win]
+  host:
+    - python {{PY_VER}}
+    - setuptools
+    #- openalea.deploy
+    - openalea.sconsx
   run:
-    - python
-    - openalea.deploy
+    - python {{PY_VER}}
+    #- openalea.deploy
     - path.py
     - numpy
 

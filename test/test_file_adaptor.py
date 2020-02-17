@@ -38,7 +38,7 @@ def test_can():
     can = data_path('filterT.can')
     cscene = read_can(can)
     assert len(cscene) == 1
-    triangles = cscene[cscene.keys()[0]]
+    triangles = cscene[list(cscene.keys())[0]]
     assert len(triangles[0]) == 3
     assert len(triangles[0][0]) == 3
 
@@ -50,7 +50,7 @@ def test_materials():
     cscene = read_can(can)
     path = data_path('par.opt')
     n, s, opts = read_opt(path)
-    materials = build_materials(cscene.keys(), opts, s)
+    materials = build_materials(list(cscene.keys()), opts, s)
     assert len(materials) == len(cscene)
-    assert materials[materials.keys()[0]] == (0.1, 0.05)
+    assert materials[list(materials.keys())[0]] == (0.1, 0.05)
     return materials

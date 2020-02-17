@@ -31,7 +31,7 @@ def read_light(file_path):
             line = line.strip()
             if not line:
                 continue
-            nrj, vx, vy, vz = map(float, line.split())
+            nrj, vx, vy, vz = list(map(float, line.split()))
             lights.append((nrj, (vx, vy, vz)))
 
     return lights
@@ -53,7 +53,7 @@ def read_pattern(file_path):
             line = line.strip()
             if not line:
                 continue
-            x, y = map(float, line.split())
+            x, y = list(map(float, line.split()))
             pts.extend([x, y])
 
     return tuple(pts)
@@ -84,7 +84,7 @@ def read_opt(file_path):
             elif line.startswith('e'):
                 eid += 1
                 fields = line.split()
-                opt = map(float, [fields[i] for i in (2, 4, 5, 7, 8)])
+                opt = list(map(float, [fields[i] for i in (2, 4, 5, 7, 8)]))
                 po[eid] = tuple(opt)
             else:
                 continue
@@ -117,8 +117,8 @@ def read_can(file_path):
             label = fields[2]
             if label not in cscene:
                 cscene[label] = []
-            coords = map(float, fields[-9:])
-            cscene[label].append(map(tuple, [coords[:3], coords[3:6], coords[6:]]))
+            coords = list(map(float, fields[-9:]))
+            cscene[label].append(list(map(tuple, [coords[:3], coords[3:6], coords[6:]])))
 
     return cscene
 
