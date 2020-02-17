@@ -6,4 +6,4 @@ class group_seq(object):
 
 
     def __call__(self, tab, indice):
-        return (range(0,len(tab[indice][0])-1),)
+        return (list(range(0,len(tab[indice][0])-1)),)

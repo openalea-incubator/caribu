@@ -1,5 +1,5 @@
 from openalea.core import IEnumStr, IFunction, Node
-import display
+from . import display
 
 
 def read_can(fn):
@@ -36,7 +36,7 @@ class CanestraDisplay(Node):
     def __call__(self, can_scene, plant_id, opt_id, t_id, cmap):
         if not can_scene:
             return
-        pids = can_scene.plants.keys()
+        pids = list(can_scene.plants.keys())
         oids = set(display.transparencies(can_scene.indexes))
         tids = set(display.optics(can_scene.indexes))
 

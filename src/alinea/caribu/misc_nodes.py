@@ -1,7 +1,8 @@
 """ Miscellaneous helper nodes used for building dataflows
 """
+from functools import reduce
 
-from itertools import ifilter, izip
+
 
 
 def reduceDict(dictlist):
@@ -17,7 +18,7 @@ def reduceDict(dictlist):
                 nl = [d[k]]
             nl.append(e[k])
             vals.append(nl)
-        return dict(zip(d.keys(), vals))
+        return dict(list(zip(list(d.keys()), vals)))
 
     reduced = reduce(_bind, dictlist)
 
@@ -28,7 +29,7 @@ def filterby(indices, values, condition):
     """
     Return values whose indices match condition
     """
-    index_value = ifilter(lambda x: condition(x[0]), izip(indices, values))
+    index_value = filter(lambda x: condition(x[0]), zip(indices, values))
     res = [value for index, value in index_value]
 
     return res

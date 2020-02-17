@@ -68,12 +68,12 @@ class Sun(object):
 
     def test(self):
         Su = Sun()
-        print Su
+        print(Su)
         Su.Rsun=4.
-        print Su
+        print(Su)
         DOY,heureTU,lat=200,11,45
         Su._set_pos_astro(DOY,heureTU,lat)
-        print Su
+        print(Su)
         Su._get_pos_astro()
         
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
             az1=Su.azim
             Su._set_pos_astro(self.DOY,self.delai+1,self.lat)
             az2=Su.azim
-            print "(az1,az2) = (%5.3f,%5.3f)" %(az1,az2)
+            print("(az1,az2) = (%5.3f,%5.3f)" %(az1,az2))
             # the earth rotates ccw, so the sun's azimut must always decrease 
             self.assertTrue(az1>az2)
 

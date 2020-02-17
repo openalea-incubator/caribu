@@ -1,4 +1,4 @@
-import Sky
+from . import Sky
 
 class mergeNskies(object):
     """  Doc... """ 

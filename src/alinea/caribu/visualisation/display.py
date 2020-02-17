@@ -29,10 +29,10 @@ class CanestraScene(object):
             soil_material = pgl.Material(pgl.Color3(170, 85, 0))
 
         scene = pgl.Scene()
-        for id, plant in self.plants.iteritems():
+        for id, plant in self.plants.items():
             leaves = plant["leaves"]
             stems = plant["stems"]
-            for lid, leaf in leaves.iteritems():
+            for lid, leaf in leaves.items():
                 shape = pgl.Shape(leaf, leaf_material)
                 shape.name = str(lid)
                 scene.add(shape)
@@ -64,16 +64,16 @@ class CanestraScene(object):
                 geom.colorPerVertex = False
 
             assert 3 * len(geom.colorList) == count
-            if i >= n or type(colors[i]) == types.FloatType:
+            if i >= n or type(colors[i]) == float:
                 geom.colorList.append(pgl.Color4(10, 10, 10, 0))
             else:
                 r, g, b = colors[i]
                 geom.colorList.append(pgl.Color4(r, g, b, 0))
 
-        for plant in self.plants.values():
+        for plant in list(self.plants.values()):
             leaves = plant["leaves"]
             stems = plant["stems"]
-            for leaf in leaves.values():
+            for leaf in list(leaves.values()):
                 scene += leaf
             if len(stems.pointList) > 0:
                 scene += stems
@@ -101,7 +101,7 @@ def process_line(line):
     l = line.split()
     nb_polygon = int(l[-10])
     assert nb_polygon == 3
-    coords = map(float, l[-9:])
+    coords = list(map(float, l[-9:]))
     label = l[2]
     if len(label) < 11:
         label = (12 - len(label)) * '0' + label
@@ -127,7 +127,7 @@ def build_geometry(elements):
     plants = {}
     soil = {}
     indexes = []
-    print 'number of elements', len(elements)
+    print('number of elements', len(elements))
     for i, (label, triangle) in enumerate(elements):
         pid = plant_id(label)
         if pid not in plants:
