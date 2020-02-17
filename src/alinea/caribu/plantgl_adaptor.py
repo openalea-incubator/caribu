@@ -46,7 +46,7 @@ def scene_to_cscene(scene):
 
     cscene = {}
     tesselator = pgl.Tesselator()
-    for pid, pgl_objects in scene.todict().iteritems():
+    for pid, pgl_objects in scene.todict().items():
         tri_list = sum([pgl_to_triangles(pgl_object, tesselator) for pgl_object in pgl_objects],[])
         if len(tri_list) > 0:
             cscene[pid] = tri_list
