@@ -29,7 +29,7 @@ requirements:
     #- openalea.deploy
     - path.py
     - numpy
-
+    - ipython
 test:
   requires:
     - nose

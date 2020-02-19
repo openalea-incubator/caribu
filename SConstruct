@@ -20,7 +20,7 @@ conf.UpdateOptions(options)
 # tools = ['opengl']
 # env = config.ALEASolution(options, tools)
 # oldies
-env = Environment(options=options)
+env = Environment(options=options, ENV = {'PATH' : os.environ['PATH']})
 
 conf.Update(env)
 
@@ -51,6 +51,7 @@ src/cpp/Canestra/src
 # src/cpp/glCanestra/src - MC09
 
 dirs = map(lambda x:pj(prefix,x, 'SConscript'), Split(dirs))
-env.SConscript(dirs, exports='env bibliotek meschach')
+for d in dirs:
+	env.SConscript(d, exports='env bibliotek meschach')
 
 Default("build")
