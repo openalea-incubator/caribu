@@ -31,7 +31,6 @@ requirements:
     - numpy
     - openalea.plantgl
     - openalea.mtg
-
 test:
   requires:
     - nose
