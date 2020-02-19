@@ -111,7 +111,6 @@ def test_radiosity_exception():
     materials = [green_leaf_PAR]
     assert_raises(ValueError, lambda: radiosity(triangles, materials, debug=DEBUG))
 
-
 if __name__ == '__main__':
     tests = [(fname,func) for fname, func in globals().items() if 'test_' in fname]
     for fname,func in tests:
