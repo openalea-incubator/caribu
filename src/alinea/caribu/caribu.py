@@ -295,7 +295,7 @@ def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
 
 
 def radiosity(triangles, materials, lights=(default_light,), screen_size=1536,
-              sensors=None):
+              sensors=None, debug=False):
     """Compute monochromatic illumination of triangles using radiosity method.
 
     Args:
@@ -348,7 +348,7 @@ def radiosity(triangles, materials, lights=(default_light,), screen_size=1536,
                   infinitise=False,
                   sphere_diameter=-1,
                   projection_image_size=screen_size,
-                  resdir=None, resfile=None)
+                  resdir=None, resfile=None,debug=debug)
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)

@@ -10,7 +10,7 @@ def test_default_light_in_raycasting():
     mats = [green_leaf_PAR]
 
     # default light
-    res = raycasting(triangles, mats)
+    res = raycasting(triangles, mats, debug=True)
 
     assert 'area' in res
 
@@ -22,7 +22,7 @@ def test_default_light_in_radiosity():
     mats = [green_leaf_PAR] * 2
 
     # default light
-    res = radiosity(triangles, mats)
+    res = radiosity(triangles, mats, debug=True)
 
     assert 'area' in res
 
@@ -111,4 +111,9 @@ def test_radiosity_exception():
     assert_raises(ValueError, lambda: radiosity(triangles, materials))
 
 
-
+if __name__ == '__main__':
+    tests = [(fname,func) for fname, func in globals().items() if 'test_' in fname]
+    del tests[0]
+    for fname,func in tests:
+            print(fname)
+            func()
