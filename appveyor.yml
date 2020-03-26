@@ -10,6 +10,7 @@ environment:
 install:
   - git clone https://github.com/openalea/appveyor-ci.git appveyor-ci
   - cd appveyor-ci
+  - call install.bat
   - conda config --prepend channels conda-forge
   - conda config --prepend channels fredboudon
 
