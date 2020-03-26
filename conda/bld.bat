@@ -2,7 +2,7 @@ COPY options_conda_win.py options.py
 
 REM systeminfo
 
-scons -j %CPU_COUNT% 
+scons -j %CPU_COUNT% install
 REM MOVE build-scons\bin\* $PREFIX\bin
 REM MOVE build-scons\lib\* $PREFIX\lib
 
