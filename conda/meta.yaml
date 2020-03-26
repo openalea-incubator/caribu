@@ -22,7 +22,7 @@ requirements:
   host:
     - python {{PY_VER}}
     - setuptools
-    #- openalea.deploy
+    - openalea.deploy
     - openalea.sconsx
   run:
     - python {{PY_VER}}
