@@ -162,3 +162,8 @@ def test_sensor(debug=False):
     sim.run()
     return sim.measures
 
+if __name__ == '__main__':
+    tests = [(fname,func) for fname, func in globals().items() if 'test_' in fname]
+    for fname,func in tests:
+            print(fname)
+            func(True)
