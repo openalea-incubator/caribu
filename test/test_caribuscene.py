@@ -15,7 +15,7 @@ if run_test:
     def test_instantiation_from_files():
         can = str(data_path('filterT.can'))
         sky = str(data_path('Turtle16soc.light'))
-        opts = map(str, [data_path('par.opt'), data_path('nir.opt')])
+        opts = list(map(str, [data_path('par.opt'), data_path('nir.opt')]))
         pattern = str(data_path('filter.8'))
 
         # defaults
@@ -30,7 +30,7 @@ if run_test:
         # complete set of files
         cs = CaribuScene(scene=can, light=sky, opt=opts, pattern=pattern)
         assert len(cs.scene) == 1
-        assert len(cs.scene[cs.scene.keys()[0]]) == 192
+        assert len(cs.scene[list(cs.scene.keys())[0]]) == 192
         assert len(cs.light) == 16
         for band in ('nir', 'par'):
             assert band in cs.material
@@ -60,10 +60,10 @@ if run_test:
 
         cs = CaribuScene(scene=s, light=sky, pattern=pattern)
         assert len(cs.scene) == 1
-        assert len(cs.scene.values()[0]) == 112
+        assert len(list(cs.scene.values())[0]) == 112
         assert len(cs.light) == 2
         assert len(cs.pattern) == 4
-        assert cs.material[cs.default_band].values()[0] == cs.default_material
+        assert list(cs.material[cs.default_band].values())[0] == cs.default_material
         assert cs.soil_reflectance[
                    cs.default_band] == cs.default_soil_reflectance
 
@@ -261,8 +261,8 @@ if run_test:
 
         # raycasting
         out, agg = cscene.run(direct=True, infinite=False,sensors=sensors)
-        assert 'par' in out.keys()
-        assert 'nir' in out.keys()
+        assert 'par' in list(out.keys())
+        assert 'nir' in list(out.keys())
         assert len(out['par']['Eabs']) == 2
         assert len(out['par']['Eabs']['lower']) == 2
         assert len(out['nir']['Eabs']) == 2
@@ -270,8 +270,8 @@ if run_test:
 
         # radiosity
         out, agg = cscene.run(direct=False, infinite=False)
-        assert 'par' in out.keys()
-        assert 'nir' in out.keys()
+        assert 'par' in list(out.keys())
+        assert 'nir' in list(out.keys())
         assert len(out['par']['Eabs']) == 2
         assert len(out['par']['Eabs']['lower']) == 2
         assert len(out['nir']['Eabs']) == 2
@@ -279,8 +279,8 @@ if run_test:
 
         # mixed radiosity
         out, agg = cscene.run(direct=False, infinite=True)
-        assert 'par' in out.keys()
-        assert 'nir' in out.keys()
+        assert 'par' in list(out.keys())
+        assert 'nir' in list(out.keys())
         assert len(out['par']['Eabs']) == 2
         assert len(out['par']['Eabs']['lower']) == 2
         assert len(out['nir']['Eabs']) == 2

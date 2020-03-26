@@ -1,4 +1,4 @@
-import Sun
+from . import Sun
 
 class Gensun(object):
     """  Generate sun object from astronomical data and location latitude""" 

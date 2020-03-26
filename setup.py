@@ -54,25 +54,25 @@ setup_kwds = dict(
 
     include_package_data=True,
     package_data={'caribu_data': data_files},
-    install_requires=[
-        "path.py",
-        ],
-    tests_require=[
-        "coverage",
-        "flake8",
-        "mock",
-        "nose",
-        "sphinx",
-        "coveralls",
-        ],
+    #install_requires=[
+    #    "path.py",
+    #    ],
+    #tests_require=[
+    #    "coverage",
+    #    "flake8",
+    #    "mock",
+    #    "nose",
+    #    "sphinx",
+    #    "coveralls",
+    #    ],
     entry_points={},
     keywords='',
-    test_suite='nose.collector',
+    #test_suite='nose.collector',
 )
 # #}
 # change setup_kwds below before the next pkglts tag
 
-setup_kwds['setup_requires'] = ['openalea.deploy']
+#setup_kwds['setup_requires'] = ['openalea.deploy']
 build_prefix = "build-scons"
 setup_kwds['scons_scripts'] = ['SConstruct']
 setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
@@ -81,6 +81,7 @@ setup_kwds['entry_points']["console_scripts"] = []
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
 setup_kwds['namespace_packages']=['alinea']
 setup_kwds['install_requires'] = []
+setup_kwds['tests_require'] = []
 # do not change things below
 # {# pkglts, pysetup.call
 setup(**setup_kwds)

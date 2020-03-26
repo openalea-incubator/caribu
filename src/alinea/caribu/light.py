@@ -66,7 +66,7 @@ def turtle(sectors='46', format='soc', energy=1.):
     of the sky hemisphere"""
     res = [(energy, emission_inv(energy, elevation), (vecteur_direction(elevation, azimuth)), elevation, azimuth) for
            elevation, azimuth, energy in _turtle(sectors, format, energy)]
-    return zip(*res)
+    return list(zip(*res))
 
 
 def vecteur_direction(elevation, azimuth):
@@ -129,4 +129,4 @@ def emission_inv(elevation, energy):
 
 def diffuse_source(directions=1):
     energie, emission, direction, elevation, azimuth = turtle(sectors=str(directions), energy=1)
-    return zip(energie, direction)
+    return list(zip(energie, direction))

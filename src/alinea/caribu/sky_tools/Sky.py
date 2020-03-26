@@ -56,7 +56,7 @@ class Sky(object):
     def __add__(self,sky2):
         """ ajoute 2 ciels ; surcharge +"""
         if self.sec!=sky2.sec:
-            print "sky sectors do not match!"
+            print("sky sectors do not match!")
         else:
             res=Sky(self.sec[0],self.sec[1])
             for i in range(len(self.sky)):
@@ -104,8 +104,8 @@ class Sky(object):
         if elv<0:
             return [-1,-1]
         else:
-            Belv=array(range(nbt))*(pi/(2*nbt)) #vecteur bornes des secteurs elv
-            Bazim=array(range(nbp))*(2*pi/(nbp)) - pi 
+            Belv=array(list(range(nbt)))*(pi/(2*nbt)) #vecteur bornes des secteurs elv
+            Bazim=array(list(range(nbp)))*(2*pi/(nbp)) - pi 
             Velv=abs(Belv-elv).tolist() # liste des distances des bornes a azim
             Vazim=abs(Bazim-azim).tolist()
             Ielv=Velv.index(min(Velv)) # recupere index de la distance mini

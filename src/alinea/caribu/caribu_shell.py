@@ -60,7 +60,7 @@ def _process(cmd, directory, out):
     return status
 
 
-def _safe_iter(obj, atomic_types=(basestring, int, float, complex)):
+def _safe_iter(obj, atomic_types=(str, int, float, complex)):
     """Equivalent to iter when obj is iterable and not defined as atomic.
     If obj is defined atomic or found to be not iterable, returns iter((obj,)).
     safe_iter(None) returns an empty iterator"""
@@ -145,7 +145,7 @@ class Caribu(object):
         of the scene
         """
         if debug:
-            print "\n >>>> Caribu.__init__ starts...\n"
+            print("\n >>>> Caribu.__init__ starts...\n")
         # debug mode
         self.my_dbg = debug
         # print "my_dbg = ",   self.my_dbg
@@ -178,11 +178,11 @@ class Caribu(object):
         self.ready = True
         self.img_size = projection_image_size
         if debug:
-            print "\n <<<< Caribu.__init__ ends...\n"
+            print("\n <<<< Caribu.__init__ ends...\n")
 
     def __del__(self):
         if self.my_dbg and self.tempdir.exists():
-            print "Caribu.__del__ called, tmp dir kept: %s" % self.tempdir
+            print("Caribu.__del__ called, tmp dir kept: %s" % self.tempdir)
         else:
             if self.tempdir.exists():
                 # print 'Remove tempfile %s'%self.tempdir
@@ -223,9 +223,9 @@ class Caribu(object):
         return (s)
 
     def show(self, titre="############"):
-        print "\n>>> Caribu state in ", titre
+        print("\n>>> Caribu state in ", titre)
         print(self)
-        print "<<<<\n\n"
+        print("<<<<\n\n")
 
     def init(self):
         if self.scene == None or self.sky == None or self.opticals == None or self.opticals == []:
@@ -345,7 +345,7 @@ class Caribu(object):
             self.sensor = Path(fn.basename())
 
         if not skip_opt:
-            optn = map(lambda (x): x + '.opt', _safe_iter(self.optnames))
+            optn = [x + '.opt' for x in _safe_iter(self.optnames)]
             try:
                 for i, opt in enumerate(_safe_iter(self.opticals)):
                     # safe_iter allows not to iterate along character composing the optfile name when only one optfile is given
@@ -356,7 +356,7 @@ class Caribu(object):
                     else:
                         fn = d / optn[i]
                         fn.write_text(opt)
-                self.opticals = map(Path, _safe_iter(optn))
+                self.opticals = list(map(Path, _safe_iter(optn)))
             except IndexError:
                 raise CaribuOptionError("Optnames list must be None or as long as optfiles list")
 
@@ -422,7 +422,7 @@ class Caribu(object):
         5. save output on disk if resfile specified
         """
         if self.my_dbg:
-            print "\n >>>> Caribu.run() starts...\n"
+            print("\n >>>> Caribu.run() starts...\n")
         self.init()
         if self.infinity:
             self.periodise()
@@ -445,7 +445,7 @@ class Caribu(object):
             # x=caribu_run
             # print x['par']['data']['Eabs'][0]
         if self.my_dbg:
-            print "\n <<<< Caribu.run() ends...\n"
+            print("\n <<<< Caribu.run() ends...\n")
 
     def run_periodise(self):
         """ Run Periodise as a standalone program
@@ -464,7 +464,7 @@ class Caribu(object):
         outscene = name + '_8' + ext
         cmd = '%s -m %s -8 %s -o %s ' % (self.periodise_name, self.scene, self.pattern, outscene)
         if self.my_dbg:
-            print ">>> periodise() : ", cmd
+            print(">>> periodise() : ", cmd)
         status = _process(cmd, d, d / "periodise.log")
         if (d / outscene).exists():
             self.scene = outscene
@@ -481,7 +481,7 @@ class Caribu(object):
         cmd = "%s %s %d %f %s " % (
             self.s2v_name, self.scene, self.nb_layers, self.can_height, self.pattern) + wavelength
         if self.my_dbg:
-            print ">>> s2v() : ", cmd
+            print(">>> s2v() : ", cmd)
         status = _process(cmd, d, d / "s2v.log")
         # Raise an exception if s2v crashed...
         leafarea = d / 'leafarea'
@@ -500,7 +500,7 @@ class Caribu(object):
         cmd = "%s %s " % (self.sail_name, self.sky)
 
         if self.my_dbg:
-            print ">>> mcsail(): ", cmd
+            print(">>> mcsail(): ", cmd)
         logfile = "sail-%s.log" % (optname)
         logfile = d / logfile
         status = _process(cmd, d, logfile)
@@ -521,7 +521,7 @@ class Caribu(object):
         d = self.tempdir
         optname, ext = Path(opt.basename()).splitext()
         if self.my_dbg:
-            print optname
+            print(optname)
         str_pattern = str_direct = str_FF = str_diam = str_env = str_sensor = ""
 
         if self.infinity:
@@ -550,7 +550,7 @@ class Caribu(object):
         cmd = "%s -M %s -l %s -p %s -A %s %s %s %s %s %s %s " % (
             self.canestra_name, self.scene, self.sky, opt, str_pattern, str_direct, str_diam, str_FF, str_env, str_img, str_sensor)
         if self.my_dbg:
-            print(">>> Canestrad(): %s" % (cmd))
+            print((">>> Canestrad(): %s" % (cmd)))
         status = _process(cmd, self.tempdir, d / "nr.log")
 
         ficres = d / 'Etri.vec0'
@@ -566,13 +566,13 @@ class Caribu(object):
                 # copy result files
                 fdest = Path(optname + ".vec")
                 if self.my_dbg:
-                    print fdest
+                    print(fdest)
                 ficres.move(self.resdir / fdest)
 
                 if self.sensor is not None:
                     fdest = Path(optname + ".sens")
                     if self.my_dbg:
-                        print fdest
+                        print(fdest)
                     ficsens.move(self.resdir / fdest)
         else:
             f = open(d / "nr.log")
@@ -587,7 +587,7 @@ class Caribu(object):
             (d / "nr.log").move(d / fic)
 
         if self.my_dbg:
-            print ">>> caribu.py: Caribu::canestra (%s) finished !" % (optname)
+            print(">>> caribu.py: Caribu::canestra (%s) finished !" % (optname))
 
 
 def vcaribu(canopy, lightsource, optics, pattern, options):
@@ -621,28 +621,28 @@ def vcaribu(canopy, lightsource, optics, pattern, options):
     # --options (if different from caribu defaults)
     if options is not None:
         # --scatter
-        if '1st' in options.keys():
+        if '1st' in list(options.keys()):
             sim.direct = options['1st']
         # --infinity
-        if 'infinity' in options.keys():
+        if 'infinity' in list(options.keys()):
             sim.infinity = options['infinity']
         # --nb_layers
-        if 'Nz' in options.keys():
+        if 'Nz' in list(options.keys()):
             sim.nb_layers = options['Nz']
             # --can_height
-        if 'Hc' in options.keys():
+        if 'Hc' in list(options.keys()):
             sim.can_height = options['Hc']
             # --sphere_diameter
-        if 'Ds' in options.keys():
+        if 'Ds' in list(options.keys()):
             sim.sphere_diameter = options['Ds']
         # --debug mode (if True, prevent removal of tempdir)
-        if 'debug' in options.keys():
+        if 'debug' in list(options.keys()):
             sim.my_dbg = options['debug']
         # --names of optical properties (usefull if opticals are given as strings
-        if 'wavelength' in options.keys():
+        if 'wavelength' in list(options.keys()):
             sim.optnames = options['wavelength']
         # size of the projection image for first order
-        if 'projection_image_size' in options.keys():
+        if 'projection_image_size' in list(options.keys()):
             sim.img_size = options['projection_image_size']
     status = str(sim)
     sim.run()
@@ -670,28 +670,28 @@ def main(my_arg):
 
     MC09
     """
-    print ">>> caribu.py :main(%s) starts..." % (my_arg)
+    print(">>> caribu.py :main(%s) starts..." % (my_arg))
     sim = Caribu()
 
-    print ">>> caribu.py :main(): options analysis"
+    print(">>> caribu.py :main(): options analysis")
     # parse command line options
     import getopt
     try:
         opts, args = getopt.getopt(my_arg, "hc:s:o:p:XN:Z:D:",
                                    ["help", "canfile=", "skyfile=", "optfiles=", "pattern=", "scatter", "nb_layers=",
                                     "can_height=", "sphere_diameter="])
-    except getopt.GetoptError, msg:
-        print msg
-        print "for help use --help"
+    except getopt.GetoptError as msg:
+        print(msg)
+        print("for help use --help")
         sys.exit(2)
     # process options and  arguments
-    print "opts=%s (len=%s)" % (opts, len(opts))
-    print "args=%s (len=%s)" % (args, len(args))
+    print("opts=%s (len=%s)" % (opts, len(opts)))
+    print("args=%s (len=%s)" % (args, len(args)))
     sim.opticals = args
     for opt, arg in opts:
-        print "opt=%s, arg=%s" % (opt, arg)
+        print("opt=%s, arg=%s" % (opt, arg))
         if opt in ("-h", "--help"):
-            print "caribu.py use...\n 'hc:s:p:1N:Z:D:', ['help','canfile=','skyfile=','pattern=','direct','nb_layers=','can_height=','sphere_diameter=' + optfiles (last args)"
+            print("caribu.py use...\n 'hc:s:p:1N:Z:D:', ['help','canfile=','skyfile=','pattern=','direct','nb_layers=','can_height=','sphere_diameter=' + optfiles (last args)")
             sys.exit(0)
         elif opt in ("-c", "--canfile"):
             sim.scene = arg
@@ -709,9 +709,9 @@ def main(my_arg):
         elif opt in ("-D", "--sphere_diameter"):
             sim.sphere_diameter = arg
         else:
-            print "<!> Erreur Option non trouvee: opt=%s, arg=%s" % (opt, arg)
+            print("<!> Erreur Option non trouvee: opt=%s, arg=%s" % (opt, arg))
 
-    print ">>> caribu.py :main():  run caribu..."
+    print(">>> caribu.py :main():  run caribu...")
     sim.show()
     sim.run()
 
@@ -719,7 +719,7 @@ def main(my_arg):
 if __name__ == "__main__":
     import sys
 
-    print "caribu.py called ..."
+    print("caribu.py called ...")
     main(sys.argv[1:])
     # USE
     # %run caribu.py  -h
