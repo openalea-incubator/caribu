@@ -88,7 +88,7 @@ try:
 except :
     # If deploy is not set, call directly scons
     if 'CONDA_BUILD' in os.environ:
-        os.system('scons -j \%CPU_COUNT\% install')
+        os.system('scons -j '+os.environ['CPU_COUNT']+' install')
 
 # do not change things below
 # {# pkglts, pysetup.call
