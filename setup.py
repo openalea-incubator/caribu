@@ -4,6 +4,7 @@
 # {# pkglts, pysetup.kwds
 # format setup arguments
 
+import os
 from os import walk
 from os.path import abspath, normpath
 from os.path import join as pj
@@ -36,7 +37,6 @@ def data_rel_pth(pth):
 for root, dnames, fnames in walk("src/caribu_data"):
     for name in fnames:
         data_files.append(data_rel_pth(pj(root, name)))
-
 
 setup_kwds = dict(
     name='alinea.caribu',
@@ -80,8 +80,16 @@ setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
 setup_kwds['entry_points']["console_scripts"] = []
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
 setup_kwds['namespace_packages']=['alinea']
-setup_kwds['install_requires'] = []
-setup_kwds['tests_require'] = []
+#setup_kwds['install_requires'] = []
+#setup_kwds['tests_require'] = []
+
+try:
+    import openalea.deploy
+except :
+    # If deploy is not set, call directly scons
+    if 'CONDA_BUILD' in os.environ:
+        os.system('scons -j \%CPU_COUNT\% install')
+
 # do not change things below
 # {# pkglts, pysetup.call
 setup(**setup_kwds)
