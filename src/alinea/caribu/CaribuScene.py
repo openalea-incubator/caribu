@@ -527,10 +527,10 @@ class CaribuScene(object):
             lights = [(e * self.conv_unit ** 2, vect) for e, vect in self.light]
 
         if self.scene is not None:
-            if self.debug : print 'Prepare scene', len(self.light)
+            if self.debug : print ('Prepare scene', len(self.light))
             triangles = self.scene.allvalues(copied=True)
             groups = self.scene.allids()
-            if self.debug : print 'done'
+            if self.debug : print ('done')
             if self.soil is not None:
                 triangles += self.soil
                 groups = groups + ['soil'] * len(self.soil)
