@@ -170,7 +170,7 @@ def get_incident(eabs, materials):
 
 
 def raycasting(triangles, materials, lights=(default_light,), domain=None,
-               screen_size=1536, sensors=None):
+               screen_size=1536, sensors=None, debug=False):
     """Compute monochrome illumination of triangles using caribu raycasting mode.
 
     Args:
@@ -228,7 +228,7 @@ def raycasting(triangles, materials, lights=(default_light,), domain=None,
                   direct=True,
                   infinitise=infinite,
                   projection_image_size=screen_size,
-                  resdir=None, resfile=None)
+                  resdir=None, resfile=None, debug=debug)
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)
@@ -239,7 +239,7 @@ def raycasting(triangles, materials, lights=(default_light,), domain=None,
 
 
 def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
-                 screen_size=1536, sensors=None):
+                 screen_size=1536, sensors=None, debug=False):
     """Compute monochrome illumination of triangles using caribu raycasting mode.
 
     Args:
@@ -279,7 +279,7 @@ def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
     x_materials = {k: v for k, v in x_materials.items()}
     band, materials = x_materials.popitem()
     out = raycasting(triangles, materials, lights=lights, domain=domain,
-                     screen_size=screen_size, sensors=sensors)
+                     screen_size=screen_size, sensors=sensors, debug=debug)
     x_out[band] = out
 
     for band in x_materials:
@@ -295,7 +295,7 @@ def x_raycasting(triangles, x_materials, lights=(default_light,), domain=None,
 
 
 def radiosity(triangles, materials, lights=(default_light,), screen_size=1536,
-              sensors=None):
+              sensors=None, debug=False):
     """Compute monochromatic illumination of triangles using radiosity method.
 
     Args:
@@ -348,7 +348,7 @@ def radiosity(triangles, materials, lights=(default_light,), screen_size=1536,
                   infinitise=False,
                   sphere_diameter=-1,
                   projection_image_size=screen_size,
-                  resdir=None, resfile=None)
+                  resdir=None, resfile=None,debug=debug)
     algo.run()
     out = algo.nrj['band0']['data']
     out['Ei'] = get_incident(out['Eabs'], materials)
@@ -359,7 +359,7 @@ def radiosity(triangles, materials, lights=(default_light,), screen_size=1536,
 
 
 def x_radiosity(triangles, x_materials, lights=(default_light,),
-                screen_size=1536, sensors=None):
+                screen_size=1536, sensors=None, debug=False):
     """Compute multi-chromatic illumination of triangles using radiosity method.
 
     Args:
@@ -414,7 +414,7 @@ def x_radiosity(triangles, x_materials, lights=(default_light,),
                     infinitise=False,
                     sphere_diameter=-1,
                     projection_image_size=screen_size,
-                    resdir=None, resfile=None)
+                    resdir=None, resfile=None, debug=debug)
     caribu.run()
     out = {k: v['data'] for k, v in caribu.nrj.items()}
     for band in out:
@@ -501,7 +501,7 @@ def mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
 
 
 def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
-                      diameter, layers, height, sensors=None, screen_size=1536):
+                      diameter, layers, height, sensors=None, screen_size=1536, debug=False):
     """Compute multi-chromatic illumination of triangles using mixed-radiosity model.
 
     Args:
@@ -564,7 +564,7 @@ def x_mixed_radiosity(triangles, materials, lights, domain, soil_reflectance,
                     can_height=height,
                     sphere_diameter=diameter,
                     projection_image_size=screen_size,
-                    resdir=None, resfile=None)
+                    resdir=None, resfile=None, debug=debug)
     caribu.run()
     out = {k: v['data'] for k, v in caribu.nrj.items()}
     for band in out:

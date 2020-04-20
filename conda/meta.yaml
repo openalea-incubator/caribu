@@ -1,6 +1,6 @@
 package:
   name: alinea.caribu
-  version: 7.0.4
+  version: 8.0.0
 
 source:
   path: ..
@@ -12,13 +12,13 @@ about:
 
 build:
   preserve_egg_dir: True
-  number: 1
+  number: 0
 
 requirements:
   build:
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
-    - mingw   [win]
+    - m2w64-toolchain   [win]
   host:
     - python {{PY_VER}}
     - setuptools
@@ -29,12 +29,11 @@ requirements:
     #- openalea.deploy
     - path.py
     - numpy
-
+    - openalea.plantgl
+    - openalea.mtg
 test:
   requires:
     - nose
-    - openalea.plantgl
-    - openalea.mtg
   imports:
     - alinea.caribu
   source_files:

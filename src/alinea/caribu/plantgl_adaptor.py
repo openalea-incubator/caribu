@@ -20,13 +20,16 @@ def _triangle(index, pts):
 
 
 def pgl_to_triangles(pgl_object, tesselator=None):
+    triangles = []
     if tesselator is None:
         tesselator = pgl.Tesselator()
     pgl_object.apply(tesselator)
     mesh = tesselator.triangulation
-    pts = numpy.array(mesh.pointList, ndmin=2)
-    indices = numpy.array(mesh.indexList, ndmin=2)
-    return [_triangle(itri, pts) for itri in indices]
+    if mesh:
+        pts = numpy.array(mesh.pointList, ndmin=2)
+        indices = numpy.array(mesh.indexList, ndmin=2)
+        triangles = [_triangle(itri, pts) for itri in indices]
+    return triangles
 
 
 def scene_to_cscene(scene):
@@ -43,9 +46,10 @@ def scene_to_cscene(scene):
 
     cscene = {}
     tesselator = pgl.Tesselator()
-    for pid, pgl_objects in scene.todict().items():
-        cscene[pid] = sum([pgl_to_triangles(pgl_object, tesselator) for pgl_object in pgl_objects],[])
-
+    for pid, pgl_objects in scene.todict().iteritems():
+        tri_list = sum([pgl_to_triangles(pgl_object, tesselator) for pgl_object in pgl_objects],[])
+        if len(tri_list) > 0:
+            cscene[pid] = tri_list
     return cscene
 
 
