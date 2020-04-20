@@ -59,11 +59,11 @@ class CaribuTriangleSet(AbstractCaribuTriangleSet):
         """ compute mean area of elementary triangles in the scene """
 
         def _surf(triangle):
-            a, b, c = map(numpy.array, triangle)
+            a, b, c = tuple(map(numpy.array, triangle))
             x, y, z = numpy.cross(b - a, c - a).tolist()
             return numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
 
-        return numpy.array(map(_surf, self.allpoints))
+        return numpy.array(list(map(_surf, self.allpoints)))
 
     def getZmin(self):
         return self.getBoundingBox()[0][2]
@@ -92,7 +92,7 @@ class CaribuTriangleSet(AbstractCaribuTriangleSet):
         return self.repeat_for_triangles(self.values.keys())
 
     def repeat_for_triangles(self, values):
-        return [v for v,nb in zip(values,[len(v) for v in self.values.values()]) for j in xrange(nb)]
+        return [v for v,nb in zip(values,[len(v) for v in self.values.values()]) for j in range(nb)]
 
     def items(self):
         return self.values.items()
