@@ -467,7 +467,7 @@ class CaribuScene(object):
         return triangles, groups, materials, bands, albedo
 
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10,
-            height=None, screen_size=1536, screen_resolution=None,
+            height=None, screen_size=1536, screen_resolution=None, sensors=None,
             split_face=False, simplify=False):
         """ Compute illumination using the appropriate caribu algorithm
 
