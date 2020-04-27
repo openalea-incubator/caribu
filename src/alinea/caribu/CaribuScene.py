@@ -466,7 +466,7 @@ class CaribuScene(object):
         return triangles, groups, materials, bands, albedo
 
     def run(self, direct=True, infinite=False, d_sphere=0.5, layers=10,
-            height=None, screen_size=1536, screen_resolution=None,
+            height=None, screen_size=1536, screen_resolution=None, sensors=None,
             split_face=False, simplify=False):
         """ Compute illumination using the appropriate caribu algorithm
 
@@ -553,6 +553,7 @@ class CaribuScene(object):
                 else:
                     # self.materialvalues is a cache for the computation of the material list
                     materials = self.materialvalues
+                    albedo = self.soil_reflectance[bands[0]]
 
                 algos = {'raycasting': raycasting, 'radiosity': radiosity,
                          'mixed_radiosity': mixed_radiosity}
@@ -569,6 +570,7 @@ class CaribuScene(object):
                     albedo = self.soil_reflectance
                 else:
                     materials = self.materialvalues
+                    albedo = self.soil_reflectance
 
                 algos = {'raycasting': x_raycasting, 'radiosity': x_radiosity,
                          'mixed_radiosity': x_mixed_radiosity}

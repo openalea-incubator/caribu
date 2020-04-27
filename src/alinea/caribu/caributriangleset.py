@@ -24,13 +24,13 @@ class AbstractCaribuTriangleSet:
     def values(self):
         pass
 
+    def items(self):
+        pass
+
     def allvalues(self, copied=False):
         pass
 
     def allids(self):
-        pass
-
-    def items(self):
         pass
 
     def getNumberOfTriangles(self, shapeid):
@@ -39,14 +39,17 @@ class AbstractCaribuTriangleSet:
     def generate_scene(self, colorproperty):
         pass
 
+    def __len__(self):
+        raise NotImplemented()
 
+import numpy
 
 class CaribuTriangleSet(AbstractCaribuTriangleSet):
     def __init__(self, pointtuplelistdict):
         AbstractCaribuTriangleSet.__init__(self)
-        self.values = pointtuplelistdict
+        self._values = pointtuplelistdict
         import itertools
-        self.allpoints = list(itertools.chain(*self.values.values()))
+        self.allpoints = list(itertools.chain(*self._values.values()))
         self.bbox = None
 
     def getBoundingBox(self):
@@ -73,13 +76,19 @@ class CaribuTriangleSet(AbstractCaribuTriangleSet):
 
     def __getitem__(self, shapeid):
         """ Return all triangles of a shape """
-        return self.values[shapeid]
+        return self._values[shapeid]
+
+    def __len__(self):
+        return len(self._values)
 
     def keys(self):
-        return self.values.keys()
+        return self._values.keys()
 
     def values(self):
-        return self.values.values()
+        return self._values.values()
+
+    def items(self):
+        return self._values.items()
 
     def allvalues(self, copied=False):
         from copy import copy
@@ -87,19 +96,16 @@ class CaribuTriangleSet(AbstractCaribuTriangleSet):
             return copy(self.allpoints)
         else:
             return self.allpoints
-
+    
     def allids(self):
-        return self.repeat_for_triangles(self.values.keys())
+        return self.repeat_for_triangles(self._values.keys())
 
     def repeat_for_triangles(self, values):
-        return [v for v,nb in zip(values,[len(v) for v in self.values.values()]) for j in range(nb)]
-
-    def items(self):
-        return self.values.items()
+        return [v for v,nb in zip(values,[len(v) for v in self._values.values()]) for j in range(nb)]
 
     def getNumberOfTriangles(self, shapeid):
-        return len(self.values[shapeid])
+        return len(self._values[shapeid])
 
     def generate_scene(self, colorproperty):
-        return generate_scene(self.values, colorproperty)
+        return generate_scene(self._values, colorproperty)
 
