@@ -174,8 +174,8 @@ def write_scene(triangles, materials, canfile, optfile):
         raise ValueError(len(triangles), len(materials))
     o_string, labels = opt_string_and_labels(materials)
     can_string = triangles_string(triangles, labels)
-    file(canfile,'w').write(can_string)
-    file(optfile,'w').write(o_string)
+    open(canfile,'w').write(can_string)
+    open(optfile,'w').write(o_string)
 
 
 
