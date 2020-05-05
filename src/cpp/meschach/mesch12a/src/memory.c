@@ -505,7 +505,7 @@ int v_get_vars(int dim,...)
    VEC **par;
    
    va_start(ap, dim);
-   while (par = va_arg(ap,VEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,VEC **))) {   /* NULL ends the list*/
       *par = v_get(dim);
       i++;
    } 
@@ -522,7 +522,7 @@ int iv_get_vars(int dim,...)
    IVEC **par;
    
    va_start(ap, dim);
-   while (par = va_arg(ap,IVEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,IVEC **))) {   /* NULL ends the list*/
       *par = iv_get(dim);
       i++;
    } 
@@ -538,7 +538,7 @@ int m_get_vars(int m,int n,...)
    MAT **par;
    
    va_start(ap, n);
-   while (par = va_arg(ap,MAT **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,MAT **))) {   /* NULL ends the list*/
       *par = m_get(m,n);
       i++;
    } 
@@ -554,7 +554,7 @@ int px_get_vars(int dim,...)
    PERM **par;
    
    va_start(ap, dim);
-   while (par = va_arg(ap,PERM **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,PERM **))) {   /* NULL ends the list*/
       *par = px_get(dim);
       i++;
    } 
@@ -586,7 +586,7 @@ int v_resize_vars(int new_dim,...)
    VEC **par;
    
    va_start(ap, new_dim);
-   while (par = va_arg(ap,VEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,VEC **))) {   /* NULL ends the list*/
       *par = v_resize(*par,new_dim);
       i++;
    } 
@@ -604,7 +604,7 @@ int iv_resize_vars(int new_dim,...)
    IVEC **par;
    
    va_start(ap, new_dim);
-   while (par = va_arg(ap,IVEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,IVEC **))) {   /* NULL ends the list*/
       *par = iv_resize(*par,new_dim);
       i++;
    } 
@@ -620,7 +620,7 @@ int m_resize_vars(int m,int n,...)
    MAT **par;
    
    va_start(ap, n);
-   while (par = va_arg(ap,MAT **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,MAT **))) {   /* NULL ends the list*/
       *par = m_resize(*par,m,n);
       i++;
    } 
@@ -637,7 +637,7 @@ int px_resize_vars(int new_dim,...)
    PERM **par;
    
    va_start(ap, new_dim);
-   while (par = va_arg(ap,PERM **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,PERM **))) {   /* NULL ends the list*/
       *par = px_resize(*par,new_dim);
       i++;
    } 
@@ -668,7 +668,7 @@ int v_free_vars(VEC **pv,...)
    v_free(*pv);
    *pv = VNULL;
    va_start(ap, pv);
-   while (par = va_arg(ap,VEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,VEC **))) {   /* NULL ends the list*/
       v_free(*par); 
       *par = VNULL;
       i++;
@@ -688,7 +688,7 @@ int iv_free_vars(IVEC **ipv,...)
    iv_free(*ipv);
    *ipv = IVNULL;
    va_start(ap, ipv);
-   while (par = va_arg(ap,IVEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,IVEC **))) {   /* NULL ends the list*/
       iv_free(*par); 
       *par = IVNULL;
       i++;
@@ -708,7 +708,7 @@ int px_free_vars(PERM **vpx,...)
    px_free(*vpx);
    *vpx = PNULL;
    va_start(ap, vpx);
-   while (par = va_arg(ap,PERM **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,PERM **))) {   /* NULL ends the list*/
       px_free(*par); 
       *par = PNULL;
       i++;
@@ -727,7 +727,7 @@ int m_free_vars(MAT **va,...)
    m_free(*va);
    *va = MNULL;
    va_start(ap, va);
-   while (par = va_arg(ap,MAT **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,MAT **))) {   /* NULL ends the list*/
       m_free(*par); 
       *par = MNULL;
       i++;
@@ -761,7 +761,7 @@ int v_get_vars(va_alist) va_dcl
    
    va_start(ap);
    dim = va_arg(ap,int);
-   while (par = va_arg(ap,VEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,VEC **))) {   /* NULL ends the list*/
       *par = v_get(dim);
       i++;
    } 
@@ -779,7 +779,7 @@ int iv_get_vars(va_alist) va_dcl
    
    va_start(ap);
    dim = va_arg(ap,int);
-   while (par = va_arg(ap,IVEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,VEC **))) {   /* NULL ends the list*/
       *par = iv_get(dim);
       i++;
    } 
@@ -797,7 +797,7 @@ int m_get_vars(va_alist) va_dcl
    va_start(ap);
    m = va_arg(ap,int);
    n = va_arg(ap,int);
-   while (par = va_arg(ap,MAT **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,MAT **))) {   /* NULL ends the list*/
       *par = m_get(m,n);
       i++;
    } 
@@ -816,7 +816,7 @@ int px_get_vars(va_alist) va_dcl
    
    va_start(ap);
    dim = va_arg(ap,int);
-   while (par = va_arg(ap,PERM **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,PERM **))) {   /* NULL ends the list*/
       *par = px_get(dim);
       i++;
    } 
@@ -868,7 +868,7 @@ int iv_resize_vars(va_alist) va_dcl
    
    va_start(ap);
    new_dim = va_arg(ap,int);
-   while (par = va_arg(ap,IVEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,VEC **))) {   /* NULL ends the list*/
       *par = iv_resize(*par,new_dim);
       i++;
    } 
@@ -886,7 +886,7 @@ int m_resize_vars(va_alist) va_dcl
    va_start(ap);
    m = va_arg(ap,int);
    n = va_arg(ap,int);
-   while (par = va_arg(ap,MAT **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,MAT **))) {   /* NULL ends the list*/
       *par = m_resize(*par,m,n);
       i++;
    } 
@@ -903,7 +903,7 @@ int px_resize_vars(va_alist) va_dcl
    
    va_start(ap);
    new_dim = va_arg(ap,int);
-   while (par = va_arg(ap,PERM **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,PERM **))) {   /* NULL ends the list*/
       *par = px_resize(*par,new_dim);
       i++;
    } 
@@ -951,7 +951,7 @@ int iv_free_vars(va_alist) va_dcl
    IVEC **par;
    
    va_start(ap);
-   while (par = va_arg(ap,IVEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,VEC **))) {   /* NULL ends the list*/
       iv_free(*par); 
       *par = IVNULL;
       i++;
@@ -969,7 +969,7 @@ int px_free_vars(va_alist) va_dcl
    PERM **par;
    
    va_start(ap);
-   while (par = va_arg(ap,PERM **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,PERM **))) {   /* NULL ends the list*/
       px_free(*par); 
       *par = PNULL;
       i++;
@@ -986,7 +986,7 @@ int m_free_vars(va_alist) va_dcl
    MAT **par;
    
    va_start(ap);
-   while (par = va_arg(ap,MAT **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,MAT **))) {   /* NULL ends the list*/
       m_free(*par); 
       *par = MNULL;
       i++;

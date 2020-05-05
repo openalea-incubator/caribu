@@ -9,7 +9,7 @@
 #include "multicou.h"
 #include <system.h>
 
-// exportées dans multicou.h
+// exportï¿½es dans multicou.h
 double pi, rd;
 int N;
 
@@ -72,7 +72,7 @@ int main(int argc, char **argv){
     // Parametres du modele de transferts radiatifs
     // => CROPCHAR
     fpar=fopen("cropchar","r") ; 
-    //BUG Scons: MC08 : -DNDEBUG Supprime la fonction assert() donc les fichiers n'étaient pas ouvert
+    //BUG Scons: MC08 : -DNDEBUG Supprime la fonction assert() donc les fichiers n'ï¿½taient pas ouvert
     assert (fpar != NULL ); 
     fgets(line,200,fpar);
     sscanf(line,"%d",&(msailin.nbang));
@@ -193,7 +193,7 @@ int main(int argc, char **argv){
     clai = 0;
     msailin.l[0] = 0.;
 
-    //BUG Scons: MC08 : -DNDEBUG Supprime la fonction assert() donc les fichiers n'étaient pas ouvert
+    //BUG Scons: MC08 : -DNDEBUG Supprime la fonction assert() donc les fichiers n'ï¿½taient pas ouvert
     if(!brdf){
       printf("=> Ecriture des resultats\n");
       fout=fopen("profout","w") ; //unit=2
@@ -220,7 +220,7 @@ int main(int argc, char **argv){
     else{
       if(phi_v==0)
 	theta_v=-theta_v;
-      printf("BRDF: tv=%.1lf, phi=%.1lf %.3lf\n", theta_v, phi_v,  Cprofout[N-1].refdir,  Cprofout[N-1].refdif);
+      printf("BRDF: tv=%.1lf, phi=%.1lf %.3lf\n", theta_v, phi_v,  Cprofout[N-1].refdir);
       fbrf<<theta_v << "\t"<< Cprofout[N-1].refdir << "\t" << Cprofout[N-1].refdif << endl;
     }// else if ! brdf
        
