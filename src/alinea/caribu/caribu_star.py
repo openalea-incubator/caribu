@@ -18,7 +18,7 @@ def _caribu_call(scene, directions, opt=None, domain=None, convUnit=None):
     """ adaptor for backward compatibility of macros calling caribu
     """
     energie, emission, direction, elevation, azimuth = turtle(sectors=str(directions), energy=1)
-    sources = zip(energie, direction)
+    sources = list(zip(energie, direction))
 
     c_scene = CaribuScene(scene=scene, light=sources, opt=opt, pattern=domain)
     if convUnit is not None:

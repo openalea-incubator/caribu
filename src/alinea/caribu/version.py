@@ -13,7 +13,7 @@
 # {# pkglts, version
 #  -*- coding: utf-8 -*-
 
-major = 7
+major = 8
 minor = 0
 post = 6
 

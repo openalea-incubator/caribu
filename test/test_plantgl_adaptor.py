@@ -17,7 +17,7 @@ if run_test:
         s.add(pgl.Sphere())
         cs = scene_to_cscene(s)
         assert len(cs) == 1
-        css = cs.values()[0]
+        css = list(cs.values())[0]
         assert len(css[0]) == 3
         assert len(css[0][0]) == 3
 
@@ -25,7 +25,7 @@ if run_test:
         cs = scene_to_cscene(s)
         assert len(cs) == 2
 
-        css = cs.values()[1]
+        css = list(cs.values())[1]
         assert len(css[0]) == 3
         assert len(css[0][0]) == 3
         return cs
@@ -42,7 +42,7 @@ if run_test:
         geom[0] = pgl.Sphere()
         cs = mtg_to_cscene(g)
         assert len(cs) == 1
-        assert len(cs.values()[0][0]) == 3
-        assert len(cs.values()[0][0][0]) == 3
+        assert len(list(cs.values())[0][0]) == 3
+        assert len(list(cs.values())[0][0][0]) == 3
 
         return cs
