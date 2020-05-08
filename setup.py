@@ -6,7 +6,7 @@
 
 import os
 from os import walk
-from os.path import abspath, normpath
+from os.path import abspath, normpath, dirname
 from os.path import join as pj
 
 from setuptools import setup, find_packages
@@ -73,15 +73,15 @@ setup_kwds = dict(
 # change setup_kwds below before the next pkglts tag
 
 #setup_kwds['setup_requires'] = ['openalea.deploy']
-build_prefix = "build-scons"
+build_prefix = pj(abspath(dirname(__file__)),"build-scons")
 setup_kwds['scons_scripts'] = ['SConstruct']
 setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
 setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
 setup_kwds['entry_points']["console_scripts"] = []
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
 setup_kwds['namespace_packages']=['alinea']
-#setup_kwds['install_requires'] = []
-#setup_kwds['tests_require'] = []
+setup_kwds['install_requires'] = []
+setup_kwds['tests_require'] = []
 
 try:
     import openalea.deploy

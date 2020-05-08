@@ -15,9 +15,6 @@ import numpy
 import openalea.plantgl.all as pgl
 
 
-def _triangle(index, pts):
-    return tuple([tuple([x for x in pts[i]]) for i in index])
-
 
 def pgl_to_triangles(pgl_object, tesselator=None):
     triangles = []
@@ -26,11 +23,10 @@ def pgl_to_triangles(pgl_object, tesselator=None):
     pgl_object.apply(tesselator)
     mesh = tesselator.triangulation
     if mesh:
-        pts = numpy.array(mesh.pointList, ndmin=2)
-        indices = numpy.array(mesh.indexList, ndmin=2)
-        triangles = [_triangle(itri, pts) for itri in indices]
+        indices = mesh.indexList
+        pts = list(map(tuple,mesh.pointList))
+        triangles = [(pts[itri[0]],pts[itri[1]],pts[itri[2]]) for itri in indices]
     return triangles
-
 
 def scene_to_cscene(scene):
     """ Build a caribu-compatible scene from a PlantGl scene
@@ -43,11 +39,11 @@ def scene_to_cscene(scene):
         primitive_id is taken as the index of the shape in the scene shape list.
 
     """
-
+    import itertools
     cscene = {}
     tesselator = pgl.Tesselator()
     for pid, pgl_objects in scene.todict().items():
-        tri_list = sum([pgl_to_triangles(pgl_object, tesselator) for pgl_object in pgl_objects],[])
+        tri_list = list(itertools.chain(*[pgl_to_triangles(pgl_object, tesselator) for pgl_object in pgl_objects]))
         if len(tri_list) > 0:
             cscene[pid] = tri_list
     return cscene

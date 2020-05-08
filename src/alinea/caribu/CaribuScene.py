@@ -24,11 +24,13 @@ from alinea.caribu.file_adaptor import read_can, read_light, read_pattern, \
 from alinea.caribu.plantgl_adaptor import scene_to_cscene, mtg_to_cscene
 from alinea.caribu.caribu import raycasting, radiosity, mixed_radiosity, \
     x_raycasting, x_radiosity, x_mixed_radiosity, opt_string_and_labels, \
-    triangles_string, pattern_string
+    triangles_string, pattern_string, write_scene
 from alinea.caribu.display import jet_colors, generate_scene, nan_to_zero
-from alinea.caribu.caribu_shell import vperiodise
+from alinea.caribu.caribu_shell import vperiodise, Path
 from functools import reduce
+from alinea.caribu.caributriangleset import AbstractCaribuTriangleSet, CaribuTriangleSet 
 
+import tempfile
 
 def _agregate(values, indices, fun=sum):
     """ performs aggregation of outputs along indices """
@@ -107,7 +109,7 @@ class CaribuScene(object):
 
     def __init__(self, scene=None, light=None, pattern=None, opt=None,
                  soil_reflectance=None, soil_mesh=None, z_soil=None,
-                 scene_unit='m'):
+                 scene_unit='m', debug = False, filecache = True):
         """ Initialise a CaribuScene
 
         Args:
@@ -161,6 +163,8 @@ class CaribuScene(object):
             File format specifications (*.can, *.light, *.8, *.opt) can be found in data/CanestraDoc.pdf
         """
 
+        self.debug = debug
+
         if scene_unit not in self.units:
             raise ValueError('unrecognised scene unit: ' + scene_unit)
         self.conv_unit = self.units[scene_unit]
@@ -175,30 +179,21 @@ class CaribuScene(object):
                     assert isinstance(elt[0][0], tuple)
                 except:
                     raise ValueError('Unrecognised scene format')
-                self.scene = scene
+                self.scene = CaribuTriangleSet(scene)
             elif isinstance(scene, str):
-                self.scene = read_can(scene)
+                self.scene = CaribuTriangleSet(read_can(scene))
             elif isinstance(scene, MTG):
-                self.scene = mtg_to_cscene(scene)
+                self.scene = CaribuTriangleSet(mtg_to_cscene(scene))
             elif isinstance(scene, pglScene):
-                self.scene = scene_to_cscene(scene)
+                self.scene = CaribuTriangleSet(scene_to_cscene(scene))
+            elif isinstance(scene, AbstractCaribuTriangleSet):
+                self.scene = scene
             else:
                 raise ValueError('Unrecognised scene format')
 
         self.light = [self.default_light]
         if light is not None:
-            if isinstance(light, list):
-                elt = light[0]
-                try:
-                    assert isinstance(elt, tuple)
-                    assert isinstance(elt[1], tuple)
-                except:
-                    raise ValueError('Unrecognised light format')
-                self.light = light
-            elif isinstance(light, str):
-                self.light = read_light(light)
-            else:
-                raise ValueError('Unrecognised light format')
+            self.setLight(light)
 
         self.pattern = None
         if pattern is not None:
@@ -226,7 +221,7 @@ class CaribuScene(object):
                 self.material = {}
                 for band in bands:
                     self.material[band] = {pid: self.default_material for pid in
-                                           self.scene}
+                                           self.scene.keys()}
         else:
             if isinstance(opt, list):
                 if not isinstance(opt[0], str):
@@ -251,7 +246,7 @@ class CaribuScene(object):
                         if self.scene is not None:
                             for band in opt:
                                 self.material[band] = {pid: opt[band] for pid in
-                                                       self.scene}
+                                                       self.scene.keys()}
                     else:
                         raise ValueError('Unrecognised opt format')
                 else:
@@ -280,28 +275,45 @@ class CaribuScene(object):
                     if self.scene is None:
                         z_soil = 0
                     else:
-                        triangles = reduce(lambda x, y: x + y,
-                                           list(self.scene.values()))
-                        z = (pt[2] for tri in triangles for pt in tri)
-                        z_soil = min(z)
+                        z_soil = self.scene.getZmin()
                 self.soil = domain_mesh(self.pattern, z_soil, soil_mesh)
+        
+        self.tempdir = None
+        if filecache:
+            self.tempdir = tempfile.mkdtemp() if not debug else './caribuscene_'+str(id(self))
+        self.canfile = None
+        self.optfile = None
+
+
+    def __del__(self):
+        if os.path.exists(self.tempdir):
+            import shutil
+            shutil.rmtree(self.tempdir)
+
+
 
     def triangle_areas(self, convert=True):
         """ compute mean area of elementary triangles in the scene
 
         If convert is true, area is xpressed in meter (scene unit otherwise)"""
+        areas = self.scene.triangle_areas()
+        if convert : areas *= self.conv_unit**2
+        return areas
 
-        def _surf(triangle):
-            a, b, c = list(map(numpy.array, triangle))
-            x, y, z = numpy.cross(b - a, c - a).tolist()
-            if convert:
-                return self.conv_unit**2 * numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
-            else:
-                return numpy.sqrt(x ** 2 + y ** 2 + z ** 2) / 2.0
-
-        return numpy.array(
-            list(map(_surf, reduce(lambda x, y: x + y, list(self.scene.values())))))
-
+    def setLight(self, light):
+        if isinstance(light, list):
+            elt = light[0]
+            try:
+                assert isinstance(elt, tuple)
+                assert isinstance(elt[1], tuple)
+            except:
+                raise ValueError('Unrecognised light format')
+            self.light = light
+            self.lightfile = None
+        elif isinstance(light, str):
+            self.light = read_light(light)
+        else:
+            raise ValueError('Unrecognised light format')
 
     def bbox(self):
         """ Scene bounding box opposite corner points
@@ -309,10 +321,7 @@ class CaribuScene(object):
         Returns:
             two tuples: (xmin, ymin, zmin), (xmax, ymax, zmax)
         """
-
-        x, y, z = list(map(numpy.array, list(zip(*[list(zip(*x)) for x in reduce(lambda x, y: x + y,
-                                                   list(self.scene.values()))]))))
-        return (x.min(), y.min(), z.min()), (x.max(), y.max(), z.max())
+        return self.scene.getBoundingBox()
 
     def auto_screen(self, screen_resolution):
         pix = screen_resolution * self.conv_unit
@@ -365,8 +374,8 @@ class CaribuScene(object):
                     for i in range(len(v)):
                         color_property[k].append(colors.pop(0))
                 else:
-                    color_property[k] = [colors.pop(0)] * len(self.scene[k])
-        scene = generate_scene(self.scene, color_property)
+                    color_property[k] = [colors.pop(0)] * self.scene.getNumberOfTriangles(k)
+        scene = self.scene.generate_scene(color_property)
         if display:
             Viewer.display(scene)
         return scene, values
@@ -431,27 +440,25 @@ class CaribuScene(object):
         """
         triangles, groups, materials, bands, albedo = None, None, None, None, None
         if self.scene is not None:
-            triangles = reduce(lambda x, y: x + y, list(self.scene.values()))
-            groups = [[pid] * len(self.scene[pid]) for pid in self.scene]
-            groups = reduce(lambda x, y: x + y, groups)
+            triangles = self.scene.allvalues(copied=True) #reduce(lambda x, y: x + y, self.scene.values())
+            groups = self.scene.allids()
             if self.soil is not None:
                 triangles += self.soil
                 groups = groups + ['soil'] * len(self.soil)
             bands = list(self.material.keys())
             if len(bands) == 1:
-                materials = [
-                    [self.material[bands[0]][pid]] * len(self.scene[pid]) for
-                    pid in self.scene]
-                materials = reduce(lambda x, y: x + y, materials)
+                materials = self.scene.repeat_for_triangles([
+                    self.material[bands[0]][pid] for
+                    pid in self.scene.keys()])
                 albedo = self.soil_reflectance[bands[0]]
                 if self.soil is not None:
                     materials = materials + [(albedo,)] * len(self.soil)
             else:
                 materials = {}
                 for band in bands:
-                    mat = [[self.material[band][pid]] * len(self.scene[pid]) for
-                           pid in self.scene]
-                    materials[band] = reduce(lambda x, y: x + y, mat)
+                    mat = self.scene.repeat_for_triangles([self.material[band][pid] for
+                           pid in self.scene.keys()])
+                    materials[band] = mat
                     if self.soil is not None:
                         materials = materials + [(self.soil_reflectance[
                                                       band],)] * len(self.soil)
@@ -521,33 +528,51 @@ class CaribuScene(object):
             lights = [(e * self.conv_unit ** 2, vect) for e, vect in self.light]
 
         if self.scene is not None:
-            triangles = reduce(lambda x, y: x + y, list(self.scene.values()))
-            groups = [[pid] * len(self.scene[pid]) for pid in self.scene]
-            groups = reduce(lambda x, y: x + y, groups)
+            if self.debug : print ('Prepare scene', len(self.light))
+            triangles = self.scene.allvalues(copied=True)
+            groups = self.scene.allids()
+            if self.debug : print ('done')
             if self.soil is not None:
                 triangles += self.soil
                 groups = groups + ['soil'] * len(self.soil)
             bands = list(self.material.keys())
             if len(bands) == 1:
-                materials = [
-                    [self.material[bands[0]][pid]] * len(self.scene[pid]) for
-                    pid in self.scene]
-                materials = reduce(lambda x, y: x + y, materials)
-                albedo = self.soil_reflectance[bands[0]]
-                if self.soil is not None:
-                    materials = materials + [(albedo,)] * len(self.soil)
+                if not hasattr(self,'materialvalues') : 
+                    materials = self.scene.repeat_for_triangles([
+                       self.material[bands[0]][pid] for
+                       pid in self.scene.keys()])
+                    albedo = self.soil_reflectance[bands[0]]
+                    if self.soil is not None:
+                        materials = materials + [(albedo,)] * len(self.soil)
+                    self.materialvalues = materials
+
+                    if not self.tempdir is None:
+                        self.canfile = os.path.join(self.tempdir,'cscene.can')
+                        self.optfile = os.path.join(self.tempdir,'band0.opt')
+                        write_scene(triangles, materials, canfile = self.canfile, optfile = self.optfile)
+
+                else:
+                    # self.materialvalues is a cache for the computation of the material list
+                    materials = self.materialvalues
+                    albedo = self.soil_reflectance[bands[0]]
+
                 algos = {'raycasting': raycasting, 'radiosity': radiosity,
                          'mixed_radiosity': mixed_radiosity}
             else:
                 materials = {}
-                for band in bands:
-                    mat = [[self.material[band][pid]] * len(self.scene[pid]) for
-                           pid in self.scene]
-                    materials[band] = reduce(lambda x, y: x + y, mat)
-                    if self.soil is not None:
-                        materials = materials + [(self.soil_reflectance[
-                                                      band],)] * len(self.soil)
-                albedo = self.soil_reflectance
+                if not hasattr(self,'materialvalues') : 
+                    for band in bands:
+                        mat = self.scene.repeat_for_triangles([self.material[band][pid] for
+                               pid in self.scene.keys()])
+                        materials[band] =  mat
+                        if self.soil is not None:
+                            materials = materials + [(self.soil_reflectance[
+                                                          band],)] * len(self.soil)
+                    albedo = self.soil_reflectance
+                else:
+                    materials = self.materialvalues
+                    albedo = self.soil_reflectance
+
                 algos = {'raycasting': x_raycasting, 'radiosity': x_radiosity,
                          'mixed_radiosity': x_mixed_radiosity}
 
@@ -557,8 +582,7 @@ class CaribuScene(object):
                         'calling radiosity should be done using direct=False and infinite=False')
                 d_sphere /= self.conv_unit
                 if height is None:
-                    z = (pt[2] for tri in triangles for pt in tri)
-                    height = max(z)
+                    height = self.scene.getZmax()
                 else:
                     height /= self.conv_unit
 
@@ -582,22 +606,26 @@ class CaribuScene(object):
                                                diameter=d_sphere, layers=layers,
                                                height=height,
                                                screen_size=screen_size,
-                                               sensors=sensors)
+                                               sensors=sensors, debug = self.debug)
             elif not direct:  # pure radiosity
                 out = algos['radiosity'](triangles, materials, lights=lights,
-                                         screen_size=screen_size, sensors=sensors)
+                                         screen_size=screen_size, sensors=sensors, debug = self.debug)
             else:  # ray_casting
                 if infinite:
                     out = algos['raycasting'](triangles, materials,
                                               lights=lights,
                                               domain=self.pattern,
                                               screen_size=screen_size,
-                                              sensors=sensors)
+                                              sensors=sensors,
+                                              debug = self.debug)
                 else:
                     out = algos['raycasting'](triangles, materials,
                                               lights=lights, domain=None,
                                               screen_size=screen_size,
-                                              sensors=sensors)
+                                              sensors=sensors,
+                                              debug = self.debug,
+                                              canfile = self.canfile,
+                                              optfile = self.optfile)
 
             if len(bands) == 1:
                 out = {bands[0]: out}
@@ -657,6 +685,7 @@ class CaribuScene(object):
             coords = list(map(float, fields[-9:]))
             cscene[label].append(list(map(tuple, [coords[:3], coords[3:6], coords[6:]])))
 
+        # should be changed to take into account the new structure
         self.scene = cscene
 
         return self
