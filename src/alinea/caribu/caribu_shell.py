@@ -308,7 +308,7 @@ class Caribu(object):
     def copyfiles(self, skip_sky=False, skip_pattern=False, skip_opt=False):
         d = self.tempdir
 
-        if os.path.exists(self.scene):
+        if str(self.scene).endswith('.can'):
             fn = Path(self.scene)
             fn.copy(d / fn.basename())
         else:
