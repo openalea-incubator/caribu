@@ -4,8 +4,9 @@
 # {# pkglts, pysetup.kwds
 # format setup arguments
 
+import os
 from os import walk
-from os.path import abspath, normpath
+from os.path import abspath, normpath, dirname
 from os.path import join as pj
 
 from setuptools import setup, find_packages
@@ -37,7 +38,6 @@ for root, dnames, fnames in walk("src/caribu_data"):
     for name in fnames:
         data_files.append(data_rel_pth(pj(root, name)))
 
-
 setup_kwds = dict(
     name='alinea.caribu',
     version=version["__version__"],
@@ -54,26 +54,26 @@ setup_kwds = dict(
 
     include_package_data=True,
     package_data={'caribu_data': data_files},
-    install_requires=[
-        "path.py",
-        ],
-    tests_require=[
-        "coverage",
-        "flake8",
-        "mock",
-        "nose",
-        "sphinx",
-        "coveralls",
-        ],
+    #install_requires=[
+    #    "path.py",
+    #    ],
+    #tests_require=[
+    #    "coverage",
+    #    "flake8",
+    #    "mock",
+    #    "nose",
+    #    "sphinx",
+    #    "coveralls",
+    #    ],
     entry_points={},
     keywords='',
-    test_suite='nose.collector',
+    #test_suite='nose.collector',
 )
 # #}
 # change setup_kwds below before the next pkglts tag
 
-setup_kwds['setup_requires'] = ['openalea.deploy']
-build_prefix = "build-scons"
+#setup_kwds['setup_requires'] = ['openalea.deploy']
+build_prefix = pj(abspath(dirname(__file__)),"build-scons")
 setup_kwds['scons_scripts'] = ['SConstruct']
 setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
 setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
@@ -81,6 +81,15 @@ setup_kwds['entry_points']["console_scripts"] = []
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
 setup_kwds['namespace_packages']=['alinea']
 setup_kwds['install_requires'] = []
+setup_kwds['tests_require'] = []
+
+try:
+    import openalea.deploy
+except :
+    # If deploy is not set, call directly scons
+    if 'CONDA_BUILD' in os.environ:
+        os.system('scons -j '+os.environ['CPU_COUNT']+' install')
+
 # do not change things below
 # {# pkglts, pysetup.call
 setup(**setup_kwds)

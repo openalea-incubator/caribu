@@ -153,9 +153,9 @@ def encode_label(opt_id=1, opak=0, plant_id=1, elt_id=1, minlength=1):
     if not isinstance(elt_id, list):
         elt_id = [elt_id]
 
-    maxlen = max([max(map(len, [opt_id, opak, plant_id, elt_id])), minlength])
+    maxlen = max([max(list(map(len, [opt_id, opak, plant_id, elt_id]))), minlength])
 
-    opt_id, opak, plant_id, elt_id = map(lambda (x): _complete(x, maxlen), [opt_id, opak, plant_id, elt_id])
+    opt_id, opak, plant_id, elt_id = [_complete(x, maxlen) for x in [opt_id, opak, plant_id, elt_id]]
 
     return [canlabel_string(opt_id[i], opak[i], plant_id[i], elt_id[i]) for i in range(maxlen)]
 
@@ -169,4 +169,4 @@ def decode_label(label):
     properties = [(lab.optical_id, lab.transparency, lab.plant_id, lab.elt_id) for lab in
                   (Label(labstring) for labstring in label)]
 
-    return zip(*properties)
+    return list(zip(*properties))

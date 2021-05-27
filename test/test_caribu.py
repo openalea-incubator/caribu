@@ -3,6 +3,7 @@ from nose.tools import assert_raises
 from alinea.caribu.caribu import green_leaf_PAR, radiosity, raycasting, \
     x_radiosity, x_raycasting, mixed_radiosity, x_mixed_radiosity
 
+DEBUG = False
 
 def test_default_light_in_raycasting():
     pts1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
@@ -10,7 +11,7 @@ def test_default_light_in_raycasting():
     mats = [green_leaf_PAR]
 
     # default light
-    res = raycasting(triangles, mats)
+    res = raycasting(triangles, mats, debug=DEBUG)
 
     assert 'area' in res
 
@@ -22,7 +23,7 @@ def test_default_light_in_radiosity():
     mats = [green_leaf_PAR] * 2
 
     # default light
-    res = radiosity(triangles, mats)
+    res = radiosity(triangles, mats, debug=DEBUG)
 
     assert 'area' in res
 
@@ -38,21 +39,21 @@ def test_other_algos():
     sensors = [[(0, 0, 2), (1, 0, 2), (0, 1, 2)],[(0, 0, 2), (1, 0, 2), (1, 0, 3)]]
     lights = [(1, (0, 0, -1))]
 
-    res = raycasting(triangles, mats, sensors=sensors)
+    res = raycasting(triangles, mats, sensors=sensors, debug=DEBUG)
     assert 'sensors' in res
     assert 'Ei' in res['sensors']
 
-    res = x_raycasting(triangles, x_mats, sensors=sensors)
+    res = x_raycasting(triangles, x_mats, sensors=sensors, debug=DEBUG)
     assert 'PAR' in res
     assert 'NIR' in res
     assert 'sensors' in res['PAR']
     assert 'Ei' in res['PAR']['sensors']
 
-    res = radiosity(triangles, mats, sensors=sensors)
+    res = radiosity(triangles, mats, sensors=sensors, debug=DEBUG)
     assert 'sensors' in res
     assert 'Ei' in res['sensors']
 
-    res = x_radiosity(triangles, x_mats, sensors=sensors)
+    res = x_radiosity(triangles, x_mats, sensors=sensors, debug=DEBUG)
     assert 'PAR' in res
     assert 'NIR' in res
     assert 'sensors' in res['PAR']
@@ -60,13 +61,13 @@ def test_other_algos():
 
     res = mixed_radiosity(triangles, mats, lights=lights, domain=domain,
                           soil_reflectance=0.3, diameter=1, layers=2,
-                          height=height)
+                          height=height, debug=DEBUG)
     assert 'Eabs' in res
 
     res = x_mixed_radiosity(triangles, x_mats, lights=lights, domain=domain,
                             soil_reflectance={'PAR': 0.3, 'NIR': 0.1},
                             diameter=1, layers=2,
-                            height=height)
+                            height=height, debug=DEBUG)
     assert 'PAR' in res
     assert 'NIR' in res
     assert 'Eabs' in res['PAR']
@@ -77,17 +78,17 @@ def test_raycasting_exception():
 
     # black body
     materials = [(0,)]
-    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+    assert_raises(ValueError, lambda: raycasting(triangles, materials, debug=DEBUG))
     materials = [(0.,)]
-    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+    assert_raises(ValueError, lambda: raycasting(triangles, materials, debug=DEBUG))
     materials = [(0., 0)]
-    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+    assert_raises(ValueError, lambda: raycasting(triangles, materials, debug=DEBUG))
     materials = [(0., 0, 0, 0.)]
-    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+    assert_raises(ValueError, lambda: raycasting(triangles, materials, debug=DEBUG))
 
     # unmatch
     materials = [(0.1,)] * 2
-    assert_raises(ValueError, lambda: raycasting(triangles, materials))
+    assert_raises(ValueError, lambda: raycasting(triangles, materials, debug=DEBUG))
 
 
 def test_radiosity_exception():
@@ -96,7 +97,7 @@ def test_radiosity_exception():
     materials = [green_leaf_PAR]
 
     # one triangle
-    assert_raises(ValueError, lambda: radiosity(triangles, materials))
+    assert_raises(ValueError, lambda: radiosity(triangles, materials, debug=DEBUG))
 
     pts1 = [(0, 0, 0), (1, 0, 0), (0, 1, 0)]
     pts2 = [(0, 0, 1), (1, 0, 1), (0, 1, 1)]
@@ -104,11 +105,14 @@ def test_radiosity_exception():
 
     # black body
     materials = [(0,)] * 2
-    assert_raises(ValueError, lambda: radiosity(triangles, materials))
+    assert_raises(ValueError, lambda: radiosity(triangles, materials, debug=DEBUG))
 
     # unmatch triangles <-> materials
     materials = [green_leaf_PAR]
-    assert_raises(ValueError, lambda: radiosity(triangles, materials))
+    assert_raises(ValueError, lambda: radiosity(triangles, materials, debug=DEBUG))
 
-
-
+if __name__ == '__main__':
+    tests = [(fname,func) for fname, func in globals().items() if 'test_' in fname]
+    for fname,func in tests:
+            print(fname)
+            func()
