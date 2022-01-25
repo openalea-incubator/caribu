@@ -95,3 +95,4 @@ doc/_dvlpt/
 
 build-scons
 .sconsign.dblite
+.DS_Store
