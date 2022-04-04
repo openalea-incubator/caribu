@@ -34,7 +34,7 @@ double	x;
     return y;	/* prevents optimisation */
 }
 
-main()
+int main()
 {
     static float	feps, feps1, ftmp;
 
@@ -43,4 +43,5 @@ main()
 	feps = 0.5*feps;
 
     printf("%g\n", 2.0*feps);
+    return 0;
 }

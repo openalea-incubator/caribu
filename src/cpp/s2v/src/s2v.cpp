@@ -9,7 +9,7 @@
 /* 	deux termes represente la meme grandeur. */
 /* 	nb2 : la maquette peut comprendre plusieurs especes vegetales. */
 /* 	Dans ce cas l'analyse est faite pour chacune des especes presentes. */
-/* 	La variable espece est codee via le label associé a chaque triangle */
+/* 	La variable espece est codee via le label associï¿½ a chaque triangle */
 /* 	(espece= label/10**11) */
 /*	nb3 :La structure peut etre de type periodique dans le plan horizontal.*/
 /* 	(typiquement une periode = un interrang). */
@@ -95,7 +95,7 @@
 /* 	nje : nombres d'especes */
 /* 	nji,nja :nombre de classes de zenith et d'azimuth */
 /* 	njx,njy,njz: nombre de tranches en x, y, z */
-/* 	dx,dy,dz(jz): épaisseur des tranches en x, y, z */
+/* 	dx,dy,dz(jz): ï¿½paisseur des tranches en x, y, z */
 /* 	p1, p2, p3 : sommets du triangle */
 
 /* MC avr 97 - Lecture des donnees envoyees par caribu par le shm */
@@ -103,7 +103,7 @@
 /* MC jan 00 - Creation du fichier de temperature pour SailT, modifie fev00 */
 /* MC jan 00 - Calcul du profil de sinT pour mcsellers */
 /* MC jan 00 - Creation d'un ficier .can trie par couche et avec un 2e id couche */
-/* MC mai 2011 - passage en 1D pour regler bug espece
+/* MC mai 2011 - passage en 1D pour regler bug espece */
 /* MC avr 97 -  */
 
 #include <iostream>	//.h>
@@ -129,7 +129,7 @@ using namespace std ;
 #include <transf.h>
 
 #ifdef WIN32
-#include <windows.h>	// Mem partagée via CerateFileMapping/MapViewOfFile
+#include <windows.h>	// Mem partagï¿½e via CerateFileMapping/MapViewOfFile
 #endif
 
 #include <assert.h>
@@ -195,7 +195,7 @@ struct shmid_ds info;
 // AFAIRE ??
 #endif
 
-// Indice du premier fichier de propriétés optiques
+// Indice du premier fichier de propriï¿½tï¿½s optiques
 #define MIN_ARGC 6
 #define MIN_OPT (MIN_ARGC-1)
 
@@ -228,11 +228,11 @@ int s2v(int argc, char **argv){
   double id;
 
 #ifndef WIN32
-  int shmid ;			// Id du segment de mem. partagée
+  int shmid ;			// Id du segment de mem. partagï¿½e
 #else
   char clef_alphanum[12] ;	// version char* de la clef numerique
-  HANDLE	hSharedSeg ;	// Handle du fichier mappé
-  LPVOID	lpSharedSeg ;	// pointeur LPVOID sur seg. partagé
+  HANDLE	hSharedSeg ;	// Handle du fichier mappï¿½
+  LPVOID	lpSharedSeg ;	// pointeur LPVOID sur seg. partagï¿½
 #endif
 
   for(i=0;i<argc;i++)
@@ -260,7 +260,7 @@ int s2v(int argc, char **argv){
       segpar=true;
 #ifndef WIN32
       shmid=shmget((key_t)clef,SEGSIZE*sizeof(Patch) ,IPC_CREAT|0666);
-      Ts=(Patch *)shmat(shmid,0,NULL);
+      Ts=(Patch *)shmat(shmid,0,0); // NULL
 #else
       sprintf ( clef_alphanum, "%d", clef) ;
       assert ((hSharedSeg = OpenFileMapping (
@@ -348,7 +348,7 @@ int s2v(int argc, char **argv){
     }// if ftri
     Ferr<<"Lecture du fichier parametre dans fichier :"<<'\n';
     fscanf(fpar,"%d %d %d",&nji,&nja,&njz);
-    printf("nji=%d, nja=%d, njz=%hd \n",nji,nja,njz);
+    printf("nji=%d, nja=%d, njz=%d \n",nji,nja,njz);
     Ferr <<"nji="<<nji <<", nja="<<nja<< ", njz="<<njz<< '\n';
     volume=new double[njz];
     dz=new double[njz];
@@ -429,7 +429,7 @@ int s2v(int argc, char **argv){
         long opak;
 	nbtri++;
 	//i_att[0] = label1/1000
-	je=(i_att[0]/100000000)-1; //je : de 0 à nje (indice tableau C)
+	je=(i_att[0]/100000000)-1; //je : de 0 ï¿½ nje (indice tableau C)
 	if(je+1>nje_reel)nje_reel=je+1;
 	// Bug MC09 T.t=je+1;
 	T.t= - je+1; // default OPak
@@ -519,7 +519,7 @@ int s2v(int argc, char **argv){
 #else
     UnmapViewOfFile(lpSharedSeg) ; // invalidation du ptr sur mem partagee
     // Ts = NULL ;		   // Tester avant
-    CloseHandle(hSharedSeg) ;	   // Fermeture du fichier mappé
+    CloseHandle(hSharedSeg) ;	   // Fermeture du fichier mappï¿½
 #endif
     Ferr<< "-> Fin de lecture du segment partage: "<<it;
     Ferr<<" Triangles " << (int)nbtt<< '\n';
@@ -571,7 +571,7 @@ int s2v(int argc, char **argv){
 	if (xlad(je,jz) > 0) {
 	  tmp=xlad(je,  jz);
 	  for (ji=0; ji < nji; ji++) {
-	    xladi(je, jz, ji) /= tmp;  //bug fixé - mai 2011
+	    xladi(je, jz, ji) /= tmp;  //bug fixï¿½ - mai 2011
 	  }//for ji
 	}//if xlad>0 
       }//for je
@@ -947,7 +947,7 @@ void calcjp(Patch T, int jp[3][3], char &acv){
 /***********************************************/
 void  classe(double z, int &jz){
   /* 	Classement de la valeur z. Les classes sont definies par leur borne */
-  /* 	supérieures, le numero de classe est dans le sens des z decroissants. 
+  /* 	supï¿½rieures, le numero de classe est dans le sens des z decroissants. 
    */
   /* 	nb.: les z negatifs sont classes dans la classe la plus basse... */
   /* 	if (z.ge.bz(1)) print *,"subroutine class : depassement en z",z 
