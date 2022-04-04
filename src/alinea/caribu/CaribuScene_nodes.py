@@ -145,9 +145,9 @@ def PARaggregators(aggregated_output):
 
     out = aggregated_output['Ei']
     aggregators = { 'Total' : [1] * len(caribu_outdict['Plt']),
-            'Green' : [x is 1 for x in caribu_outdict['Opt']],
-            'Stem' :  [x[0] is 0 and x[1] is 1 for x in zip(caribu_outdict['Opak'],caribu_outdict['Opt'])],
-            'Leaves' :  [x[0] is not 0 and x[1] is 1 for x in zip(caribu_outdict['Opak'],caribu_outdict['Opt'])],
+            'Green' : [(x == 1) for x in caribu_outdict['Opt']],
+            'Stem' :  [(x[0] == 0) and (x[1] == 1) for x in zip(caribu_outdict['Opak'],caribu_outdict['Opt'])],
+            'Leaves' :  [(x[0] != 0) and (x[1] == 1) for x in zip(caribu_outdict['Opak'],caribu_outdict['Opt'])],
             'Soil' :  [x == 0 for x in caribu_outdict['Opt']]}
 
     # write the node code here.

@@ -1,12 +1,14 @@
+{% set data = load_setup_py_data() %}
+
 package:
   name: alinea.caribu
-  version: 8.0.7
+  version: {{ data.get('version') }}
 
 source:
   path: ..
 
 about:
-  home: http://openalea.gforge.inria.fr
+  home: {{ data.get('url') }}
   summary: Eco-physiological model of light interception by plants.
 
 
