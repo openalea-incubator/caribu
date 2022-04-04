@@ -505,7 +505,7 @@ int v_get_vars(int dim,...)
    VEC **par;
    
    va_start(ap, dim);
-   while (par = va_arg(ap,VEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,VEC **))) {   /* NULL ends the list*/
       *par = v_get(dim);
       i++;
    } 
@@ -522,7 +522,7 @@ int iv_get_vars(int dim,...)
    IVEC **par;
    
    va_start(ap, dim);
-   while (par = va_arg(ap,IVEC **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,IVEC **))) {   /* NULL ends the list*/
       *par = iv_get(dim);
       i++;
    } 
@@ -538,7 +538,7 @@ int m_get_vars(int m,int n,...)
    MAT **par;
    
    va_start(ap, n);
-   while (par = va_arg(ap,MAT **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,MAT **))) {   /* NULL ends the list*/
       *par = m_get(m,n);
       i++;
    } 
@@ -554,7 +554,7 @@ int px_get_vars(int dim,...)
    PERM **par;
    
    va_start(ap, dim);
-   while (par = va_arg(ap,PERM **)) {   /* NULL ends the list*/
+   while ((par = va_arg(ap,PERM **))) {   /* NULL ends the list*/
       *par = px_get(dim);
       i++;
    } 
