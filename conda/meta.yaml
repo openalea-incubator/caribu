@@ -38,7 +38,7 @@ test:
   imports:
     - alinea.caribu
   source_files:
-    - test/test_*.py
+    - test/*.py
   commands:
    - pytest -v
 
