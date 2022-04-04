@@ -80,15 +80,16 @@ setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
 setup_kwds['entry_points']["console_scripts"] = []
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
 setup_kwds['namespace_packages']=['alinea']
-setup_kwds['install_requires'] = []
-setup_kwds['tests_require'] = []
+setup_kwds['setup_requires'] = ['openalea.deploy']
 
+"""
 try:
     import openalea.deploy
 except :
     # If deploy is not set, call directly scons
     if 'CONDA_BUILD' in os.environ:
         os.system('scons -j '+os.environ['CPU_COUNT']+' install')
+"""
 
 # do not change things below
 # {# pkglts, pysetup.call

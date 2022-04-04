@@ -22,23 +22,23 @@ requirements:
   host:
     - python {{PY_VER}}
     - setuptools
-    #- openalea.deploy
+    - openalea.deploy
     - openalea.sconsx
   run:
     - python {{PY_VER}}
-    #- openalea.deploy
-    - path.py
+    - openalea.deploy
+    - path              # path.py is outdated
     - numpy
     - openalea.plantgl
     - openalea.mtg
     - m2w64-toolchain   [win]
 test:
   requires:
-    - nose
+    - pytest
   imports:
     - alinea.caribu
   source_files:
     - test/test_*.py
   commands:
-   - nosetests -v
+   - pytest -v
 
