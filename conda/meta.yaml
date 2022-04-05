@@ -7,34 +7,30 @@ package:
 source:
   path: ..
 
-about:
-  home: {{ data.get('url') }}
-  summary: Eco-physiological model of light interception by plants.
-
-
 build:
   preserve_egg_dir: True
   number: 2
-  script: python setup.py install
+  script: {{ PYTHON }} setup.py install --single-version-externally-managed --record=record.txt
 
 requirements:
   build:
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
     - m2w64-toolchain   [win]
+    - python {{PY_VER}}
   host:
     - python {{PY_VER}}
     - setuptools
     - openalea.deploy
     - openalea.sconsx
   run:
-    - python {{PY_VER}}
     - openalea.deploy
     - path              # path.py is outdated
     - numpy
     - openalea.plantgl
     - openalea.mtg
     - m2w64-toolchain   [win]
+
 test:
   requires:
     - pytest
@@ -44,4 +40,8 @@ test:
     - test/*.py
   commands:
    - pytest -v
+
+about:
+  home: {{ data.get('url') }}
+  summary: Eco-physiological model of light interception by plants.
 
