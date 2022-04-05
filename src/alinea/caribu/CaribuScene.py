@@ -639,14 +639,14 @@ class CaribuScene(object):
                     aggregated[band]['sensors'] = {}
                     for k in ('Ei', 'Ei0', 'area'):
                         raw[band]['sensors'][k] = _agregate(sensors[k], sensors_id, list)
-                        if k is 'area':
+                        if k == 'area':
                             aggregated[band]['sensors'][k] = _agregate(sensors[k], sensors_id, sum)
                         else:
                             aggregated[band]['sensors'][k] = _agregate(
                                 zip(sensors[k], sensors['area']), sensors_id, _wsum)
                 for k in results:
                     raw[band][k] = _agregate(output[k], groups, list)
-                    if k is 'area':
+                    if k == 'area':
                         aggregated[band][k] = _agregate(output[k], groups, sum)
                     else:
                         aggregated[band][k] = _agregate(

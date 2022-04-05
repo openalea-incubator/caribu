@@ -152,7 +152,7 @@ int k;
 }
 
 
-void main()
+int main()
 {
   MAT3D *M;
   int i,j,k;
@@ -186,6 +186,7 @@ void main()
   m3d_free(M);  /* if M is not necessary */
   mem_info_file(stdout,M3D_LIST);
 
+  return 0;
 }
 
 

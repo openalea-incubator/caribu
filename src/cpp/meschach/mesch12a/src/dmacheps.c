@@ -34,7 +34,7 @@ double	x;
     return y;	/* prevents optimisation */
 }
 
-main()
+int main()
 {
     static double	deps, deps1, dtmp;
 
@@ -43,4 +43,5 @@ main()
 	deps = 0.5*deps;
 
     printf("%g\n", 2.0*deps);
+    return 0;
 }

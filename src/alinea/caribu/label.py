@@ -1,6 +1,6 @@
 # -*- python -*-
 #
-#       Copyright 2015 INRIA - CIRAD - INRA
+#       Copyright 2015-2022 INRIA - CIRAD - INRAE
 #
 #       Distributed under the Cecill-C License.
 #       See accompanying file LICENSE.txt or copy at
@@ -128,7 +128,7 @@ def simple_canlabel(what, plant=1, elt=1, opt=1):
     opak = opak_mapping.get(what, 0)
     opt_mapping = {'awn': 3}
     opt = opt_mapping.get(what, 1)
-    if what is 'soil':
+    if what == 'soil':
         plant, opt, elt = 0, 0, 0
     return canlabel_string(opt, opak, plant, elt)
 
