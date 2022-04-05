@@ -18,12 +18,10 @@ requirements:
     - {{ compiler('cxx') }} # [unix]
     - m2w64-toolchain   [win]
     - python {{PY_VER}}
-  host:
-    - python {{PY_VER}}
-    - setuptools
-    - openalea.deploy
     - openalea.sconsx
+    - openalea.deploy
   run:
+    - python {{PY_VER}}
     - openalea.deploy
     - path              # path.py is outdated
     - numpy
