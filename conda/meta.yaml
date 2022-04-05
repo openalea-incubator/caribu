@@ -20,8 +20,11 @@ requirements:
     - python {{PY_VER}}
     - openalea.sconsx
     - openalea.deploy
-  run:
+  host:
     - python {{PY_VER}}
+    - setuptools
+    - openalea.deploy
+  run:
     - openalea.deploy
     - path              # path.py is outdated
     - numpy
