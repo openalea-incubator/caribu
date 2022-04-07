@@ -5,7 +5,7 @@ except ImportError:
     run_test = False
 
 if run_test:
-    from nose.tools import assert_almost_equal
+    from .tools import assert_almost_equal
 
     import openalea.plantgl.all as pgl
     from alinea.caribu.CaribuScene import CaribuScene

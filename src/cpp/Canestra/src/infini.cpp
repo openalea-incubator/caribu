@@ -54,8 +54,8 @@ bool out(int i,int j,int moving_i,int moving_j) {
   //cout << "\ndehors[1]: " << dehors[1];
   //cout << "\ni,j ("<<i<<","<<j<<") out ["<<Ti<<","<<Tj<<"] ? ==> " << ((dehors[0] && dehors[1]) ? "true" : "false") << "\n";
   // BUG BUG BUG BUG  - MC09
-  //MC96   return dehors[0]||dehors[1]; // BUG BUG theta fort > 70° !!! - MC09
-  // MC09 return (dehors[0] && dehors[1]); // Bug qd phi=0°, boucle infinie...
+  //MC96   return dehors[0]||dehors[1]; // BUG BUG theta fort > 70ï¿½ !!! - MC09
+  // MC09 return (dehors[0] && dehors[1]); // Bug qd phi=0ï¿½, boucle infinie...
   return (dehors[0] && dehors[1]);
 
  
@@ -87,7 +87,7 @@ void lateral(int x,int y, char idx) {
 
 void pave(int x,int  y, char idx ) {
   if(out(x,y,tr[idx],tr[idx+1])) return;
-  if(verbose>1)printf("\n pave(%d,%d,%d):\n",x,y);
+  if(verbose>1)printf("\n pave(%d,%d):\n",x,y);
   if( !(x==0 && y == 0))
     zbuf(x,y);
   lateral(x+tr[2],y+tr[3],2);      // gauche

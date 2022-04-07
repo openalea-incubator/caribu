@@ -71,10 +71,10 @@ Polygone::Polygone(string ligne,double name,
   //Ferr <<__FILE__<<" : "<<__LINE__<<"\n" ;
   istringstream isTmp (ligne);
 
-  // Note: apprendre à vider TOUTE une istringstream d'1 coup
+  // Note: learn to empty a full istringstream in one command
 
   char *tmp1 = new char[LONG_LIGNE_CAN],
-    *tmp2 = new char[LONG_LIGNE_CAN] ;
+       *tmp2 = new char[LONG_LIGNE_CAN] ;
   strcpy (tmp2,"");
   if ((tmp1 != NULL) && (tmp2 != NULL)) {
     while (isTmp.good() ){
@@ -87,8 +87,8 @@ Polygone::Polygone(string ligne,double name,
     Ferr <<"Plus de memoire" << "\n" ;
     exit (23);
   }
-  if (tmp1 != NULL) delete (tmp1);
-  if (tmp2 != NULL) delete (tmp2);
+  if (tmp1 != NULL) delete [] tmp1;
+  if (tmp2 != NULL) delete [] tmp2;
 }
 // constructeur par nom string 
 
@@ -590,7 +590,7 @@ static   time_t tpsD,tpsF,tps1=0,tps2=0;
 
 double Polygone::distance2_point(Point &C) {
   /* Calcule le carre de la distance d'un point a un polygone convexe T en 2 etapes :
-     - I, intesection du plan de T avec la droite (C,n), où n est la normale de T
+     - I, intesection du plan de T avec la droite (C,n), oï¿½ n est la normale de T
      (cf. intersect())
      - Determination de I', point minimisant la distance (T,I) dans le plan  
      */

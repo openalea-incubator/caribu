@@ -31,6 +31,8 @@ static char rcsid[] = "$Id: tutorial.c,v 1.3 1994/01/16 22:53:09 des Exp $";
 
 #include <math.h>
 #include "matrix.h"
+#include "sparse2.h"
+#include "matlab.h"
 
 /* rk4 -- 4th order Runge--Kutta method */
 double rk4(f,t,x,h)
@@ -302,7 +304,7 @@ void tut_lap()
 }
 
 
-void main()
+int main()
 {
    int i;
 
@@ -314,8 +316,9 @@ void main()
     case 3: tut_lap(); break;
     default: 
       printf(" Wrong value of i (only 1, 2 or 3)\n\n");
-      break;
+      return 1;
    }
+   return 0;
 
 }
 

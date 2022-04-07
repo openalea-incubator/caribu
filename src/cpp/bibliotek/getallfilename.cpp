@@ -16,10 +16,10 @@ char *GetAllFileName(char *nom) {
   
   if(true){
     if (pcTmpName == NULL){
-      clog<<__FILE__<<" : "<<__LINE__<<" : Plus de mémoire"<<endl;
+      clog<<__FILE__<<" : "<<__LINE__<<" : Not enough memory"<<endl;
       exit (1);
     }
-    // fin de chaîne
+    // end of string
     pcTmpName[0]=0;
     
     // this #def is to be set for every Win32 compiler to run
@@ -52,7 +52,7 @@ char *GetAllFileName(char *nom) {
     // est-ce que FLUX >> string reserve la memoire ?
     fin >> sTmpName ;
     //clog <<"stmpname = "<< sTmpName ;
-    // Attention : XP ne renvoie rien si une variable n'est pas définie
+    // Attention : XP ne renvoie rien si une variable n'est pas dï¿½finie
     // (style posix) HA 07 2004
     if (( sTmpName[0] == '%' ) || ( sTmpName.size() == 0 )) {
       istringstream isIn (".");

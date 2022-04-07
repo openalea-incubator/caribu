@@ -531,24 +531,26 @@ void proj_ortho(Diffuseur* E,reel *inc) {
     signed char caxe[2]={0,0};
     for(i=0;i<3;i++) {
       if((Pp[i][0]==0)&&(Pp[i][1]==0.))
-	Pp[i][0]=Pp[i][1]=0.0000001;
-      else
-	for(j=0;j<2;j++) {
-	  if(Pp[i][j]==0) 
-	    if(caxe[j]!=0)
-	      Pp[i][j]= Pp[caxe[j]-1][j]=0.0000001;
-	    else
-	      caxe[j]=i+1;
-	}
+	      Pp[i][0]=Pp[i][1]=0.0000001;
+      else  {
+	      for(j=0;j<2;j++) {
+	        if(Pp[i][j]==0) {
+	          if(caxe[j]!=0)
+	            Pp[i][j]= Pp[caxe[j]-1][j]=0.0000001;
+	          else
+	            caxe[j]=i+1;
+          }
+	      }
+      }
       if(Pp[i][2]<1e-6) 
-	Pp[i][2]+=0.0000001;
-    //Remplissage de la mat. du plan du triangle
-    //printf("Pp[%d] : ",i); 
-    for(j=0;j<3;j++) {
-      //printf("%lf  ",Pp[i][j]);
-      M[i][j]=Pp[i][j];
-    }
-    //printf("\n");
+	      Pp[i][2]+=0.000001;
+      //Remplissage de la mat. du plan du triangle
+      //printf("Pp[%d] : ",i); 
+      for(j=0;j<3;j++) {
+        //printf("%lf  ",Pp[i][j]);
+        M[i][j]=Pp[i][j];
+      }
+      //printf("\n");
       b[i]=-1;//b contiendra les coeff de l'equation du plan du triangle E
       //printf("PROJ_ORHTO() : Pp[%d] = %f, %f, %f\n",i,Pp[i][0],Pp[i][1],Pp[i][2]);
     }//for i
@@ -630,11 +632,11 @@ void proj_ortho(Diffuseur* E,reel *inc) {
 	  //printf("\nABSI :  min=%f, extr=%lf, max=%f\n",Ps[i1][j],pos_extr,Ps[i2][j]);
 	  //printf("ORDO :  min=%lf, extr=%lf, max=%lf\n",Ps[i1][kk],extrem,Ps[i2][kk]);
 	  
-	  if((Ps[i1][j]>0)^(Ps[i2][j]>0) == 1) {
+	  if( ((Ps[i1][j]>0)^(Ps[i2][j]>0)) == 1) {
 	    double a,ya;
 	    a=(pos_extr-Ps[i1][j])/(Ps[i2][j]-Ps[i1][j]);
 	    ya=(1-a)*Ps[i1][kk]+a*Ps[i2][kk];
-	    if((ya>0) ^ (extrem>0) == 1) {
+	    if( ((ya>0) ^ (extrem>0)) == 1) {
 	      //printf(" pasglop: extrem a la mmln!\n");
 	      pos_extr=-pos_extr;
 	      extrem=-extrem;

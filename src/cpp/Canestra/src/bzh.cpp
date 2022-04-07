@@ -27,20 +27,20 @@ void Tremove(char * buffer){
   if (remove(buffer)) {
     switch(errno) {
       case EACCES:
-        Ferr<<">>> bzh.cpp: Tremove()- Fichier protégé contre l'écriture !"<<'\n';
-        cout<<">>> bzh.cpp: Tremove()- Fichier protégé contre l'écriture !"<<'\n';
+        Ferr<<">>> bzh.cpp: Tremove()- File protected against writing !"<<'\n';
+        cout<<">>> bzh.cpp: Tremove()- File protected against writing !"<<'\n';
         break;
       case ENOENT:
-        Ferr<<">>> bzh.cpp: Tremove()- Fichier non trouvé !"<<'\n';
-        cout<<">>> bzh.cpp: Tremove()- Fichier non trouvé !"<<'\n';
+        Ferr<<">>> bzh.cpp: Tremove()- File not found !"<<'\n';
+        cout<<">>> bzh.cpp: Tremove()- File not found !"<<'\n';
         break;
       case EINVAL:
-        Ferr<<">>> bzh.cpp: Tremove()- Caractères invalides pour un nom !"<<'\n';
-        Ferr<<">>> bzh.cpp: Tremove()- Caractères invalides pour un nom !"<<'\n';
+        Ferr<<">>> bzh.cpp: Tremove()- Unvalid char for a name !"<<'\n';
+        Ferr<<">>> bzh.cpp: Tremove()- Unvalid char for a name !"<<'\n';
 	break;
       default:
-        Ferr<<">>> bzh.cpp: Tremove()- Erreur indéterminée !"<<'\n';
-        cout<<">>> bzh.cpp: Tremove()- Erreur indéterminée !"<<'\n';
+        Ferr<<">>> bzh.cpp: Tremove()- Undefined error !"<<'\n';
+        cout<<">>> bzh.cpp: Tremove()- Undefined error !"<<'\n';
     }
   }
 }//Tremove()
@@ -53,7 +53,7 @@ void placenette(char *ficname){
       fprintf(stderr,"=> placenette(%s) k=%d\n",ficname,k);
       if(k==0){
       Ferr<< " <!> Danger: fichier "<<ficname<<" existant => destruction!"<<'\n'; 
-      //Version hard codé pour Win$
+      //Hard coded version for Win$
       sprintf(cmd,"del %s",ficname);
       system(cmd);
       }

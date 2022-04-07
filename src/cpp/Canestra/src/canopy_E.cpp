@@ -426,7 +426,7 @@ void Canopy::calc_FF_Bfar(SPMAT *FF,
 
     if(verbose>4){
       Ferr <<__FILE__ <<" : "<< __LINE__<< " : ";
-      Ferr<<proj_cpt<<'\n'<<" NFF caculées "<<'\n';
+      Ferr<<proj_cpt<<'\n'<<" NFF computed "<<'\n';
     }
 
     //}//for nb patch diffR
@@ -511,7 +511,7 @@ void Canopy::projplan(Vecteur &visee,bool infty, double* Bo) {
   l=0;
   //   Tabdyn<REELLE, 2> Zbuf(img->taille(0),img->taille(1));
   //Tabdyn<Diffuseur *, 2> Zprim(img->taille(0),img->taille(1));
-  if(verbose>2) printf("%c => projplan() DEBUT res. %d x %d\n%c",7, Timg,Timg);
+  if(verbose>2) printf("%c => projplan() DEBUT res. %d x %d\n",7, Timg,Timg);
   Zbuf= new REELLE*[Timg];
   pZbuf=Zbuf;
   img_surf=Timg*Timg;
@@ -926,7 +926,7 @@ void Canopy::projplan(Vecteur &visee,bool infty, double* Bo) {
 
  //ecriture de projplan.ppm et de prozplan.ppm
  ////////////////////// GAFFE !! ecriture par fprintf ET fwrite 
- //                              dans le même fichier
+ //                              dans le mï¿½me fichier
  //////////////////////          Ne fonctionnera pas sous Win
  /*FILE*fz,*fprim;
  unsigned char bit;

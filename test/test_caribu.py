@@ -1,4 +1,4 @@
-from nose.tools import assert_raises
+from pytest import raises as assert_raises
 
 from alinea.caribu.caribu import green_leaf_PAR, radiosity, raycasting, \
     x_radiosity, x_raycasting, mixed_radiosity, x_mixed_radiosity
