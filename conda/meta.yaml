@@ -16,11 +16,11 @@ requirements:
   host:
     - python {{PY_VER}}
     - setuptools
-    - openalea.deploy
     - m2w64-toolchain   [win]
   build:
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
+    - openalea.deploy
     - openalea.sconsx
   run:
     - openalea.deploy
