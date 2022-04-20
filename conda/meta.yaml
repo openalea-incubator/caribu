@@ -10,27 +10,23 @@ source:
 build:
   preserve_egg_dir: True
   number: 2
-  script: {{ PYTHON }} setup.py install --single-version-externally-managed --record=record.txt
+  script: python setup.py install #--single-version-externally-managed --record=record.txt
 
 requirements:
-  build:
-    - {{ compiler('c') }}   # [unix]
-    - {{ compiler('cxx') }} # [unix]
-    - m2w64-toolchain   [win]
-    - python {{PY_VER}}
-    - openalea.sconsx
-    - openalea.deploy
   host:
     - python {{PY_VER}}
     - setuptools
     - openalea.deploy
+    - m2w64-toolchain   [win]
+  build:
+    - {{ compiler('c') }}   # [unix]
+    - {{ compiler('cxx') }} # [unix]
+    - openalea.sconsx
   run:
     - openalea.deploy
     - path              # path.py is outdated
-    - numpy
     - openalea.plantgl
     - openalea.mtg
-    - m2w64-toolchain   [win]
 
 test:
   requires:

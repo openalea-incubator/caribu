@@ -20,7 +20,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 version = {}
 with open("src/alinea/caribu/version.py") as fp:
     exec(fp.read(), version)
-
+version_caribu = version["__version__"]
 
 data_files = []
 
@@ -40,7 +40,7 @@ for root, dnames, fnames in walk("src/caribu_data"):
 
 setup_kwds = dict(
     name='alinea.caribu',
-    version=version["__version__"],
+    version=version_caribu,
     description=short_descr,
     long_description=readme + '\n\n' + history,
     author="Christian Fournier, Michael Chelle, Christophe Pradal ",
@@ -66,7 +66,7 @@ setup_kwds = dict(
     #    "coveralls",
     #    ],
     entry_points={},
-    keywords='',
+    keywords='openalea, FSPM, light interception',
     #test_suite='nose.collector',
 )
 # #}
@@ -81,7 +81,9 @@ setup_kwds['inc_dirs'] = { 'include' : build_prefix+'/include' }
 setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
 setup_kwds['entry_points']["console_scripts"] = []
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
-setup_kwds['namespace_packages']=['alinea']
+if ('CONDA_BUILD' in os.environ) or ('PREFIX' in os.environ):
+    setup_kwds['namespace_packages']=['alinea']
+
 setup_kwds['setup_requires'] = ['openalea.deploy']
 
 """
