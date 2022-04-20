@@ -13,17 +13,16 @@ build:
   script: python setup.py install #--single-version-externally-managed --record=record.txt
 
 requirements:
-  host:
-    - python {{PY_VER}}
-    - setuptools
-    - m2w64-toolchain   [win]
   build:
+    - python {{PY_VER}}
+    - m2w64-toolchain   [win]
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
     - openalea.deploy
     - openalea.sconsx
   run:
-    - openalea.deploy
+    - python {{PY_VER}}
+    - m2w64-toolchain   [win]
     - path              # path.py is outdated
     - openalea.plantgl
     - openalea.mtg

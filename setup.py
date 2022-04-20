@@ -33,10 +33,11 @@ def data_rel_pth(pth):
     abs_pth = normpath(abspath(pth))
     return abs_pth[nb:]
 
-
+"""
 for root, dnames, fnames in walk("src/caribu_data"):
     for name in fnames:
         data_files.append(data_rel_pth(pj(root, name)))
+"""
 
 setup_kwds = dict(
     name='alinea.caribu',
@@ -53,18 +54,7 @@ setup_kwds = dict(
     package_dir={'': 'src'},
 
     include_package_data=True,
-    package_data={'caribu_data': data_files},
-    #install_requires=[
-    #    "path.py",
-    #    ],
-    #tests_require=[
-    #    "coverage",
-    #    "flake8",
-    #    "mock",
-    #    "nose",
-    #    "sphinx",
-    #    "coveralls",
-    #    ],
+    package_data={},
     entry_points={},
     keywords='openalea, FSPM, light interception',
     #test_suite='nose.collector',
@@ -79,10 +69,11 @@ setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
 setup_kwds['lib_dirs'] = {'lib' : build_prefix+'/lib' }
 setup_kwds['inc_dirs'] = { 'include' : build_prefix+'/include' }
 setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
-setup_kwds['entry_points']["console_scripts"] = []
-setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png','*.pyd', '*.so', '*.dylib']
-if ('CONDA_BUILD' in os.environ) or ('PREFIX' in os.environ):
-    setup_kwds['namespace_packages']=['alinea']
+#setup_kwds['entry_points']['console_scripts'] = []
+setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png']
+
+if ('CONDA_PREFIX' not in os.environ) and ('PREFIX' not in os.environ):
+    setup_kwds['namespace_packages']=['alinea'] # Never used in a conda env...
 
 setup_kwds['setup_requires'] = ['openalea.deploy']
 
