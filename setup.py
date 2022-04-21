@@ -56,13 +56,14 @@ setup_kwds = dict(
     include_package_data=True,
     package_data={},
     entry_points={},
-    keywords='openalea, FSPM, light interception',
+    keywords='openalea, FSPM, light',
     #test_suite='nose.collector',
 )
 # #}
 # change setup_kwds below before the next pkglts tag
 
 #setup_kwds['setup_requires'] = ['openalea.deploy']
+
 build_prefix = pj(abspath(dirname(__file__)),"build-scons")
 setup_kwds['scons_scripts'] = ['SConstruct']
 setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
@@ -76,15 +77,6 @@ if ('CONDA_PREFIX' not in os.environ) and ('PREFIX' not in os.environ):
     setup_kwds['namespace_packages']=['alinea'] # Never used in a conda env...
 
 setup_kwds['setup_requires'] = ['openalea.deploy']
-
-"""
-try:
-    import openalea.deploy
-except :
-    # If deploy is not set, call directly scons
-    if 'CONDA_BUILD' in os.environ:
-        os.system('scons -j '+os.environ['CPU_COUNT']+' install')
-"""
 
 # do not change things below
 # {# pkglts, pysetup.call
