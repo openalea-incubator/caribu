@@ -1,9 +1,0 @@
-# {# pkglts, pysetup
-coverage
-flake8
-mock
-nose
-sphinx
-coveralls
-
-# #}
