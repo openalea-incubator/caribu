@@ -19,11 +19,13 @@ requirements:
     - openalea.deploy
     - m2w64-toolchain   [win]
   build:
+    - python {{PY_VER}}
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
     - openalea.deploy
     - openalea.sconsx
   run:
+    - python {{PY_VER}}
     - path              # path.py is outdated
     - openalea.plantgl
     - openalea.mtg
