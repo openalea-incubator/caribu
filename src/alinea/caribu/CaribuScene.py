@@ -15,6 +15,7 @@ import os
 import numpy
 from itertools import groupby, chain
 from math import sqrt
+from numbers import Number
 
 from openalea.mtg.mtg import MTG
 from openalea.plantgl.all import Scene as pglScene, Viewer
@@ -266,6 +267,9 @@ class CaribuScene(object):
                 raise ValueError('Unrecognised opt format')
 
         self.soil = None
+        self.soil_label = 'soil'
+        if isinstance(self.scene.allids()[0], Number):
+            self.soil_label = -1
         if soil_mesh is not None:
             if soil_mesh != -1:
                 if self.pattern is None:
@@ -444,7 +448,7 @@ class CaribuScene(object):
             groups = self.scene.allids()
             if self.soil is not None:
                 triangles += self.soil
-                groups = groups + ['soil'] * len(self.soil)
+                groups = groups + [self.soil_label] * len(self.soil)
             bands = list(self.material.keys())
             if len(bands) == 1:
                 materials = self.scene.repeat_for_triangles([
@@ -534,7 +538,7 @@ class CaribuScene(object):
             if self.debug : print ('done')
             if self.soil is not None:
                 triangles += self.soil
-                groups = groups + ['soil'] * len(self.soil)
+                groups = groups + [self.soil_label] * len(self.soil)
             bands = list(self.material.keys())
             if len(bands) == 1:
                 if not hasattr(self,'materialvalues') : 
@@ -652,10 +656,10 @@ class CaribuScene(object):
                         aggregated[band][k] = _agregate(
                             zip(output[k], output['area']), groups, _wsum)
                 if self.soil is not None:
-                    self.soil_raw[band] = {k: raw[band][k].pop('soil') for k in
+                    self.soil_raw[band] = {k: raw[band][k].pop(self.soil_label) for k in
                                            results}
                     self.soil_aggregated[band] = {
-                        k: aggregated[band][k].pop('soil') for k in results}
+                        k: aggregated[band][k].pop(self.soil_label) for k in results}
 
             if simplify and len(bands) == 1:
                 raw = raw[bands[0]]
