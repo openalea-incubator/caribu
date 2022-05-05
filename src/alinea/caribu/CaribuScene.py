@@ -268,8 +268,11 @@ class CaribuScene(object):
 
         self.soil = None
         self.soil_label = 'soil'
-        if isinstance(self.scene.allids()[0], Number):
-            self.soil_label = -1
+        if self.scene is not None:
+            ids = self.scene.allids()
+            if ids is not None:
+                if isinstance(ids[0], Number):
+                    self.soil_label = -1
         if soil_mesh is not None:
             if soil_mesh != -1:
                 if self.pattern is None:
