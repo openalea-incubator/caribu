@@ -35,9 +35,18 @@ import tempfile
 
 def _agregate(values, indices, fun=sum):
     """ performs aggregation of outputs along indices """
+    
+    # test if indices contains multiple types element
+    if len(set([type(x) for x in indices])) > 1 :
+        # if so we only consider the "soil" index
+        indices = list(map(lambda x: -9999 if x == "soil" else x , indices))
+
     ag = {}
     for key, group in groupby(sorted(zip(indices, values), key=lambda x: x[0]),
                               lambda x: x[0]):
+        # we return to a string key for "soil"
+        if key == -9999 : key = "soil"
+
         vals = [elt[1] for elt in group]
         try:
             ag[key] = fun(vals)
