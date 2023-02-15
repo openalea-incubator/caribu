@@ -9,7 +9,7 @@ from os import walk
 from os.path import abspath, normpath, dirname
 from os.path import join as pj
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 short_descr = "Python/Visualea interface to Caribu Light model"
 readme = open('README.rst').read()
@@ -50,7 +50,7 @@ setup_kwds = dict(
     license='INRA_License_agreement',
     zip_safe=False,
 
-    packages=find_packages('src'),
+    packages=find_namespace_packages(where='src', include=['alinea*']),
     package_dir={'': 'src'},
 
     include_package_data=True,
