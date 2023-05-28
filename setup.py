@@ -50,7 +50,7 @@ setup_kwds = dict(
     license='INRA_License_agreement',
     zip_safe=False,
 
-    packages=find_namespace_packages(where='src', include=['alinea*']),
+    packages=find_namespace_packages(where='src', include=['alinea', 'alinea.*']),
     package_dir={'': 'src'},
 
     include_package_data=True,
