@@ -50,7 +50,7 @@ setup_kwds = dict(
     license='INRA_License_agreement',
     zip_safe=False,
 
-    packages=find_namespace_packages(where='src', include=['alinea', 'alinea.*']),
+    packages=find_namespace_packages(where='src', include=['alinea.*']),
     package_dir={'': 'src'},
 
     include_package_data=True,
@@ -70,11 +70,7 @@ setup_kwds['bin_dirs'] = {'bin': build_prefix + '/bin'}
 setup_kwds['lib_dirs'] = {'lib' : build_prefix+'/lib' }
 setup_kwds['inc_dirs'] = { 'include' : build_prefix+'/include' }
 setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
-#setup_kwds['entry_points']['console_scripts'] = []
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png']
-
-if ('CONDA_PREFIX' not in os.environ) and ('PREFIX' not in os.environ):
-    setup_kwds['namespace_packages']=['alinea'] # Never used in a conda env...
 
 setup_kwds['setup_requires'] = ['openalea.deploy']
 
