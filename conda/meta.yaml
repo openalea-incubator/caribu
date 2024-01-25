@@ -17,7 +17,7 @@ requirements:
     - python x.x
     - setuptools
     - openalea.deploy
-    - m2w64-toolchain   [win]
+    - m2w64-toolchain_win-64  # [win]
   build:
     - python 
     - {{ compiler('c') }}   # [unix]
