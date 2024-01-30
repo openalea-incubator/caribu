@@ -72,7 +72,7 @@ setup_kwds['inc_dirs'] = { 'include' : build_prefix+'/include' }
 setup_kwds['entry_points']['wralea'] = ['alinea.caribu = alinea.caribu_wralea']
 setup_kwds['package_data'][''] = ['*.can', '*.R', '*.8', '*.opt', '*.light', '*.csv', '*.png']
 
-setup_kwds['setup_requires'] = ['openalea.deploy']
+#setup_kwds['setup_requires'] = ['openalea.deploy']
 
 # do not change things below
 # {# pkglts, pysetup.call

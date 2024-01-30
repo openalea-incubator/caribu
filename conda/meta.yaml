@@ -10,18 +10,19 @@ source:
 build:
   preserve_egg_dir: True
   number: 3
-  script: {{PYTHON}} setup.py install 
+  script: pip install .
 
 requirements:
   host:
     - python x.x
     - setuptools
     - openalea.deploy
-    - m2w64-toolchain   [win]
   build:
     - python 
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
+    - {{ compiler('m2w64_c') }}   # [win]
+    - {{ compiler('m2w64_cxx') }} # [win]
     - openalea.deploy
     - openalea.sconsx
   run:
