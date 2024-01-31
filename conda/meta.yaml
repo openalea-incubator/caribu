@@ -17,12 +17,12 @@ requirements:
     - python x.x
     - setuptools
     - openalea.deploy
+    - {{ compiler('m2w64_c') }}   # [win]
+    - {{ compiler('m2w64_cxx') }} # [win]
   build:
     - python 
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
-    - {{ compiler('m2w64_c') }}   # [win]
-    - {{ compiler('m2w64_cxx') }} # [win]
     - openalea.deploy
     - openalea.sconsx
   run:
