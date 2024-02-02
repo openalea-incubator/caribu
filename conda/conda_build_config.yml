@@ -34,6 +34,7 @@ c_compiler_version:            # [unix]
   - 10                         # [os.environ.get("CF_CUDA_ENABLED", "False") == "True" and linux]
   - 11                         # [os.environ.get("CF_CUDA_ENABLED", "False") == "True" and linux]
 cxx_compiler:
+  - gxx                        # [linux]
   - clangxx                    # [osx]
   - m2w64-toolchain            # [win]
 cxx_compiler_version:          # [unix]
