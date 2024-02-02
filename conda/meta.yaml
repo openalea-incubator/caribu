@@ -1,4 +1,5 @@
 {% set data = load_setup_py_data() %}
+{% set native = 'm2w64-' if win else '' %}
 
 package:
   name: alinea.caribu
@@ -17,12 +18,11 @@ requirements:
     - python x.x
     - setuptools
     - openalea.deploy
-    - {{ compiler('m2w64_c') }}   # [win]
-    - {{ compiler('m2w64_cxx') }} # [win]
   build:
     - python 
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
+    - m2w64-toolchain       # [win]
     - openalea.deploy
     - openalea.sconsx
   run:
