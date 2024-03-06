@@ -11,7 +11,9 @@ source:
 build:
   preserve_egg_dir: True
   number: 4
-  script: python setup.py install
+  script: 
+    - python setup.py build_ext
+    - python setup.py install
 
 requirements:
   host:
