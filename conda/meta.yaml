@@ -10,8 +10,8 @@ source:
 
 build:
   preserve_egg_dir: True
-  number: 3
-  script: pip install .
+  number: 4
+  script: python setup.py install
 
 requirements:
   host:
