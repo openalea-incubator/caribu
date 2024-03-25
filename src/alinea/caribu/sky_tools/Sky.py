@@ -1,5 +1,5 @@
 from math import *
-from scipy import array
+from numpy import array
 
 class Sky(object):
     def __init__(self,Nbp,Nbt):
