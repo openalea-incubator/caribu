@@ -12,7 +12,7 @@ build:
   preserve_egg_dir: True
   number: 0
   script: 
-    - python setup.py install
+    - {{PYTHON}} setup.py install
 
 requirements:
   host:
@@ -20,7 +20,7 @@ requirements:
     - setuptools
     - openalea.deploy
   build:
-    - python 
+    - python {{PY_VER}}
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
     - m2w64-toolchain   # [win]
