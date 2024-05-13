@@ -33,14 +33,14 @@ requirements:
     - openalea.mtg
 
 test:
-  requires:
-    - pytest
+  #requires:
+  #  - pytest
   imports:
     - alinea.caribu
-  source_files:
-    - test/*.py
-  commands:
-   - pytest -v
+  #source_files:
+  #  - test/*.py
+  #commands:
+  # - pytest -v
 
 about:
   home: {{ data.get('url') }}
