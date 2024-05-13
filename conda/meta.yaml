@@ -10,9 +10,8 @@ source:
 
 build:
   preserve_egg_dir: True
-  number: 4
+  number: 0
   script: 
-    - python setup.py build_ext
     - python setup.py install
 
 requirements:
