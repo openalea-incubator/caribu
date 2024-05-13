@@ -23,7 +23,9 @@ requirements:
     - python 
     - {{ compiler('c') }}   # [unix]
     - {{ compiler('cxx') }} # [unix]
-    - m2w64-toolchain       # [win]
+    - {{ compiler('m2w64_c') }} # [unix]
+    - {{ compiler('m2w64_cxx') }} # [unix]
+      # [win]
     - openalea.deploy
     - openalea.sconsx
   run:
