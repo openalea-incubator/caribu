@@ -29,8 +29,8 @@ requirements:
   run:
     - python x.x
     - path              # path.py is outdated
-    - openalea.plantgl
-    - openalea.mtg
+    #- openalea.plantgl
+    #- openalea.mtg
 
 # Remove test due to a bug: tests are run before build is finished...
 #test:
