@@ -1,0 +1,9 @@
+name: caribu
+channels:
+  - openalea3
+  - conda-forge
+
+dependencies:
+  - python
+  - sphinx_rtd_theme
+  - alinea.caribu
