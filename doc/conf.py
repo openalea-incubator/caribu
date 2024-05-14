@@ -47,7 +47,7 @@ src_dir = os.path.abspath(os.path.join(project_root, "src"))
 # Insert the project root dir as the first element in the PYTHONPATH.
 # This lets us ensure that the source package is imported, and that its
 # version is used.
-sys.path.insert(0, os.path.join(project_root, 'src'))
+sys.path.insert(0, src_dir)
 
 # import caribu as mypkg
 
