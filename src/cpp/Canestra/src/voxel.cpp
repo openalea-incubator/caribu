@@ -253,7 +253,7 @@ void Voxel::construction(reel* bornemin, reel* bornemax,
        <<" - ratio = "  << ratio<<"\n" ;
   }
   else {
-    fscanf(grille_par,"%d %g",&SEUIL_NB_DIFF,&ratio);
+    fscanf(grille_par,"%d %lg",&SEUIL_NB_DIFF,&ratio);
     Ferr <<"Seuil dans "  << grille_nom<<" = "  << SEUIL_NB_DIFF
        <<" - ratio = "  << ratio<<"\n" ;
     }

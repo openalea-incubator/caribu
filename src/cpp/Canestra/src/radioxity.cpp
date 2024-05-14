@@ -705,7 +705,7 @@ int main(int argc,char **argv){
       } else
 #ifndef WIN32
 	// Unix way
-	shmdt((void*)shmid2);
+	shmdt((void*)(size_t)shmid2);
 #else
       // Complicated Way
       UnmapViewOfFile(lpSharedSeg) ; // invalidation du ptr sur mem partagee
@@ -882,7 +882,7 @@ int main(int argc,char **argv){
       dirname= new char[100]; strcpy(dirname,".\\");}
     if(memsize){
       char cmd[125];
-      sprintf(cmd,"maxmem %s 1 > maxmem.res &",argv[0]);
+      snprintf(cmd,sizeof(cmd),"maxmem %s 1 > maxmem.res &",argv[0]);
       if(verbose)
 	Ferr <<"Option -T :  Pour avoir le max de memoire occupee = "<<cmd<<"\n";
       system(cmd);

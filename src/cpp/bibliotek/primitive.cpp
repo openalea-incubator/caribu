@@ -116,7 +116,7 @@ void Polygone::init(char* line,double name,
   nom=name;
   strcpy(str3,line);
   sscanf(str3,"%d",&ii);
-  sprintf(str2,"%d",ii);
+  snprintf(str2,sizeof(str2), "%d",ii);
   str=strstr(str3,str2);//strtok(str3,str2);
   str++;
   nb_sommets=i=ii;

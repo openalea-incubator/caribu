@@ -9,7 +9,7 @@
 using namespace std ;
 
 #ifdef WIN32
-#include <windows.h>	// le + près possible de namespace
+#include <windows.h>	// le + prï¿½s possible de namespace
 #ifndef MINGW
 #undef min
 #undef max
@@ -24,8 +24,8 @@ using namespace std ;
 
 /*
 char clef_seg_in[12] ;	//  version char* de la clef numerique
-HANDLE	hSharedSegIn ;	// Handle du fichier mappé
-LPVOID	lpSharedSegIn ;	// pointeur LPVOID sur seg. partagé
+HANDLE	hSharedSegIn ;	// Handle du fichier mappï¿½
+LPVOID	lpSharedSegIn ;	// pointeur LPVOID sur seg. partagï¿½
 */
 /**************************************************************************
  *       Chargement de la scene : parse_can, read_shm                     *
@@ -107,7 +107,7 @@ inline char * endline(ifstream & fin){
     iKompteur++;
   }while(car!='\n');
   
-  // Apprends à utiliser les strings, Herve !!! // HA
+  // Apprends ï¿½ utiliser les strings, Herve !!! // HA
   istringstream isTmp (ligne.str()) ;  
   char *tmp1 = new char[LONG_LIGNE_CAN],
     *pline = new char[LONG_LIGNE_CAN] ;
@@ -577,12 +577,12 @@ long int Canopy::read_shm(
 	 <<" impossible =>exit" << "\n" ;
     exit(12);
   }
-  Ts=(Patch *)shmat(shmid,0,NULL);
+  Ts=(Patch *)shmat(shmid,0,int(NULL));
 #else
   // Win NT
      char clef_seg_in[12] ;	//  version char* de la clef numerique
-     HANDLE	hSharedSegIn ;	// Handle du fichier mappé
-     LPVOID	lpSharedSegIn ;	// pointeur LPVOID sur seg. partagé
+     HANDLE	hSharedSegIn ;	// Handle du fichier mappï¿½
+     LPVOID	lpSharedSegIn ;	// pointeur LPVOID sur seg. partagï¿½
 
       sprintf ( clef_seg_in, "%d", clef) ;
       assert ((hSharedSegIn = OpenFileMapping (
@@ -755,17 +755,17 @@ long int Canopy::read_shm(
   //liberation du shm
 #ifndef WIN32
   // Unix
-  shmdt((void*)shmid);
+  shmdt((void*)(size_t)shmid);
 #else
   // Win NT
     UnmapViewOfFile(lpSharedSegIn) ; // invalidation du ptr sur mem partagee
     // Ts = NULL ;		   // tester avant ...
-    CloseHandle(hSharedSegIn) ;	   // Fermeture du fichier mappé
+    CloseHandle(hSharedSegIn) ;	   // Fermeture du fichier mappï¿½
 #endif
 
    if(rejet){
      char Tmsg[100];
-     sprintf(Tmsg,">>>  Canopy[read_shm] ****** %d  rejected triangles ****",Nrejet);
+     snprintf(Tmsg,sizeof(Tmsg), ">>>  Canopy[read_shm] ****** %d  rejected triangles ****",Nrejet);
      cout <<Tmsg<<"\n";
      Ferr <<Tmsg<<"\n";
    }
