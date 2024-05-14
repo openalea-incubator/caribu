@@ -7,3 +7,8 @@ dependencies:
   - python
   - sphinx_rtd_theme
   - alinea.caribu
+  - mock
+  - openalea.plantgl
+  - openalea.core
+  - openalea.mtg
+  - sphinxcontrib-napoleon
