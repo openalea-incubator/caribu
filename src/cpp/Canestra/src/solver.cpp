@@ -164,12 +164,12 @@ void hd_mgcr(VEC *x,VEC *b, Diffuseur **TabDiff,double tol,int krylov,int limit,
   if (ip == INULL) error(E_NULL,(char*)"hd_mgcr");
   /* Ax, b and stopping criterion must be given */
   if (! ip->Ax || ! ip->b || ! ip->stop_crit) 
-    error(E_NULL,(char*)"hd_mgcr");
+    error(E_NULL,(const char*)"hd_mgcr");
   /* at least one direction vector must exist */
-  if ( ip->k <= 0) error(E_BOUNDS,(char*)"mgcr");
+  if ( ip->k <= 0) error(E_BOUNDS,(const char*)"mgcr");
   /* if the vector x is given then b and x must have the same dimension */
   if ( ip->x && ip->x->dim != ip->b->dim)
-    error(E_SIZES,(char*)"hd_mgcr");
+    error(E_SIZES,(const char*)"hd_mgcr");
   if (ip->eps <= 0.0) ip->eps = MACHEPS;
    
   dim = ip->b->dim;
