@@ -70,7 +70,7 @@ extern  int err_list_free(int list_num);   /* freeing a list of errors */
 
 
 /* error(E_TYPE,"myfunc") raises error type E_TYPE for function my_func() */
-#define	error(err_num,fn_name)	ev_err(__FILE__,err_num,__LINE__,fn_name,0)
+#define	error(err_num,fn_name)	ev_err((char *)__FILE__,err_num,__LINE__,(char *)fn_name,0)
 
 /* warning(WARN_TYPE,"myfunc") raises warning type WARN_TYPE for 
    function my_func() */
