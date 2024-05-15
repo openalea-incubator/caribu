@@ -35,14 +35,14 @@ class Image {
         btm.alloue(img.btm.maxi()[0],img.btm.maxi()[1]);
 */
     cout<<"Image[=]  avant copie des variables de btm \n";cout.flush(); 
-       for(register int i=0;i<pim->btm.maxi()[0];i++)
-         for(register int j=0;j<pim->btm.maxi()[1];j++)
+       for(int i=0;i<pim->btm.maxi()[0];i++)
+         for(int j=0;j<pim->btm.maxi()[1];j++)
           pim-> btm(i,j)=   img.btm(i,j);
         return *pim;
       } 
    double maxval(){
      double val;
-     register int i,j;
+     int i,j;
      
      bitmax=-9.9e20;
      for(j=0;j<btm.maxi()[1];j++)
@@ -97,7 +97,7 @@ class Image {
         fic<<"# MONTE CARLO - MC - 08/1994 \n#      BitMax = "<<bitmax<<endl;
         fic<<btm.maxi()[0]<<" "<<btm.maxi()[1]<<endl;
         fic<<"255\n";
-        register int i,j;
+        int i,j;
         for(j=0;j<btm.maxi()[1];j++)
           for(i=0;i<btm.maxi()[0];i++) {
 	    pix= (unsigned char) (btm(i,j)/bitmax*255);
@@ -133,15 +133,15 @@ class RGB {
         btm.alloue(img.btm.maxi()[0],img.btm.maxi()[1]);
 */
     cout<<"RGB[=]  avant copie des variables de btm \n";cout.flush(); 
-       for(register int i=0;i<pim->btm.maxi()[0];i++)
-         for(register int j=0;j<pim->btm.maxi()[1];j++)
-	   for(register int k=0;k<3;k++)
+       for(int i=0;i<pim->btm.maxi()[0];i++)
+         for(int j=0;j<pim->btm.maxi()[1];j++)
+	   for(int k=0;k<3;k++)
           pim-> btm(i,j,k)=   img.btm(i,j,k);
         return *pim;
       } 
    double maxval(int k)
     { double val;
-      register int i,j;
+      int i,j;
     
       bitmax=-9.9e20;
       for(j=0;j<btm.maxi()[1];j++)
@@ -204,7 +204,7 @@ class RGB {
         fic<<"# class RGB - MC - 1996 \n#      BitMax = "<<bitmax<<endl;
         fic<<btm.maxi()[0]<<" "<<btm.maxi()[1]<<endl;
         fic<<"255\n";
-        register int i,j,k;
+        int i,j,k;
         for(j=0;j<btm.maxi()[1];j++)
           for(i=0;i<btm.maxi()[0];i++)
 	    for(k=0;k<3;k++) {

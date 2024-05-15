@@ -98,7 +98,7 @@ inline void not_yet(char * type){
 }// not_yet()
 
 inline char * endline(ifstream & fin){
-  register long int iKompteur=0;
+  long int iKompteur=0;
   char car;
   ostringstream ligne; // was ostrstream
   do {
@@ -960,7 +960,7 @@ inline Point isobary(Point&A, Point&B, Point&C){
 }//isobary()
 
 void Canopy::xabs(char* nx3d,double *bornemin,double *bornemax,bool normee)
-{ register int i,j,nb_prim=0,nb_seg=0,nb_face=0,color;
+{ int i,j,nb_prim=0,nb_seg=0,nb_face=0,color;
    double M,Emax=-1.0,Emin=9.9e12;
    int nbcol=203;
    Point G;
@@ -1061,7 +1061,7 @@ void Canopy::xabs(char* nx3d,double *bornemin,double *bornemax,bool normee)
 //-********************   Canopy:: xrad()    *******************
 
 void Canopy::xrad(char* nvar,double *bornemin,double *bornemax,bool normee)
- { register int i,j,nb_prim=0,nb_seg=0,nb_face=0,color;
+ { int i,j,nb_prim=0,nb_seg=0,nb_face=0,color;
    double M,Emax=-1.0,Emin=9.9e12;
    int nbcol=203;
    Point G;

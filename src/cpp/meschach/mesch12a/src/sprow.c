@@ -75,9 +75,9 @@ int	sprow_idx(r,col)
 SPROW	*r;
 int	col;
 {
-   register int		lo, hi, mid;
+   int		lo, hi, mid;
    int			tmp;
-   register row_elt	*r_elt;
+   row_elt	*r_elt;
    
    /*******************************************
      if ( r == (SPROW *)NULL )

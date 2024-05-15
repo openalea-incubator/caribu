@@ -31,7 +31,7 @@ struct Msailin{
   Msailin(){nbang=-1;tts=tto=psi=0;}
   void alloue(int n){
     n++;
-    register int i;
+    int i;
     if(nbang>0){
       l=new REEL[n];   ttl=new REEL[n];
       roo=new REEL[n]; tau=new REEL[n];
@@ -49,7 +49,7 @@ struct Msailin{
     if (nbang >0) {
       delete [] l;delete [] ttl;delete [] roo;
       delete [] tau;delete [] bmu;delete [] bnu ;
-    } // sinon plante à vide
+    } // sinon plante ï¿½ vide
   }//destructor
 } ;
 struct Limit{

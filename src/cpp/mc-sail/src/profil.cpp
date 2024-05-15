@@ -1,6 +1,6 @@
 #define _Mprof
 
-#include <iostream> // définit des namespaces
+#include <iostream> // dï¿½finit des namespaces
 using namespace std ;
 
 #include "multicou.h"
@@ -18,7 +18,7 @@ struct Coeff{
 };
 
 void mprofil(Limit& limit,Profout* Tprof,Mlayout* Tlay){
-  register int ic;
+  int ic;
   Coeff *T,*o;
   Mlayout l;
   

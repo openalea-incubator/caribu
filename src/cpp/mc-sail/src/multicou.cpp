@@ -19,7 +19,7 @@ ferrlog Ferr((char*)"mc-sail.log") ;
 int main(int argc, char **argv){
   double clai, ctau, croo, sf, dz, hau, ros;
   int id,npo;
-  register int i,j;
+  int i,j;
   FILE *fpar, *fout, *fenv, *fpvf ;
   ifstream fpar2;
   char line[200];

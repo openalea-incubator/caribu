@@ -97,7 +97,7 @@ int	len;
 double	alpha;
 Real	*x;
 {
-    register int	i;
+    int	i;
 
     for ( i = 0; i < len; i++ )
 	x[i] *= alpha;
@@ -108,8 +108,8 @@ void	Mswap(len,x,y)
 int	len;
 Real	*x, *y;
 {
-    register int	i;
-    register Real	tmp;
+    int	i;
+    Real	tmp;
 
     for ( i = 0; i < len; i++ )
     {
@@ -124,7 +124,7 @@ void	Mcopy(len,x,y)
 int	len;
 Real	*x, *y;
 {
-    register int	i;
+    int	i;
 
     for ( i = 0; i < len; i++ )
 	y[i] = x[i];
@@ -136,7 +136,7 @@ int	len;
 double	alpha;
 Real	*x, *y;
 {
-    register int	i, len4;
+    int	i, len4;
 
     /****************************************
     for ( i = 0; i < len; i++ )
@@ -164,15 +164,15 @@ double	Mdot(len,x,y)
 int	len;
 Real	*x, *y;
 {
-    register int	i, len4;
-    register Real	sum;
+    int	i, len4;
+    Real	sum;
 
 #ifndef REGISTER_RICH
     sum = 0.0;
 #endif
 
 #ifdef REGISTER_RICH
-    register Real	sum0, sum1, sum2, sum3;
+    Real	sum0, sum1, sum2, sum3;
     
     sum0 = sum1 = sum2 = sum3 = 0.0;
     
@@ -205,8 +205,8 @@ double	Mnorminf(len,x)
 int	len;
 Real	*x;
 {
-    register int	i;
-    register Real	tmp, max_val;
+    int	i;
+    Real	tmp, max_val;
 
     max_val = 0.0;
     for ( i = 0; i < len; i++ )
@@ -224,8 +224,8 @@ double	Mnorm1(len,x)
 int	len;
 Real	*x;
 {
-    register int	i;
-    register Real	sum;
+    int	i;
+    Real	sum;
 
     sum = 0.0;
     for ( i = 0; i < len; i++ )
@@ -239,8 +239,8 @@ double	Mnorm2(len,x)
 int	len;
 Real	*x;
 {
-    register int	i;
-    register Real	norm, invnorm, sum, tmp;
+    int	i;
+    Real	norm, invnorm, sum, tmp;
 
     norm = Mnorminf(len,x);
     if ( norm == 0.0 )
@@ -264,9 +264,9 @@ int	m, n, j0;
 double	alpha, beta;
 Real	**A, *x, *y;
 {
-    register int	i, j, m4, n4;
-    register Real	sum0, sum1, sum2, sum3, tmp0, tmp1, tmp2, tmp3;
-    register Real	*dp0, *dp1, *dp2, *dp3;
+    int	i, j, m4, n4;
+    Real	sum0, sum1, sum2, sum3, tmp0, tmp1, tmp2, tmp3;
+    Real	*dp0, *dp1, *dp2, *dp3;
 
     /****************************************
     for ( i = 0; i < m; i++ )
@@ -328,14 +328,14 @@ int	m, n, j0;
 double	alpha, beta;
 Real	**A, *x, *y;
 {
-    register int	i, j, m4, n2;
-    register Real	*Aref;
-    register Real 	tmp;
+    int	i, j, m4, n2;
+    Real	*Aref;
+    Real 	tmp;
 
 #ifdef REGISTER_RICH
-    register Real	*Aref0, *Aref1;
-    register Real	tmp0, tmp1;
-    register Real	yval0, yval1, yval2, yval3;
+    Real	*Aref0, *Aref1;
+    Real	tmp0, tmp1;
+    Real	yval0, yval1, yval2, yval3;
 #endif
 
     if ( beta != 1.0 )
@@ -398,9 +398,9 @@ int	m, n, j0;
 double	alpha;
 Real	**A, *x, *y;
 {
-    register int	i, j, n4;
-    register Real	*Aref;
-    register Real 	tmp;
+    int	i, j, n4;
+    Real	*Aref;
+    Real 	tmp;
 
     /****************************************
     for ( i = 0; i < m; i++ )
@@ -435,8 +435,8 @@ double  alpha;
 Real	**A, **B, **C;
 int	Aj0, Bj0, Cj0;
 {
-    register int	i, j, k;
-    /* register Real	tmp, sum; */
+    int	i, j, k;
+    /* Real	tmp, sum; */
 
     /****************************************
     for ( i = 0; i < m; i++ )
@@ -454,7 +454,7 @@ double  alpha;
 Real	**A, **B, **C;
 int	Aj0, Bj0, Cj0;
 {
-    register int	i, j, k;
+    int	i, j, k;
 
     /****************************************
     for ( i = 0; i < m; i++ )
@@ -472,7 +472,7 @@ double  alpha;
 Real	**A, **B, **C;
 int	Aj0, Bj0, Cj0;
 {
-    register int	i, j, k;
+    int	i, j, k;
 
     /****************************************
     for ( i = 0; i < m; i++ )
@@ -490,7 +490,7 @@ double  alpha;
 Real	**A, **B, **C;
 int	Aj0, Bj0, Cj0;
 {
-    register int	i, j, k;
+    int	i, j, k;
 
     for ( i = 0; i < m; i++ )
 	for ( j = 0; j < n; j++ )

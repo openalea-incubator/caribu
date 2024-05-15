@@ -54,8 +54,8 @@ int	lim;
 {
 	int			idx1, idx2, len1, len2, tmp;
 	int			sprow_idx();
-	register row_elt	*elts1, *elts2;
-	register Real		sum;
+	row_elt	*elts1, *elts2;
+	Real		sum;
 
 	elts1 = row1->elt;	elts2 = row2->elt;
 	len1 = row1->len;	len2 = row2->len;
@@ -179,7 +179,7 @@ int	new_len;
 SPMAT	*spCHfactor(A)
 SPMAT	*A;
 {
-	register 	int	i;
+		int	i;
 	int	idx, k, m, minim, n, num_scan, diag_idx, tmp1;
 	Real	pivot, tmp2;
 	SPROW	*r_piv, *r_op;
@@ -444,7 +444,7 @@ SPMAT	*A;
 SPMAT	*spCHsymb(A)
 SPMAT	*A;
 {
-	register 	int	i;
+		int	i;
 	int	idx, k, m, minim, n, num_scan, diag_idx, tmp1;
 	SPROW	*r_piv, *r_op;
 	row_elt	*elt_piv, *elt_op, *old_elt;
