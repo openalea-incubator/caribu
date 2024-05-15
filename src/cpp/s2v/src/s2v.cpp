@@ -801,7 +801,7 @@ double  lectri(signed char &test,char &ntype,int &natt,long i_att[],int &nsom,Pa
     fscanf(fichier, "%c", &fin);
   } while(fin!='p' && !feof(fichier));
   if(!feof(fichier)) {
-    fseek(fichier,-sizeof(char),SEEK_CUR);
+    fseek(fichier,-(long)sizeof(char),SEEK_CUR);
     //fputc(fin, fichier);
   } // if
 
