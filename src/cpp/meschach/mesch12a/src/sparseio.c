@@ -259,7 +259,9 @@ FILE    *fp;
 	{
 	        ret_val = 0;
 		skipjunk(fp);
-		fscanf(fp,"SparseMatrix:");
+		if (fscanf(fp, "SparseMatrix:") != 0) {
+    		error(E_INPUT, "sp_finput");
+		}
 		skipjunk(fp);
 		if ( (ret_val=fscanf(fp,"%u by %u",&m,&n)) != 2 )
 		    error((ret_val == EOF) ? E_EOF : E_FORMAT,"sp_finput");
