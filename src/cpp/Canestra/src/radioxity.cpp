@@ -885,7 +885,9 @@ int main(int argc,char **argv){
       snprintf(cmd,sizeof(cmd),"maxmem %s 1 > maxmem.res &",argv[0]);
       if(verbose)
 	Ferr <<"Option -T :  Pour avoir le max de memoire occupee = "<<cmd<<"\n";
-      system(cmd);
+      if (system(cmd) == -1) {
+		perror("Error executing system command");
+	  }
     }
     fflush(stdout); fflush(stderr); 
     //Fin Gestion des Options
