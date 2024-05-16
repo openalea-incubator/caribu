@@ -102,7 +102,7 @@ class Image {
           for(i=0;i<btm.maxi()[0];i++) {
 	    pix= (unsigned char) (btm(i,j)/bitmax*255);
 	    pix = (pix>=255)?255:pix;
-	    snprintf(ccTmp,sizeof(ccTmp),"%ud", pix) ; 
+	    snprintf(ccTmp,sizeof(ccTmp),"%ud", (unsigned char) pix) ; 
 	    fic.write(ccTmp,1);
 	  }      
         fic.close();
