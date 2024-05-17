@@ -21,8 +21,8 @@ requirements:
     - openalea.deploy
   build:
     - python {{PY_VER}}
-    - {{ compiler('c') }}   # [unix]
-    - {{ compiler('cxx') }} # [unix]
+    - {{ compiler('c') }}   
+    - {{ compiler('cxx') }} 
     - m2w64-toolchain   # [win]
     - openalea.deploy
     - openalea.sconsx
