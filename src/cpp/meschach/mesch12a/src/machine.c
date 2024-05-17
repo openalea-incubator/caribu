@@ -36,9 +36,7 @@ static	char	*rcsid = "$Id: machine.c,v 1.4 1994/01/13 05:28:56 des Exp $";
 #include	"machine.h"
 
 /* __ip__ -- inner product */
-double	__ip__(dp1,dp2,len)
- Real	*dp1, *dp2;
-int	len;
+double	__ip__(Real *dp1, Real *dp2, int len)
 {
 #ifdef VUNROLL
      int	len4;
@@ -72,10 +70,7 @@ int	len;
 }
 
 /* __mltadd__ -- scalar multiply and add c.f. v_mltadd() */
-void	__mltadd__(dp1,dp2,s,len)
- Real	*dp1, *dp2;
- double s;
- int	len;
+void	__mltadd__(Real *dp1, Real *dp2, double s, int len)
 {
      int	i;
 #ifdef VUNROLL
@@ -98,10 +93,7 @@ void	__mltadd__(dp1,dp2,s,len)
 }
 
 /* __smlt__ scalar multiply array c.f. sv_mlt() */
-void	__smlt__(dp,s,out,len)
- Real	*dp, *out;
- double s;
- int	len;
+void	__smlt__(Real *dp, double s, Real *out,int len)
 {
      int	i;
     for ( i = 0; i < len; i++ )
@@ -109,9 +101,7 @@ void	__smlt__(dp,s,out,len)
 }
 
 /* __add__ -- add arrays c.f. v_add() */
-void	__add__(dp1,dp2,out,len)
- Real	*dp1, *dp2, *out;
- int	len;
+void	__add__(Real *dp1, Real *dp2, Real *out, int len)
 {
      int	i;
     for ( i = 0; i < len; i++ )
@@ -119,9 +109,8 @@ void	__add__(dp1,dp2,out,len)
 }
 
 /* __sub__ -- subtract arrays c.f. v_sub() */
-void	__sub__(dp1,dp2,out,len)
- Real	*dp1, *dp2, *out;
- int	len;
+void	__sub__(Real *dp1, Real *dp2, Real *out, int len)
+
 {
      int	i;
     for ( i = 0; i < len; i++ )
@@ -129,9 +118,7 @@ void	__sub__(dp1,dp2,out,len)
 }
 
 /* __zero__ -- zeros an array of floating point numbers */
-void	__zero__(dp,len)
- Real	*dp;
- int	len;
+void	__zero__(Real *dp, int len)
 {
 #ifdef CHAR0ISDBL0
     /* if a floating point zero is equivalent to a string of nulls */
