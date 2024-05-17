@@ -22,7 +22,7 @@ conf.UpdateOptions(options)
 # oldies
 env = Environment(options=options, ENV = {'PATH' : os.environ['PATH']})
 
-import_env = [ 'SystemDrive', 'SystemRoot', 'TEMP', 'TMP' ]
+import_env = [ 'SystemDrive', 'SystemRoot', 'TEMP', 'TMP' , 'USERPROFILE']
 for var in import_env:
         v = os.environ.get(var)
         if v:
