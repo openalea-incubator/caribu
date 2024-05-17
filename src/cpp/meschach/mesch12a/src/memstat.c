@@ -30,6 +30,7 @@
 
 
 #include <stdio.h>
+#include <stdint.h>
 #include  "matrix.h"
 #include  "meminfo.h"
 #ifdef COMPLEXE   
@@ -77,10 +78,9 @@ static unsigned int mem_hash_idx_end = 0;
 
 /* hashing function */
 
-static unsigned int mem_hash(ptr)
-void **ptr;
+static unsigned int mem_hash(void **ptr)
 {
-   unsigned long lp = (unsigned long)ptr;
+   uintptr_t lp = (uintptr_t)ptr;
 
    return (lp % MEM_HASHSIZE);
 }

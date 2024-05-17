@@ -70,8 +70,8 @@ VEC	*spCHsolve();
 /* cg_set_maxiter -- sets maximum number of iterations if numiter > 1
 	-- just returns current max_iter otherwise
 	-- returns old maximum */
-int	cg_set_maxiter(numiter)
-int	numiter;
+int	cg_set_maxiter(int numiter)
+//int	numiter;
 {
 	int	temp;
 
@@ -86,11 +86,11 @@ int	numiter;
 /* pccg -- solves A.x = b using pre-conditioner M
 			(assumed factored a la spCHfctr())
 	-- results are stored in x (if x != NULL), which is returned */
-VEC	*pccg(A,A_params,M_inv,M_params,b,eps,x)
-MTX_FN	A, M_inv;
-VEC	*b, *x;
-double	eps;
-void	*A_params, *M_params;
+VEC	*pccg(MTX_FN A, void* A_params, MTX_FN M_inv, void* M_params, VEC* b, double eps, VEC* x)
+//MTX_FN	A, M_inv;
+//VEC	*b, *x;
+//double	eps;
+//void	*A_params, *M_params;
 {
 	VEC	*r = VNULL, *p = VNULL, *q = VNULL, *z = VNULL;
 	int	k;
@@ -156,10 +156,10 @@ void	*A_params, *M_params;
 		data structures
 	-- assumes that LLT contains the Cholesky factorisation of the
 		actual pre-conditioner */
-VEC	*sp_pccg(A,LLT,b,eps,x)
-SPMAT	*A, *LLT;
-VEC	*b, *x;
-double	eps;
+VEC	*sp_pccg(SPMAT* A, SPMAT* LLT, VEC* b, double eps, VEC* x)
+//SPMAT	*A, *LLT;
+//VEC	*b, *x;
+//double	eps;
 {	return pccg(sp_mv_mlt,A,spCHsolve,LLT,b,eps,x);		}
 
 
@@ -175,12 +175,12 @@ double	eps;
 		A is passed where A(x,Ax,params) computes
 		Ax = A.x
 	-- the computed solution is passed */
-VEC	*cgs(A,A_params,b,r0,tol,x)
-MTX_FN	A;
-VEC	*x, *b;
-VEC	*r0;		/* tilde r0 parameter -- should be random??? */
-double	tol;		/* error tolerance used */
-void	*A_params;
+VEC	*cgs(MTX_FN A, void* A_params, VEC* b, VEC* r0, double tol, VEC* x)
+//MTX_FN	A;
+//VEC	*x, *b;
+//VEC	*r0;		/* tilde r0 parameter -- should be random??? */
+//double	tol;		/* error tolerance used */
+//void	*A_params;
 {
 	VEC	*p, *q, *r, *u, *v, *tmp1, *tmp2;
 	Real	alpha, beta, norm_b, rho, old_rho, sigma;
@@ -246,10 +246,10 @@ void	*A_params;
 }
 
 /* sp_cgs -- simple interface for SPMAT data structures */
-VEC	*sp_cgs(A,b,r0,tol,x)
-SPMAT	*A;
-VEC	*b, *r0, *x;
-double	tol;
+VEC	*sp_cgs(SPMAT* A, VEC* b, VEC* r0, double tol, VEC* x)
+//SPMAT	*A;
+//VEC	*b, *r0, *x;
+//double	tol;
 {	return cgs(sp_mv_mlt,A,b,r0,tol,x);	}
 
 /*
@@ -262,11 +262,11 @@ double	tol;
 /* lsqr -- sparse CG-like least squares routine:
 	-- finds min_x ||A.x-b||_2 using A defined through A & AT
 	-- returns x (if x != NULL) */
-VEC	*lsqr(A,AT,A_params,b,tol,x)
-MTX_FN	A, AT;	/* AT is A transposed */
-VEC	*x, *b;
-double	tol;		/* error tolerance used */
-void	*A_params;
+VEC	*lsqr(MTX_FN A, MTX_FN AT, void* A_params, VEC* b, double tol, VEC* x)
+//MTX_FN	A, AT;	/* AT is A transposed */
+//VEC	*x, *b;
+//double	tol;		/* error tolerance used */
+//void	*A_params;
 {
 	VEC	*u, *v, *w, *tmp;
 	Real	alpha, beta, norm_b, phi, phi_bar,
@@ -342,9 +342,9 @@ void	*A_params;
 }
 
 /* sp_lsqr -- simple interface for SPMAT data structures */
-VEC	*sp_lsqr(A,b,tol,x)
-SPMAT	*A;
-VEC	*b, *x;
-double	tol;
+VEC	*sp_lsqr(SPMAT* A, VEC* b, double tol, VEC* x)
+//SPMAT	*A;
+//VEC	*b, *x;
+//double	tol;
 {	return lsqr(sp_mv_mlt,sp_vm_mlt,A,b,tol,x);	}
 

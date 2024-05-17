@@ -515,7 +515,7 @@ int s2v(int argc, char **argv){
 
   if(segpar){
 #ifndef WIN32
-    shmdt((void*)shmid); //ShMDetach
+    shmdt((void*)(size_t)shmid); //ShMDetach
 #else
     UnmapViewOfFile(lpSharedSeg) ; // invalidation du ptr sur mem partagee
     // Ts = NULL ;		   // Tester avant
@@ -801,7 +801,7 @@ double  lectri(signed char &test,char &ntype,int &natt,long i_att[],int &nsom,Pa
     fscanf(fichier, "%c", &fin);
   } while(fin!='p' && !feof(fichier));
   if(!feof(fichier)) {
-    fseek(fichier,-sizeof(char),SEEK_CUR);
+    fseek(fichier,-(long)sizeof(char),SEEK_CUR);
     //fputc(fin, fichier);
   } // if
 

@@ -1,7 +1,7 @@
 
 #define _Msail
 
-#include <iostream> // définit des namespaces
+#include <iostream> // dï¿½finit des namespaces
 using namespace std ;
 
 #include "multicou.h"
@@ -34,7 +34,7 @@ void distrib(double *,double,double);
    sous-programme DISTRIB.                                                  
 *************************************************************************/
 void msailad(Msailin &msailin){
-  register int ia,ic,ili;
+  int ia,ic,ili;
   REEL fcum, sbfs, cstl, psir, tsin, sntl, cs2tl, sn2tl;
   REEL cspsi, tanto, tants, t1, btran1, btran2;
   REEL bt1, bt2, bt3, sw1, sw2, sbf;
@@ -286,7 +286,7 @@ void mlayer(Msailin &msailin, Mlayout* Tlayout){
    *************************************************************************/
 void distrib(double *fbeta,double u,double v){
   static double freq, gamm1, gamm2, gamm3, part1, part2, part3;
-  register  int ili,i;
+   int ili,i;
   static double w,y1, y2, y3, dif, gam, ang, pie;
   static double pon, sum;
 

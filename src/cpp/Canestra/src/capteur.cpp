@@ -126,7 +126,7 @@ void Camera::capte(Rayon &strahl,Diffuseur *pinter,int nbray)
          weight*=taille*taille* fabs( strahl.par().direct().prod_scalaire(prim->normal()))/I.dist2(oldpar.origin());
 
          //maj de l'image
-         register int i,j;
+         int i,j;
          i= img->taille(0)-1-(int)fabs(dir.prod_scalaire(u)/taille*(img->taille(0)-1));
          j=(int)fabs(dir.prod_scalaire(v)/taille*(img->taille(1)-1));
          img->inc(i,j, weight ); 
@@ -173,7 +173,7 @@ void Camera::capte_visi(Rayon &strahl,Diffuseur *inter,int nbray)
          weight*=taille*taille* fabs(strahl.par().direct().prod_scalaire(prim->normal()))/I.dist2(oldpar.origin());   
 
          //maj de l'image
-         register int i,j;
+         int i,j;
          i= img->taille(0)-1-(int)fabs(dir.prod_scalaire(u)/taille*(img->taille(0)-1));
          j= (int)fabs(dir.prod_scalaire(v)/taille*(img->taille(1)-1));
          img->inc(i,j, weight ); 
@@ -191,7 +191,7 @@ void Camera::capte_visi(Rayon &strahl,Diffuseur *inter,int nbray)
 void Camera::colorie_triangle(Diffuseur * pdif,Point &a,Point &b,Point &c, Tabdyn<double, 2>& Zbuf, Tabdyn<Diffuseur *, 2>& Zprim,Image *pimg)
 // Vorsicht : Zbuf, Zprim, pdiff passes en variable globale (-lourd)
  { double penteL,penteR,xL,xR,zL,yrel,vab,vac,vbc,z,dz; // L Left, R  Right
-   register int i,j, iR,iL, deby,finy,sens;
+   int i,j, iR,iL, deby,finy,sens;
    Diffuseur *exdif;
    double K[2];
 
@@ -284,7 +284,7 @@ void Camera::calc_visi(Liste <Diffuseur*>& Ldiff)
    Liste<Point> lpt; Point Pt1,Pt2; ; Primitive *pprim;
    Param_Inter parag;
    Diffuseur *pdiff;
-   register int i,j,k,l;
+   int i,j,k,l;
    double distZ,pente;
    Vecteur &w=prim->normal();cout<<" w=vers? ";w.show();
    Vecteur SvE=E,EvI; // SvE : Scene vers Ecran, EvI : Ecran vers Image
@@ -414,8 +414,8 @@ void Camera::calc_visi(Liste <Diffuseur*>& Ldiff)
 void Camera::maj_stat()
  { double x;
 
-   for(register int i=0;i<img->taille(0);i++)
-     for(register int j=0;j<img->taille(1);j++)
+   for(int i=0;i<img->taille(0);i++)
+     for(int j=0;j<img->taille(1);j++)
          { x=img->val(i,j);
            moy->inc(i,j,x);
            x*=x;
@@ -432,8 +432,8 @@ void Camera::calc_stat(unsigned int niter=0)
  { raus(niter==0,"Capteur[calc_stat] Doit avoir le nb d'iteration en parametre!");
  // calcul de la moyenne et de la variance
    double x,test1=0, test2=0;
-   for(register int i=0;i<img->taille(0);i++)
-     for(register int j=0;j<img->taille(1);j++)
+   for(int i=0;i<img->taille(0);i++)
+     for(int j=0;j<img->taille(1);j++)
          { x=moy->val(i,j)/(double)niter;
            moy->maj(i,j,x);
            img->maj(i,j,x);

@@ -143,7 +143,7 @@ void zFF(void *, int, int, void*) {
 }//zFF()
 
 static  int addbox(BSP * box,reel dx,reel dy, Boxi *Tabox,int ind) {
-  register int i;
+  int i;
   if(ind!=0) {
     if(box->nb_diffuseur()==0)
        return ind;
@@ -169,8 +169,8 @@ void Canopy::calc_FF_Bfar(SPMAT *FF,
 			  bool bias,
 			  double denv,
 			  int nbsim) {
-  register int p,t,b,nb_rec=0,nb_emi=0,nb_test=0,cum_box=0,nb_error=0,nb_ff,nop=0;;
-  register unsigned char i,nb_box,pr=0;
+  int p,t,b,nb_rec=0,nb_emi=0,nb_test=0,cum_box=0,nb_error=0,nb_ff,nop=0;;
+  unsigned char i,nb_box,pr=0;
   int pmax,tmax,inc[3],Gi[3];
   int n,i_sup,i_inf=0,idx,idxn;
   Diffuseur *diffR, *diffE;
@@ -452,7 +452,7 @@ void Canopy::calc_FF_Bfar(SPMAT *FF,
 
 void Canopy::calc_FF(SPMAT *FF){;
   Point G,T;
-  register unsigned char i,j;
+  unsigned char i,j;
   int n,i_sup,i_inf,idx;
   Diffuseur *diffR, *diffE;
   SPROW	*r_sup,*r_inf;
@@ -503,7 +503,7 @@ void Canopy::calc_FF(SPMAT *FF){
 #endif
 
 void Canopy::projplan(Vecteur &visee,bool infty, double* Bo) {
-  register int i,j,k,l,img_surf;
+  int i,j,k,l,img_surf;
   Point roof[4];
   REELLE **Zbuf,**pZbuf,*ptZ;
   double tx,ty,costeta,Apix;
@@ -668,7 +668,7 @@ void Canopy::projplan(Vecteur &visee,bool infty, double* Bo) {
   bool up,down,pastoutvu;
   //taille ecran stocke en tmp et dz
   //variable pr periodic infini
-  register signed char acv_idx,acv_fin=0;
+  signed char acv_idx,acv_fin=0;
   Vecteur delta[3];
   
   delta[0][0]=delta[2][0]=0.0;
@@ -968,8 +968,8 @@ void Canopy::projplan(Vecteur &visee,bool infty, double* Bo) {
 
 void colorie_triangle( void * tria,void *Zprim, REELLE **Zbuf,const Punkt a,const Punkt b,const Punkt c, int Tx, int Ty,double tx, double ty,void (*f)(void *, int, int, void*)){
   double penteL,penteR,xL,xR,zL,yrel,vab,vac,vbc,z,dz; // L Left, R  Right
-  register int i,j, iR,iL, deby,finy;
-  register signed char sens;
+  int i,j, iR,iL, deby,finy;
+  signed char sens;
   double K[2];
   
   //            a           b ______ c 
@@ -1057,8 +1057,8 @@ void colorie_triangle( void * tria,void *Zprim, REELLE **Zbuf,const Punkt a,cons
 /***** colorie_capteur() *****/
  void colorie_capteur(REELLE **Zbuf,Punkt a,Punkt b,Punkt c, int Tx, int Ty,double tx, double ty,int& pB0){
  double penteL,penteR,xL,xR,zL,yrel,vab,vac,vbc,z,dz; // L Left, R  Right
-  register int i,j, iR,iL, deby,finy;
-  register signed char sens;
+  int i,j, iR,iL, deby,finy;
+  signed char sens;
   double K[2];
   
   //            a           b ______ c 
@@ -1130,7 +1130,7 @@ void colorie_triangle( void * tria,void *Zprim, REELLE **Zbuf,const Punkt a,cons
 
 void Canopy::data3d(int tx,int ty,Vecteur &visee,
 		    bool infty,long int **&Zno){
-  register int i,j,k,l,img_surf;
+  int i,j,k,l,img_surf;
   Image imgZ (tx,ty,(char*)"proz.ppm");
   long int **pZno;
   REELLE **Zbuf,**pZbuf,*ptZ;
@@ -1333,7 +1333,7 @@ void Canopy::data3d(int tx,int ty,Vecteur &visee,
   Vecteur SvE; // SvE : Scene vers Ecran
   Vecteur delta[3];
   bool up,down,pastoutvu;
-  register signed char acv_idx,acv_fin=0;
+  signed char acv_idx,acv_fin=0;
   //taille ecran stocke en tmp et dz
 
   imgZ.raz(-10);
@@ -1507,7 +1507,7 @@ void color_triangle( void * tria,void *Zprim, double **Zbuf,const Punkt a,const 
   double penteL,penteR,xL,xR,zL,yrel,vab,vac,vbc,z,dz; // L Left, R  Right
   int i,j, iR,iL, deby,finy;
   int Ae[2],Be[2],Ce[2];
-  register signed char sens;
+  signed char sens;
   double K[2];
   
   //            a           b ______ c 
@@ -1583,7 +1583,7 @@ void Canopy::calc_FF_Bfar(SPMAT *FF,VEC **Cfar,char * envname, double denv,int n
   Liste<Pointt> lpt; Punkt Pt1,Pt2; ; Primitive *pprim;
   Param_Inter parag;
   Diffuseur *pdiff;
-  register int i,j,k,l;
+  int i,j,k,l;
   double distZ,pente;
   Vecteur &w=prim->normal();
   //cout<<" w=vers? ";w.show();
@@ -1714,8 +1714,8 @@ void Canopy::calc_FF_Bfar(SPMAT *FF,VEC **Cfar,char * envname, double denv,int n
 
 #ifdef _Obsolete
 void Canopy::calc_FF_Bfar(SPMAT *FF,VEC **Cfar,char * envname, double denv,int nbsim) {
-  register int p,t,b,nb_rec=0,nb_emi=0,nb_test=0,cum_box=0;
-  register unsigned char i,nb_box,pr=0;
+  int p,t,b,nb_rec=0,nb_emi=0,nb_test=0,cum_box=0;
+  unsigned char i,nb_box,pr=0;
   int pmax,tmax,inc[3],Gi[3];
   SPROW	*r_sup,*r_inf;
   int n,i_sup,i_inf;

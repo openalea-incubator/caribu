@@ -54,7 +54,7 @@ SPROW *r;
    
    fprintf(fp,"row: len = %d, maxlen = %d, diag idx = %d\n",
 	   r->len,r->maxlen,r->diag);
-   fprintf(fp,"element list @ 0x%lx\n",(long)(r->elt));
+   fprintf(fp,"element list @ 0x%p\n",(void *)(r->elt));
    if ( ! r->elt )
    {
       fprintf(fp,"*** NULL element list ***\n");
@@ -75,9 +75,9 @@ int	sprow_idx(r,col)
 SPROW	*r;
 int	col;
 {
-   register int		lo, hi, mid;
+   int		lo, hi, mid;
    int			tmp;
-   register row_elt	*r_elt;
+   row_elt	*r_elt;
    
    /*******************************************
      if ( r == (SPROW *)NULL )

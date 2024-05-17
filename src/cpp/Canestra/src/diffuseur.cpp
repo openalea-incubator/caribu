@@ -20,7 +20,7 @@ ostream& operator << (ostream& out,Diffuseur & diff){
 #ifdef _NRJ
 //-*************** friend Emax() ****************************
 int maxE(Diffuseur *g,Diffuseur *d){
-  register double grad,drad;
+  double grad,drad;
 
   /*  grad=g->dRad();
   drad=d->dRad();
