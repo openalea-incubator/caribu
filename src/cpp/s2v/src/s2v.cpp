@@ -515,7 +515,7 @@ int s2v(int argc, char **argv){
 
   if(segpar){
 #ifndef WIN32
-    shmdt((void*)shmid); //ShMDetach
+    shmdt((void*)(size_t)shmid); //ShMDetach
 #else
     UnmapViewOfFile(lpSharedSeg) ; // invalidation du ptr sur mem partagee
     // Ts = NULL ;		   // Tester avant
