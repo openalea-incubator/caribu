@@ -7,12 +7,15 @@ package:
 
 source:
   path: ..
+  patches:
+   # List any patch files here
+   - setup.py.patch #[unix]
 
 build:
   preserve_egg_dir: True
   number: 0
   script: 
-    - {{PYTHON}} setup.py install
+    - {{PYTHON}} setup.py install #[win]
 
 requirements:
   host:
