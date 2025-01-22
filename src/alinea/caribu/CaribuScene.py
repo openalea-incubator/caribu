@@ -285,7 +285,7 @@ class CaribuScene(object):
                         z_soil = self.scene.getZmin()
                 self.soil = domain_mesh(self.pattern, z_soil, soil_mesh)
         
-        self.tempdir = None
+        self.tempdir = '' # allow testing existence in __del__
         if filecache:
             self.tempdir = tempfile.mkdtemp() if not debug else './caribuscene_'+str(id(self))
         self.canfile = None
@@ -553,7 +553,7 @@ class CaribuScene(object):
                         materials = materials + [(albedo,)] * len(self.soil)
                     self.materialvalues = materials
 
-                    if not self.tempdir is None:
+                    if self.tempdir != '':
                         self.canfile = os.path.join(self.tempdir,'cscene.can')
                         self.optfile = os.path.join(self.tempdir,'band0.opt')
                         write_scene(triangles, materials, canfile = self.canfile, optfile = self.optfile)
