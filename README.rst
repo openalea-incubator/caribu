@@ -112,6 +112,6 @@ Contributing
 License
 -------
 
-**Caribu** is released under a specific INRA License agreement. See LICENSE
+**Caribu** is released under the open source CeCILL-C license. See LICENSE
 file.
 

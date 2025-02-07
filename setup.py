@@ -45,9 +45,9 @@ setup_kwds = dict(
     description=short_descr,
     long_description=readme + '\n\n' + history,
     author="Christian Fournier, Michael Chelle, Christophe Pradal ",
-    author_email="Christian.Fournier@supagro.inra.fr, michael.chelle@grignon.inra.fr, christophe dot pradal _at_ cirad fr ",
+    author_email="Christian.Fournier@inrae.fr, m dot chelle at brgm dot fr, christophe dot pradal _at_ cirad fr ",
     url='https://github.com/openalea-incubator/caribu',
-    license='INRA_License_agreement',
+    license='CECILL-C',
     zip_safe=False,
 
     packages=find_namespace_packages(where='src', include=['alinea.*']),
