@@ -37,18 +37,19 @@ canopy elements (typically 1 cm2). It takes into account multiple scattering,
 allows for infinitisation of the scene (by virtual replication) and performs
 in a reasonable time (typically a few minutes).
 
-The idea is to mix a projection model that solves the first order illumination,
+The idea is to mix a projection model (Z-buffer) that solves the first order illumination,
 a model that solves the radiosity equations for the ligth exchanges between a
 canopy element and its close neighbourhood, and a model that solves turbid
 medium equations for the exchanges between a canopy element and the rest of
 the canopy.
 
+Ref: Michaël Chelle, Bruno Andrieu, K. Bouatouch. Nested radiosity for plant canopies. The Visual Computer, 1998, 14, pp.109-125. ⟨10.1007/s003710050127⟩. ⟨hal-02697207⟩
 
 Content
 '''''''
 
 The suite is composed of two main sub-models : MCSail, that computes turbid
-medium equations on a layered canopy and Canestra, that computes radiosity
+medium equations on a layered canopy (derived from the SAIL model (Verhoef, 1984) and Canestra, that computes radiosity
 and projection. The suite also includes two utililities : periodise, that
 makes a scene suitable for infinite replication and S2v, that transforms a
 3D scene in a 1D multi-layer system.
@@ -62,6 +63,7 @@ This model is completed with a set of utilities for visualisation
 (using PlantGL), import of caribuscene from files or MTG, and tools for
 building ligth sources from meteorological data
 
+Ref: Wout Verhoef (1984), Light scattering by leaf layers with application to canopy reflectance modeling: the SAIL model. Remote Sensing of Environment, 16, 125-141
 
 Installation
 ------------
