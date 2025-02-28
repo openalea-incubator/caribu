@@ -16,9 +16,10 @@ build:
     - CMAKE_GEN=MinGW Makefiles # [win]
     - CMAKE_GENERATOR=MinGW Makefiles # [win]
     - CXX=g++ # [win]
-    - C=gcc # [win]
+    - CC=gcc # [win]
     - cxx_compiler=g++ # [win]
-  script: 
+    - c_compiler=gcc # [win]
+  script:
     - {{PYTHON}} -m pip install . -vv
 
 requirements:
