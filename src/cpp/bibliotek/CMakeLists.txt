@@ -8,4 +8,10 @@ add_library(bibliotek STATIC
             decodeclef.cpp
             chrono.cpp)
 
+if (WIN32)
+    target_compile_definitions(meschach PUBLIC MINGW)
+    target_compile_definitions(meschach PUBLIC WIN32)
+endif()
+
+
 target_include_directories(bibliotek PUBLIC ${PROJECT_SOURCE_DIR}/src/cpp/include)
