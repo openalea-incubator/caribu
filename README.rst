@@ -19,11 +19,6 @@ alinea.caribu
     :alt: Coverage report status
     :target: https://coveralls.io/github/openalea-incubator/caribu?branch=master
 
-
-.. image:: https://landscape.io/github/openalea-incubator/caribu/master/landscape.svg?style=flat
-    :alt: Code health status
-    :target: https://landscape.io/github/openalea-incubator/caribu/master
-
 .. #}
 
 What is Caribu ?
