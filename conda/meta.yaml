@@ -1,5 +1,6 @@
 {% set pyproject = load_file_data('pyproject.toml') %}
 {% set version = pyproject.get('project', {}).get('version') %}
+{% set native = 'm2w64-' if win else '' %}
 
 package:
   name: alinea.caribu
@@ -11,6 +12,9 @@ source:
 build:
   preserve_egg_dir: True
   number: 0
+  script_env:
+    - CMAKE_GEN=Ninja
+    - CMAKE_GENERATOR=Ninja
   script: 
     - {{PYTHON}} -m pip install . -vv
 
