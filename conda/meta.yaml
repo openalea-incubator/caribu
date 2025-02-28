@@ -13,8 +13,10 @@ build:
   preserve_egg_dir: True
   number: 0
   script_env:
-    - CMAKE_GEN=Ninja
-    - CMAKE_GENERATOR=Ninja
+    - CMAKE_GEN=MinGW Makefiles # [win]
+    - CMAKE_GENERATOR=MinGW Makefiles # [win]
+    - CXX=g++ # [win]
+    - C=gcc # [win]
   script: 
     - {{PYTHON}} -m pip install . -vv
 

@@ -61,7 +61,7 @@ build.verbose = true
 [tool.scikit-build.cmake]
 build-type="Release"
 source-dir="."
-args=["-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -G 'Ninja' -j"]
+args=["-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -j"]
 
 [tool.scikit-build.wheel]
 packages = ["src/alinea"]
