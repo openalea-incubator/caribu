@@ -1,34 +1,28 @@
-{% set data = load_setup_py_data() %}
-{% set native = 'm2w64-' if win else '' %}
+{% set pyproject = load_file_data('pyproject.toml') %}
+{% set version = pyproject.get('project', {}).get('version') %}
 
 package:
   name: alinea.caribu
-  version: {{ data.get('version') }}
+  version: {{ version }}
 
 source:
   path: ..
-  patches:
-   # List any patch files here
-   - setup.py.patch #[unix]
 
 build:
   preserve_egg_dir: True
   number: 0
   script: 
-    - {{PYTHON}} setup.py install #[win]
+    - {{PYTHON}} -m pip install . -vv
 
 requirements:
   host:
     - python x.x
     - setuptools
-    - openalea.deploy
   build:
     - python {{PY_VER}}
     - {{ compiler('c') }}   
     - {{ compiler('cxx') }} 
     - m2w64-toolchain   # [win]
-    - openalea.deploy
-    - openalea.sconsx
   run:
     - python x.x
     - path              # path.py is outdated
@@ -46,6 +40,6 @@ test:
    - pytest -v
 
 about:
-  home: {{ data.get('url') }}
+  home: https://openalea.readthedocs.io/
   summary: Eco-physiological model of light interception by plants.
 
