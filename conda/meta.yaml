@@ -18,11 +18,15 @@ requirements:
   host:
     - python x.x
     - setuptools
+    - scikit-build-core
   build:
     - python {{PY_VER}}
     - {{ compiler('c') }}   
     - {{ compiler('cxx') }} 
     - m2w64-toolchain   # [win]
+    - cmake
+    - make
+    - ninja
   run:
     - python x.x
     - path              # path.py is outdated
