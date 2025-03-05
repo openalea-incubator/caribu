@@ -2,7 +2,5 @@ channels:
   - conda-forge
   - openalea3
 dependencies:
-  - openalea.deploy
-  - openalea.sconsx
   - openalea.mtg
   - openalea.plantgl
