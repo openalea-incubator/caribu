@@ -3,13 +3,13 @@
 {% set home = pyproject.get('project', {}).get('urls').get('Homepage') %}
 
 {% set major = load_file_regex(
-  load_file="src/openalea/phenomenal/version.py",
+  load_file="src/alinea/caribu/version.py",
   regex_pattern='major = (.+)') %}
 {% set minor = load_file_regex(
-  load_file="src/openalea/phenomenal/version.py",
+  load_file="src/alinea/caribu/version.py",
   regex_pattern='minor = (.+)') %}
 {% set post = load_file_regex(
-  load_file="src/openalea/phenomenal/version.py",
+  load_file="src/alinea/caribu/version.py",
   regex_pattern='post = (.+)') %}
 
 {% set version = major[1]+'.'+minor[1]+'.'+post[1] %}
