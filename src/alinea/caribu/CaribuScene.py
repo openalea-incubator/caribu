@@ -98,7 +98,7 @@ def domain_mesh(domain, z=0., subdiv=1):
     return [(a, b, c), (b, d, c)]
 
 
-class CaribuScene(object):
+class CaribuScene:
     """A class interface to Caribu algorithms"""
 
     default_material = (0.06, 0.07)

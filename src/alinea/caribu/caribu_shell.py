@@ -104,7 +104,7 @@ class CaribuRunError(CaribuError):
     pass
 
 
-class Caribu(object):
+class Caribu:
     def __init__(self,
                  canfile=None,
                  skyfile=None,

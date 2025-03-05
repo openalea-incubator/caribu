@@ -9,7 +9,7 @@ import types
 # test it with randomized values and color map
 # Implement discrete color map (lut?)
 
-class CanestraScene(object):
+class CanestraScene:
     def __init__(self, plants, soil, indexes):
         self.plants = plants
         self.soil = soil
