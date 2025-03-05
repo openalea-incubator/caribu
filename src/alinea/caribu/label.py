@@ -16,7 +16,7 @@ Labels for the canestra file management.
 
 class Label:
     """ Label is an object to deals with can file cryptic label.
-    It provide a way to store various information in one field.
+    It provides a way to store various information in one field.
     """
 
     def __init__(self, label='000000000000'):
