@@ -3,7 +3,7 @@ Welcome to alinea.caribu's documentation!
 ======================================================
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     readme
     usage
