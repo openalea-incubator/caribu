@@ -44,6 +44,7 @@ requirements:
     - {{ compiler('c') }}   
     - {{ compiler('cxx') }} 
     - m2w64-toolchain   # [win]
+    - m2w64-toolchain_win-64   # [win]
     - cmake
     - make
     - ninja
