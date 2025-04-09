@@ -19,6 +19,26 @@ alinea.caribu
     :alt: Coverage report status
     :target: https://coveralls.io/github/openalea-incubator/caribu?branch=master
 
+.. image:: https://github.com/openalea-incubator/caribu/actions/workflows/conda-package-build.yml/badge.svg
+    :alt: CI status
+    :target: https://github.com/openalea-incubator/caribu/actions/workflows/conda-package-build.yml
+
+
+.. image:: https://anaconda.org/openalea3/alinea.caribu/badges/version.svg
+    :target: https://anaconda.org/openalea3/alinea.caribu
+
+.. image:: https://anaconda.org/openalea3/alinea.caribu/badges/latest_release_date.svg
+    :target: https://anaconda.org/openalea3/alinea.caribu
+
+.. image:: https://anaconda.org/openalea3/alinea.caribu/badges/platforms.svg
+    :target: https://anaconda.org/openalea3/alinea.caribu
+
+.. image:: https://anaconda.org/openalea3/alinea.caribu/badges/license.svg
+    :target: https://anaconda.org/openalea3/alinea.caribu
+
+.. image:: https://anaconda.org/openalea3/alinea.caribu/badges/downloads.svg
+    :target: https://anaconda.org/openalea3/alinea.caribu
+
 .. #}
 
 What is Caribu ?

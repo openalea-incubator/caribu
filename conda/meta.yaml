@@ -68,3 +68,4 @@ about:
   home: {{ home }}
   description: {{ description }}
   summary: {{ description }}
+  license: CeCILL_C
