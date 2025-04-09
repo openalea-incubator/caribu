@@ -6,6 +6,7 @@ channels:
 dependencies:
   - openalea.mtg
   - openalea.plantgl
+  - oawidgets
   - pip
   - pip:
       - -e ..[doc]
