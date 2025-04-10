@@ -15,7 +15,7 @@
 {% set version = major[1]+'.'+minor[1]+'.'+post[1] %}
 
 package:
-  name: {{ pyproject["project"]["name"] }}
+  name: alinea.caribu
   version: {{ version }}
 
 source:
@@ -55,7 +55,7 @@ test:
   requires:
     - pytest
   imports:
-    - {{ pyproject["project"]["name"] }}
+    - alinea.caribu
   source_files:
     - test/*.py
   commands:
