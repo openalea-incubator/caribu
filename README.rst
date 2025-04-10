@@ -9,16 +9,6 @@ alinea.caribu
     :alt: Documentation status
     :target: https://caribu.readthedocs.io/en/latest/?badge=latest
 
-
-.. image:: https://travis-ci.org/openalea-incubator/caribu.svg?branch=master
-    :alt: Travis build status
-    :target: https://travis-ci.org/openalea-incubator/caribu
-
-
-.. image:: https://coveralls.io/repos/github/openalea-incubator/caribu/badge.svg?branch=master
-    :alt: Coverage report status
-    :target: https://coveralls.io/github/openalea-incubator/caribu?branch=master
-
 .. image:: https://github.com/openalea-incubator/caribu/actions/workflows/conda-package-build.yml/badge.svg
     :alt: CI status
     :target: https://github.com/openalea-incubator/caribu/actions/workflows/conda-package-build.yml
