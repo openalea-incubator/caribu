@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core"]
+requires = ["scikit-build-core", "setuptools-scm"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -28,8 +28,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Topic :: Scientific/Engineering",
 ]
-version = "8.1.4"
-dynamic = ["readme"]
+dynamic = ["version", "readme"]
 dependencies = [
   "path"
 ]
@@ -53,8 +52,10 @@ Changelog = "https://github.com/openalea-incubator/caribu/releases"
 "alinea.caribu" = "alinea.caribu_wralea"
 
 [tool.scikit-build]
+experimental = true
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 build-dir="./build/{wheel_tag}"
-sdist.include = ["*canestrad*","*mc-sail*","*s2v*","*periodise*"]
+sdist.include = ["*canestrad*","*mc-sail*","*s2v*","*periodise*", "src/alinea/caribu/_version.py"]
 logging.level = "INFO"
 build.verbose = true
 
@@ -65,3 +66,5 @@ args=["-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX", "-DCMAKE_C_COMPILER=gcc", "-DCMAKE
 
 [tool.scikit-build.wheel]
 packages = ["src/alinea"]
+
+[tool.setuptools_scm]
