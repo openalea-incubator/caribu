@@ -7,6 +7,12 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
+
+if(MINGW)
+    message(STATUS "Building with mingw-w64")
+    set (CMAKE_CXX_FLAGS "{$CMAKECXX_FLAGS} -DMINGW32")
+endif()
+
 include_directories("src/cpp/")
 
 add_subdirectory("src/cpp/meschach/mesch12a/src")
