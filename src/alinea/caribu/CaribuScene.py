@@ -294,9 +294,10 @@ class CaribuScene:
 
 
     def __del__(self):
-        if os.path.exists(self.tempdir):
-            import shutil
-            shutil.rmtree(self.tempdir)
+        if hasattr(self, 'tempdir') and self.tempdir:
+            if os.path.exists(self.tempdir):
+                import shutil
+                shutil.rmtree(self.tempdir)
 
 
 
