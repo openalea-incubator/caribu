@@ -30,23 +30,20 @@ build:
     - cxx_compiler=g++ # [win]
     - c_compiler=gcc # [win]
   script:
-    - {{PYTHON}} -m pip install . -vv
+    - {{PYTHON}} -m pip install --prefix={{ PREFIX }} . -vv
 
 requirements:
   host:
-    - python x.x
+    - python
     - scikit-build-core
-  build:
-    - python {{PY_VER}}
-    - {{ compiler('c') }}   
-    - {{ compiler('cxx') }} 
-    - m2w64-toolchain   # [win]
-    - m2w64-toolchain_win-64   # [win]
     - cmake
     - make
     - ninja
+  build:
+    - {{ compiler('c') }}   
+    - {{ compiler('cxx') }}
   run:
-    - python x.x
+    - python
     - path              # path.py is outdated
     - openalea.plantgl
     - openalea.mtg
