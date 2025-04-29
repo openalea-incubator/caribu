@@ -1,4 +1,3 @@
-# from conda-forge-pinning
 c_compiler:
   - gcc                        # [linux]
   - clang                      # [osx]
