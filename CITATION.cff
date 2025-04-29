@@ -30,7 +30,7 @@ identifiers:
   - type: swh
     value: 'swh:1:rev:5be29662ca257bc6056d29f8d55940c16eb98735'
 repository-code: 'https://github.com/openalea-incubator/caribu'
-url: 'https://openalea.readthedocs.io'
+url: 'https://caribu.readthedocs.io'
 abstract: >-
   Caribu is a modelling suite for lighting 3D virtual
   scenes, especially designed for the illumination of
