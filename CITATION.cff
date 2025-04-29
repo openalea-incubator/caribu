@@ -52,7 +52,8 @@ abstract: >-
   canopies. The Visual Computer, 1998, 14, pp.109-125.
   ⟨10.1007/s003710050127⟩. ⟨hal-02697207⟩ 
 keywords:
-  - FSPM
-  - Light
-  - openalea
+  - plant modeling
+  - 3D radiative transfer
+  - nested radiosity
+  - light simulation
 license: CECILL-C
